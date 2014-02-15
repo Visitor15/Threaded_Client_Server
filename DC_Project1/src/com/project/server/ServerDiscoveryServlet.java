@@ -3,15 +3,11 @@ package com.project.server;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.net.InterfaceAddress;
 import java.net.MulticastSocket;
-import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
-import com.project.server.router.RoutingTable;
 import com.project.server.router.Server;
 
 public class ServerDiscoveryServlet extends DCServlet {
@@ -160,14 +156,19 @@ public class ServerDiscoveryServlet extends DCServlet {
 				Thread.sleep(2000);
 
 			} catch (SocketTimeoutException e) {
-
+				continue;
+//				e.printStackTrace();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
+				System.out.println("HEREHER HEER");
 				e.printStackTrace();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
+				System.out.println("Ah JEEBUS");
 				e.printStackTrace();
 			}
+			
+			System.out.println("HIT HIT!!");
 
 			// } while (isExecuting());
 		} while (count < 25);
