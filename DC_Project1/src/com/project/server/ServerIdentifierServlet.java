@@ -139,6 +139,7 @@ public class ServerIdentifierServlet extends DCServlet {
 
 				socket.setBroadcast(false);
 				socket.send(sendingPacket);
+				socket.disconnect();
 
 			} catch (SocketTimeoutException e) {
 
