@@ -103,8 +103,9 @@ public class ServerDiscoveryServlet extends DCServlet {
 				boolean register = false;
 				if (serverAddress.equalsIgnoreCase(InetAddress.getLocalHost()
 						.getHostName())) {
-					System.out.println("I don't need my own kind around here.");
+//					System.out.println("I don't need my own kind around here.");
 					// onFinished();
+//					continue;
 
 				} else {
 					register = true;

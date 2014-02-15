@@ -49,9 +49,9 @@ public class ServerIdentifierServlet extends DCServlet {
 		MulticastSocket socket = null;
 		try {
 			System.out.println("HIT");
-			
+
 			socket = new MulticastSocket(1337);
-//			socket.joinGroup(InetAddress.getByName("255.255.255.255"));
+			// socket.joinGroup(InetAddress.getByName("255.255.255.255"));
 
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
@@ -70,7 +70,7 @@ public class ServerIdentifierServlet extends DCServlet {
 		while (isExecuting()) {
 			try {
 
-				System.out.println("BEGIN");
+//				System.out.println("BEGIN");
 
 				if (socket != null) {
 					socket.receive(receivedPacket);
@@ -96,16 +96,13 @@ public class ServerIdentifierServlet extends DCServlet {
 					clientPort = clientData.substring(
 							(clientData.indexOf("|") + 1),
 							(clientData.indexOf("|") + 5));
-
-					System.out.println("Got client hostname: " + clientAddress
-							+ " AND port: " + clientPort);
 				}
-				
+
 				boolean register = false;
 				if (clientAddress.equalsIgnoreCase(InetAddress.getLocalHost()
 						.getHostName())) {
-					System.out
-							.println("I don't need my own kind around here. (SERVER)");
+//					System.out
+//							.println("I don't need my own kind around here. (SERVER)");
 					// continue;
 				} else {
 					register = true;
@@ -117,36 +114,15 @@ public class ServerIdentifierServlet extends DCServlet {
 				if (register) {
 					if (!RoutingTable.getInstance().registerClient(client)) {
 						System.out.println("Client already added");
-//						continue;
+						// continue;
 					}
+					
+					System.out.println("Got client hostname: " + clientAddress
+							+ " AND port: " + clientPort);
 				}
-
+				
 				InetAddress address = receivedPacket.getAddress();
 				int port = receivedPacket.getPort();
-
-				// SynchedInOut.getInstance().postMessageNewLine("Client " +
-				// clientAddress + ":" + clientPort + " found server");
-
-				// System.out.println("Client " + clientAddress + ":" +
-				// clientPort + " found server");
-
-				// Enumeration<NetworkInterface> nicInterfaces =
-				// NetworkInterface.getNetworkInterfaces();
-				//
-				// while(nicInterfaces.hasMoreElements())
-				// {
-				// NetworkInterface n=(NetworkInterface)
-				// nicInterfaces.nextElement();
-				// Enumeration ee = n.getInetAddresses();
-				// while(ee.hasMoreElements())
-				// {
-				// InetAddress i= (InetAddress) ee.nextElement();
-				// System.out.println(i.getHostAddress());
-				//
-				// System.out.println("NIC INTERFACE: " + i.getHostAddress());
-				//
-				// }
-				// }
 
 				String localServerHostAddress = InetAddress.getLocalHost()
 						.getHostName();
@@ -154,7 +130,7 @@ public class ServerIdentifierServlet extends DCServlet {
 
 				String serverReturnData = (localServerHostAddress + "|" + localServerPort);
 
-				System.out.println("Returning data: " + serverReturnData);
+				// System.out.println("Returning data: " + serverReturnData);
 
 				buf = serverReturnData.getBytes();
 
@@ -164,21 +140,9 @@ public class ServerIdentifierServlet extends DCServlet {
 				socket.setBroadcast(false);
 				socket.send(sendingPacket);
 
-				// dataGramSocket = new
-				// DatagramSocket(Integer.parseInt(clientPort));
-				// dataGramSocket.send(sendingPacket);
-				// dataGramSocket.close();
-
-				if (this.isExecuting()) {
-					Thread.sleep(100);
-				}
-
 			} catch (SocketTimeoutException e) {
 
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
