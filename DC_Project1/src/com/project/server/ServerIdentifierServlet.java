@@ -9,7 +9,6 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 import com.project.server.router.Client;
-import com.project.server.router.RoutingTable;
 
 public class ServerIdentifierServlet extends DCServlet {
 
@@ -47,10 +46,12 @@ public class ServerIdentifierServlet extends DCServlet {
 	@Override
 	public void execute() {
 		MulticastSocket socket = null;
+		DatagramSocket returnSocket = null;
 		try {
 			System.out.println("HIT");
 
 			socket = new MulticastSocket(1337);
+			socket.setBroadcast(true);
 			// socket.joinGroup(InetAddress.getByName("255.255.255.255"));
 
 		} catch (SocketException e) {
@@ -70,9 +71,10 @@ public class ServerIdentifierServlet extends DCServlet {
 		while (isExecuting()) {
 			try {
 
-//				System.out.println("BEGIN");
+				
 
 				if (socket != null) {
+					System.out.println("BEGIN");
 					socket.receive(receivedPacket);
 				}
 
@@ -108,14 +110,16 @@ public class ServerIdentifierServlet extends DCServlet {
 					register = true;
 				}
 
+				System.out.println("Got client: " + clientData);
+				
 				Client client = new Client(clientAddress,
 						Integer.parseInt(clientPort));
 
 				if (register) {
-					if (!RoutingTable.getInstance().registerClient(client)) {
-						System.out.println("Client already added");
-						// continue;
-					}
+//					if (!RoutingTable.getInstance().registerClient(client)) {
+//						System.out.println("Client already added");
+//						// continue;
+//					}
 					
 					System.out.println("Got client hostname: " + clientAddress
 							+ " AND port: " + clientPort);
@@ -134,12 +138,17 @@ public class ServerIdentifierServlet extends DCServlet {
 
 				buf = serverReturnData.getBytes();
 
-				sendingPacket = new DatagramPacket(buf, buf.length, address,
+				sendingPacket = new DatagramPacket(buf, buf.length, receivedPacket.getAddress(),
 						Integer.parseInt(clientPort));
 
-				socket.setBroadcast(false);
-				socket.send(sendingPacket);
+//				socket.setBroadcast(false);
+//				socket.send(sendingPacket);
+				
 				socket.disconnect();
+				
+				returnSocket = new DatagramSocket(Integer.parseInt(clientPort));
+				returnSocket.send(sendingPacket);
+				returnSocket.close();
 
 			} catch (SocketTimeoutException e) {
 
