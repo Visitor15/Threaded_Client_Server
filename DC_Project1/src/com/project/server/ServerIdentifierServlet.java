@@ -156,12 +156,17 @@ public class ServerIdentifierServlet extends DCServlet {
 //					}
 					socket.send(sendingPacket);
 				}
+				
+				Thread.sleep(2000);
 //				returnSocket.close();
 //				returnSocket.disconnect();
 
 			} catch (SocketTimeoutException e) {
 
 			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

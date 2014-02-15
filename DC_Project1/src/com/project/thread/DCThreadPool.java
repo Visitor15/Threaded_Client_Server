@@ -9,7 +9,7 @@ import com.project.thread.DCThread.THREAD_STATE;
 
 public class DCThreadPool<T extends Task> implements IThreadPoolCallback {
 
-	public static final int POOL_SIZE = 2;
+	public static final int POOL_SIZE = 4;
 
 	public static final long DEF_WAIT_TIME = 250;
 
