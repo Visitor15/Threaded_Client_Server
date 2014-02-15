@@ -46,7 +46,7 @@ public class ServerIdentifierServlet extends DCServlet {
 	@Override
 	public void execute() {
 		MulticastSocket socket = null;
-		DatagramSocket returnSocket = null;
+//		DatagramSocket returnSocket = null;
 		try {
 			System.out.println("HIT");
 
@@ -146,8 +146,9 @@ public class ServerIdentifierServlet extends DCServlet {
 				
 				socket.disconnect();
 				
-				returnSocket = new DatagramSocket(Integer.parseInt(clientPort));
+				DatagramSocket returnSocket = new DatagramSocket(Integer.parseInt(clientPort));
 				returnSocket.send(sendingPacket);
+				returnSocket.disconnect();
 				returnSocket.close();
 
 			} catch (SocketTimeoutException e) {
