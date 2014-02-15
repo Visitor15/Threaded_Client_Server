@@ -78,22 +78,18 @@ public abstract class DCServlet extends SimplePersistentTask implements
 
 	@Override
 	public boolean stopServlet() {
-
-		boolean canStop = !isRunning;
-
-		if (!canStop) {
-
-		}
-
-		if (m_RecievingSocket != null) {
+		if (getServerSocket() != null) {
 			try {
-				m_RecievingSocket.close();
+				getServerSocket().close();
 			} catch (IOException e) {
 				e.printStackTrace();
+				
+				return false;
 			}
 		}
+		stopTask();
 
-		return canStop;
+		return true;
 	}
 
 	@Override
@@ -105,16 +101,21 @@ public abstract class DCServlet extends SimplePersistentTask implements
 			return false;
 		}
 
-		if (autoStart) {
-			return startServlet();
-		}
+//		if (autoStart) {
+//			return startServlet();
+//		}
 
-		return false;
+		return true;
 	}
 
 	@Override
 	public void checkResponses() {
 		respondToRequest();
+	}
+	
+	@Override
+	public void onFinished() {
+		
 	}
 
 	public synchronized ServerSocket getServerSocket() {

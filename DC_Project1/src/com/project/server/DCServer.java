@@ -12,6 +12,7 @@ import java.util.HashMap;
 import com.project.io.SynchedInOut;
 import com.project.server.DCServlet.SERVLET_TYPE;
 import com.project.server.router.Client;
+import com.project.tasks.FindDefaultGatewayTask;
 import com.project.tasks.SimpleTask;
 import com.project.tasks.TaskManager;
 
@@ -44,6 +45,7 @@ public class DCServer implements IServletCallback {
 	}
 
 	public void start() {
+		tryFindDefaultGateway();
 		registerDefaultServlets();
 
 //		testCode();
@@ -143,6 +145,10 @@ public class DCServer implements IServletCallback {
 		if (m_ServletMap.containsKey(servlet.TYPE)) {
 			m_ServletMap.get(servlet.TYPE).respondToRequest();
 		}
+	}
+	
+	private void tryFindDefaultGateway() {
+		TaskManager.DO_TASK(new FindDefaultGatewayTask());
 	}
 
 	@Override

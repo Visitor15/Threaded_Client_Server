@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 
 import com.project.server.router.Server;
 
@@ -155,20 +156,22 @@ public class ServerDiscoveryServlet extends DCServlet {
 
 				Thread.sleep(2000);
 
+			} catch (UnknownHostException e) {
+				
 			} catch (SocketTimeoutException e) {
 				continue;
 //				e.printStackTrace();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				System.out.println("HEREHER HEER");
+//				System.out.println("HEREHER HEER");
 				e.printStackTrace();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
-				System.out.println("Ah JEEBUS");
+//				System.out.println("Ah JEEBUS");
 				e.printStackTrace();
 			}
 			
-			System.out.println("HIT HIT!!");
+//			System.out.println("HIT HIT!!");
 
 			// } while (isExecuting());
 		} while (count < 25);
