@@ -18,9 +18,9 @@ public class ServerDiscoveryServlet extends DCServlet {
 			final IServletCallback callback) {
 		super(SERVLET_TYPE.REGISTRATION_SERVLET, autoStart, callback);
 
-		if (autoStart) {
-			startServlet();
-		}
+//		if (autoStart) {
+//			startServlet();
+//		}
 
 		// init();
 	}
@@ -141,7 +141,7 @@ public class ServerDiscoveryServlet extends DCServlet {
 			}
 
 			// } while (isExecuting());
-		} while (count < 5);
+		} while (count < 25);
 
 		onFinished();
 	}
