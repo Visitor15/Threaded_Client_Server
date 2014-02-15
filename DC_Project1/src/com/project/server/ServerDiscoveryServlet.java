@@ -101,7 +101,7 @@ public class ServerDiscoveryServlet extends DCServlet {
 						serverData.indexOf("|") + 5);
 
 				boolean register = false;
-				if (!serverAddress.equalsIgnoreCase(InetAddress.getLocalHost()
+				if (serverAddress.equalsIgnoreCase(InetAddress.getLocalHost()
 						.getHostName())) {
 //					System.out.println("I don't need my own kind around here.");
 					// onFinished();
@@ -128,7 +128,7 @@ public class ServerDiscoveryServlet extends DCServlet {
 					}
 				}
 
-				Thread.sleep(5000);
+				Thread.sleep(2000);
 
 			} catch (SocketTimeoutException e) {
 
