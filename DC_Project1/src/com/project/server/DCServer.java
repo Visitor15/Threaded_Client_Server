@@ -64,7 +64,7 @@ public class DCServer implements IServletCallback {
 //		m_ServletMap.put(SERVLET_TYPE.REGISTRATION_SERVLET,
 //				new ClientRegistrationServlet(true, this));
 		m_ServletMap.put(SERVLET_TYPE.CLIENT_RESPONDER_SERVLET, new ServerIdentifierServlet(true, this));
-//		m_ServletMap.put(SERVLET_TYPE.SERVER_DISCOVERY_SERVLET, new ServerDiscoveryServlet(true, this));
+		m_ServletMap.put(SERVLET_TYPE.SERVER_DISCOVERY_SERVLET, new ServerDiscoveryServlet(true, this));
 		// m_ServletMap.put(SERVLET_TYPE.CLIENT_RESPONDER_SERVLET,
 		// new ClientResponderServlet(true, this));
 
