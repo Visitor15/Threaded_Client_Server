@@ -8,12 +8,18 @@ import java.net.MulticastSocket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
+import com.project.framework.Task;
 import com.project.server.router.Client;
 import com.project.server.router.RoutingTable;
+import com.project.tasks.FindDefaultGatewayTask;
+import com.project.tasks.ITaskCallback;
+import com.project.tasks.TaskManager;
 
-public class ServerIdentifierServlet extends DCServlet {
+public class ServerIdentifierServlet extends DCServlet implements ITaskCallback {
 
 	private DatagramSocket dataGramSocket;
+
+	private boolean isLocatingDNS = false;
 
 	public ServerIdentifierServlet(final boolean autoStart,
 			final IServletCallback callback) {
@@ -46,6 +52,19 @@ public class ServerIdentifierServlet extends DCServlet {
 
 	@Override
 	public void execute() {
+
+		executeFindDNSTask();
+		System.out.print("Locating DNS...");
+		do {
+			try {
+				Thread.sleep(1000);
+				System.out.print("...");
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} while (isLocatingDNS);
+
 		MulticastSocket socket = null;
 		DatagramSocket returnSocket = null;
 		try {
@@ -53,7 +72,7 @@ public class ServerIdentifierServlet extends DCServlet {
 
 			socket = new MulticastSocket(1337);
 			socket.setBroadcast(true);
-			// socket.joinGroup(InetAddress.getByName("255.255.255.255"));
+			socket.joinGroup(InetAddress.getByName("228.5.6.7"));
 
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
@@ -121,7 +140,6 @@ public class ServerIdentifierServlet extends DCServlet {
 						// continue;
 					}
 
-
 					System.out.println("Got client hostname: " + clientAddress
 							+ " AND port: " + clientPort);
 				}
@@ -146,21 +164,21 @@ public class ServerIdentifierServlet extends DCServlet {
 				// socket.setBroadcast(false);
 				// socket.send(sendingPacket);
 
-//				socket.disconnect();
+				// socket.disconnect();
 
 				if (register) {
-//					if (returnSocket == null || returnSocket.isClosed()) {
-//						returnSocket = new DatagramSocket(
-//								Integer.parseInt(clientPort));
-//						returnSocket.setReuseAddress(true);
-//					}
+					// if (returnSocket == null || returnSocket.isClosed()) {
+					// returnSocket = new DatagramSocket(
+					// Integer.parseInt(clientPort));
+					// returnSocket.setReuseAddress(true);
+					// }
 					socket.send(sendingPacket);
 				}
-				
-				Thread.sleep(2000);
-//				returnSocket.close();
-//				returnSocket.disconnect();
-				
+
+				// Thread.sleep(2000);
+				// returnSocket.close();
+				// returnSocket.disconnect();
+
 				Thread.sleep(2000);
 
 			} catch (SocketTimeoutException e) {
@@ -191,4 +209,35 @@ public class ServerIdentifierServlet extends DCServlet {
 		System.out.println(this.getClass().getSimpleName() + " finished");
 	}
 
+	private void executeFindDNSTask() {
+		isLocatingDNS = true;
+		TaskManager.DO_TASK(new FindDefaultGatewayTask(this));
+	}
+
+	@Override
+	public void onTaskStart(Task task) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onAtomicTaskStart(Task task) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onTaskProgress(Task task) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onTaskFinished(Task task) {
+		System.out.println("GOT DNS: " + task.getStringData());
+
+		this.stringData = task.getStringData();
+
+		isLocatingDNS = false;
+	}
 }

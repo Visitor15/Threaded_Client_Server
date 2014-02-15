@@ -9,6 +9,8 @@ public abstract class SimpleTask implements Task {
 	public boolean isRunning = false;
 
 	private String taskId = "";
+	
+	public String stringData = "";
 
 	public SimpleTask() {
 		logTask();
@@ -47,7 +49,7 @@ public abstract class SimpleTask implements Task {
 					isRunning = true;
 					execute();
 				}
-				callback.onTaskFinished(this);
+//				callback.onTaskFinished(this);
 			}
 		
 	}
@@ -58,7 +60,7 @@ public abstract class SimpleTask implements Task {
 		if (!isExecuting()) {
 			m_Callback.onAtomicTaskStart(this);
 			execute();
-			m_Callback.onTaskFinished(this);
+//			m_Callback.onTaskFinished(this);
 		}
 	}
 
@@ -75,7 +77,7 @@ public abstract class SimpleTask implements Task {
 
 	@Override
 	public void stopAtomicTask() {
-		m_Callback.onTaskFinished(this);
+//		m_Callback.onTaskFinished(this);
 		onFinished();
 	}
 
@@ -87,6 +89,11 @@ public abstract class SimpleTask implements Task {
 	@Override
 	public String getTaskId() {
 		return this.taskId;
+	}
+	
+	@Override
+	public String getStringData() {
+		return stringData;
 	}
 
 	public ITaskCallback getTaskCallback() {

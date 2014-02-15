@@ -46,6 +46,6 @@ public class RegisterClientTask extends SimpleTask {
 	@Override
 	public void onFinished() {
 		System.out.println("Client Responder shutting down.");
-		getTaskCallback().onTaskFinished(this);
+//		getTaskCallback().onTaskFinished(this);
 	}
 }

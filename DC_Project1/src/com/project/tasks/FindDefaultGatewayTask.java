@@ -15,6 +15,10 @@ public class FindDefaultGatewayTask extends SimpleTask {
 		this.setTaskId("FindDefaultGatewayTask");
 	}
 
+	public FindDefaultGatewayTask(ITaskCallback callback) {
+		super(callback);
+	}
+
 	@Override
 	public void execute() {
 
@@ -37,7 +41,6 @@ public class FindDefaultGatewayTask extends SimpleTask {
 
 	@Override
 	public void onFinished() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -50,58 +53,63 @@ public class FindDefaultGatewayTask extends SimpleTask {
 		String gateway = "NULL";
 		StringTokenizer st;
 		String thisLine = "";
+		String decidedDNS = "NULL";
 		BufferedReader output;
 
 		boolean hasRouteTable = false;
 
 		try {
-			
+
 			System.out.println("Executing traceroute");
 			result = Runtime.getRuntime()
 					.exec("traceroute -m 1 www.google.com");
 
 			output = new BufferedReader(new InputStreamReader(
 					result.getInputStream()));
-//			thisLine = output.readLine();
-			
-//			System.out.println("OUTPUT: " + output.readLine());
-			
+			// thisLine = output.readLine();
+
+			// System.out.println("OUTPUT: " + output.readLine());
+
 			while (output.readLine() != null) {
 
 				String tmp = output.readLine();
-				
+
 				System.out.println("OUTPUT: " + tmp);
-				
-//				if (tmp.equalsIgnoreCase("IPv4 Route Table")) {
-//					hasRouteTable = true;
-//				} else if (tmp.contains("========")) {
-//					hasRouteTable = false;
-//				}
-//
-//				if (hasRouteTable) {
 
-//					System.out.println(tmp);
+				// if (tmp.equalsIgnoreCase("IPv4 Route Table")) {
+				// hasRouteTable = true;
+				// } else if (tmp.contains("========")) {
+				// hasRouteTable = false;
+				// }
+				//
+				// if (hasRouteTable) {
 
-					String splitData[] = tmp.split("\\s+");
-					st = new StringTokenizer(tmp);
-					String decidedDNS = "NULL";
-					if (splitData.length > 2) {
-						decidedDNS = splitData[2];
+				// System.out.println(tmp);
 
-						if (!decidedDNS.equalsIgnoreCase("On-link")) {
-							System.out.println("Found DNS: " + decidedDNS);
-						}
+				String splitData[] = tmp.split("\\s+");
+				st = new StringTokenizer(tmp);
+				decidedDNS = "NULL";
+				if (splitData.length > 2) {
+					decidedDNS = splitData[2];
+
+					if (!decidedDNS.equalsIgnoreCase("On-link")) {
+						System.out.println("Found DNS: " + decidedDNS);
+
+						break;
 					}
 				}
-//				thisLine += tmp;
-//			}
-			
-			
-			
-//			st = new StringTokenizer(thisLine);
-//			st.nextToken();
-//			gateway = st.nextToken();
-//			System.out.printf("The gateway is %s\n", gateway);
+			}
+
+			this.stringData = decidedDNS;
+//			this.stopTask();
+
+			// thisLine += tmp;
+			// }
+
+			// st = new StringTokenizer(thisLine);
+			// st.nextToken();
+			// gateway = st.nextToken();
+			// System.out.printf("The gateway is %s\n", gateway);
 		} catch (IOException e) {
 			try {
 				result = Runtime.getRuntime().exec("netstat -rn");
@@ -119,27 +127,32 @@ public class FindDefaultGatewayTask extends SimpleTask {
 
 					if (hasRouteTable) {
 
-//						System.out.println(tmp);
+						// System.out.println(tmp);
 
 						String splitData[] = tmp.split("\\s+");
 						st = new StringTokenizer(tmp);
-						String decidedDNS = "NULL";
+						decidedDNS = "NULL";
 						if (splitData.length > 3) {
 							decidedDNS = splitData[3];
 
 							if (!decidedDNS.equalsIgnoreCase("On-link")) {
 								System.out.println("Found DNS: " + decidedDNS);
+
+								break;
 							}
 						}
 					}
-//					thisLine += tmp;
+					// thisLine += tmp;
 				}
 
-//				System.out.println("LINE FOUND: " + thisLine);
+				this.stringData = decidedDNS;
+//				this.stopTask();
 
-//				st = new StringTokenizer(thisLine);
-//				st.nextToken();
-//				gateway = st.nextToken();
+				// System.out.println("LINE FOUND: " + thisLine);
+
+				// st = new StringTokenizer(thisLine);
+				// st.nextToken();
+				// gateway = st.nextToken();
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();

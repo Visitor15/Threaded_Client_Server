@@ -45,7 +45,7 @@ public class DCServer implements IServletCallback {
 	}
 
 	public void start() {
-		tryFindDefaultGateway();
+//		tryFindDefaultGateway();
 		registerDefaultServlets();
 
 //		testCode();

@@ -7,7 +7,7 @@ public abstract class SimplePersistentTask extends SimpleTask {
 	};
 	
 	public SimplePersistentTask(final IPersistentTaskCallback callback) {
-		this.m_Callback = callback;
+		super(callback);
 	}
 	
 	public void logTask() {

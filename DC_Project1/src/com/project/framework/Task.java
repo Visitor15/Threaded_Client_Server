@@ -7,6 +7,8 @@ public interface Task {
 	public void setTaskId(String id);
 	
 	public String getTaskId();
+	
+	public String getStringData();
 
 	public void execute();
 	
