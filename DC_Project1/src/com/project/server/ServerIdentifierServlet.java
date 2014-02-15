@@ -101,11 +101,24 @@ public class ServerIdentifierServlet extends DCServlet {
 							+ " AND port: " + clientPort);
 				}
 				
-				Client client = new Client(clientAddress, Integer.parseInt(clientPort));
-				
-				if (!RoutingTable.getInstance().registerClient(client)) {
-					System.out.println("Client already added");
-					continue;
+				boolean register = false;
+				if (clientAddress.equalsIgnoreCase(InetAddress.getLocalHost()
+						.getHostName())) {
+					System.out
+							.println("I don't need my own kind around here. (SERVER)");
+					// continue;
+				} else {
+					register = true;
+				}
+
+				Client client = new Client(clientAddress,
+						Integer.parseInt(clientPort));
+
+				if (register) {
+					if (!RoutingTable.getInstance().registerClient(client)) {
+						System.out.println("Client already added");
+//						continue;
+					}
 				}
 
 				InetAddress address = receivedPacket.getAddress();

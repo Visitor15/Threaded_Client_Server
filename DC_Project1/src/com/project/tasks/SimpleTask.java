@@ -6,7 +6,7 @@ public abstract class SimpleTask implements Task {
 
 	protected ITaskCallback m_Callback;
 
-	private boolean isRunning = false;
+	public boolean isRunning = false;
 
 	private String taskId = "";
 

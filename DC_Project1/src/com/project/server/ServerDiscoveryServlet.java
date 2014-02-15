@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
+import com.project.server.router.RoutingTable;
 import com.project.server.router.Server;
 
 public class ServerDiscoveryServlet extends DCServlet {
@@ -48,9 +49,10 @@ public class ServerDiscoveryServlet extends DCServlet {
 	public void execute() {
 
 		int count = 0;
-		
+
 		try {
 			dataGramSocket = new DatagramSocket(MY_PORT);
+			dataGramSocket.setBroadcast(true);
 			dataGramSocket.setReuseAddress(true);
 			dataGramSocket.setSoTimeout(3000);
 		} catch (SocketException e) {
@@ -77,7 +79,7 @@ public class ServerDiscoveryServlet extends DCServlet {
 
 				sendingPacket = new DatagramPacket(buf, buf.length,
 						InetAddress.getByName("255.255.255.255"), 1337);
-				dataGramSocket.setBroadcast(true);
+				// dataGramSocket.setBroadcast(true);
 				// dataGramSocket.setReuseAddress(true);
 				dataGramSocket.send(sendingPacket);
 				dataGramSocket.receive(receivedPacket);
@@ -98,16 +100,32 @@ public class ServerDiscoveryServlet extends DCServlet {
 				serverPort = serverData.substring(serverData.indexOf("|") + 1,
 						serverData.indexOf("|") + 5);
 
-				Server foundServer = new Server(serverAddress,
-						Integer.parseInt(serverPort));
+				boolean register = false;
+				if (serverAddress.equalsIgnoreCase(InetAddress.getLocalHost()
+						.getHostName())) {
+					System.out.println("I don't need my own kind around here.");
+					// onFinished();
 
-				System.out.println("Found server: " + foundServer.getId() + ":"
-						+ foundServer.getPort());
+				} else {
+					register = true;
+				}
 
-				// if (RoutingTable.getInstance().registerServer(foundServer)) {
-				// // this.stopTask();
-				// // this.onFinished();
-				// }
+				if (register) {
+					Server foundServer = new Server(serverAddress,
+							Integer.parseInt(serverPort));
+
+					if (RoutingTable.getInstance().registerServer(foundServer)) {
+						System.out.println("Server already registered.");
+						continue;
+					}
+
+					System.out.println("Found server: " + foundServer.getId()
+							+ ":" + foundServer.getPort());
+
+					if (RoutingTable.getInstance().registerServer(foundServer)) {
+						System.out.println("Server already registered.");
+					}
+				}
 
 				Thread.sleep(5000);
 
@@ -135,7 +153,7 @@ public class ServerDiscoveryServlet extends DCServlet {
 
 	@Override
 	public void onFinished() {
-		System.out.println("Found server!");
+		System.out.println("FINISHED!");
 		this.stopServlet();
 	}
 

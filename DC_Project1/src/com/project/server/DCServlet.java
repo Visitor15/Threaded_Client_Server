@@ -22,8 +22,6 @@ public abstract class DCServlet extends SimplePersistentTask implements
 
 	private IServletCallback m_Callback;
 
-	private boolean isRunning = false;
-
 	DCServlet() {
 		super();
 		initBaseServlet();
@@ -55,18 +53,18 @@ public abstract class DCServlet extends SimplePersistentTask implements
 		registerServlet(autoStart);
 	}
 
-	@Override
-	public void beginTask(ITaskCallback callback) {
-
-		synchronized (this) {
-
-			if (!isExecuting()) {
-				// startServlet();
-				isRunning = true;
-				execute();
-			}
-		}
-	}
+//	@Override
+//	public void beginTask(ITaskCallback callback) {
+//
+//		synchronized (this) {
+//
+//			if (!isExecuting()) {
+//				// startServlet();
+//				isRunning = true;
+//				execute();
+//			}
+//		}
+//	}
 
 	@Override
 	public boolean isExecuting() {
