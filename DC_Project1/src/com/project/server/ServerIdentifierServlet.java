@@ -9,6 +9,7 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 import com.project.server.router.Client;
+import com.project.server.router.RoutingTable;
 
 public class ServerIdentifierServlet extends DCServlet {
 
@@ -46,7 +47,7 @@ public class ServerIdentifierServlet extends DCServlet {
 	@Override
 	public void execute() {
 		MulticastSocket socket = null;
-//		DatagramSocket returnSocket = null;
+		DatagramSocket returnSocket = null;
 		try {
 			System.out.println("HIT");
 
@@ -70,8 +71,6 @@ public class ServerIdentifierServlet extends DCServlet {
 
 		while (isExecuting()) {
 			try {
-
-				
 
 				if (socket != null) {
 					System.out.println("BEGIN");
@@ -103,28 +102,29 @@ public class ServerIdentifierServlet extends DCServlet {
 				boolean register = false;
 				if (clientAddress.equalsIgnoreCase(InetAddress.getLocalHost()
 						.getHostName())) {
-//					System.out
-//							.println("I don't need my own kind around here. (SERVER)");
+					// System.out
+					// .println("I don't need my own kind around here. (SERVER)");
 					// continue;
 				} else {
 					register = true;
 				}
 
 				System.out.println("Got client: " + clientData);
-				
+
 				Client client = new Client(clientAddress,
 						Integer.parseInt(clientPort));
 
 				if (register) {
-//					if (!RoutingTable.getInstance().registerClient(client)) {
-//						System.out.println("Client already added");
-//						// continue;
-//					}
-					
+					 if (!RoutingTable.getInstance().registerClient(client)) {
+					 System.out.println("Client already added");
+					 register = false;
+					 // continue;
+					 }
+
 					System.out.println("Got client hostname: " + clientAddress
 							+ " AND port: " + clientPort);
 				}
-				
+
 				InetAddress address = receivedPacket.getAddress();
 				int port = receivedPacket.getPort();
 
@@ -138,18 +138,25 @@ public class ServerIdentifierServlet extends DCServlet {
 
 				buf = serverReturnData.getBytes();
 
-				sendingPacket = new DatagramPacket(buf, buf.length, receivedPacket.getAddress(),
+				sendingPacket = new DatagramPacket(buf, buf.length,
+						receivedPacket.getAddress(),
 						Integer.parseInt(clientPort));
 
-//				socket.setBroadcast(false);
-//				socket.send(sendingPacket);
-				
-				socket.disconnect();
-				
-				DatagramSocket returnSocket = new DatagramSocket(Integer.parseInt(clientPort));
-				returnSocket.send(sendingPacket);
-				returnSocket.disconnect();
-				returnSocket.close();
+				// socket.setBroadcast(false);
+				// socket.send(sendingPacket);
+
+//				socket.disconnect();
+
+				if (register) {
+//					if (returnSocket == null || returnSocket.isClosed()) {
+//						returnSocket = new DatagramSocket(
+//								Integer.parseInt(clientPort));
+//						returnSocket.setReuseAddress(true);
+//					}
+					socket.send(sendingPacket);
+				}
+//				returnSocket.close();
+//				returnSocket.disconnect();
 
 			} catch (SocketTimeoutException e) {
 
