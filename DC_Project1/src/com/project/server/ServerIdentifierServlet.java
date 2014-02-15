@@ -47,7 +47,7 @@ public class ServerIdentifierServlet extends DCServlet {
 	@Override
 	public void execute() {
 		MulticastSocket socket = null;
-		// DatagramSocket returnSocket = null;
+		DatagramSocket returnSocket = null;
 		try {
 			System.out.println("HIT");
 
@@ -121,6 +121,7 @@ public class ServerIdentifierServlet extends DCServlet {
 						// continue;
 					}
 
+
 					System.out.println("Got client hostname: " + clientAddress
 							+ " AND port: " + clientPort);
 				}
@@ -145,18 +146,18 @@ public class ServerIdentifierServlet extends DCServlet {
 				// socket.setBroadcast(false);
 				// socket.send(sendingPacket);
 
-				socket.disconnect();
+//				socket.disconnect();
 
 				if (register) {
-					
+//					if (returnSocket == null || returnSocket.isClosed()) {
+//						returnSocket = new DatagramSocket(
+//								Integer.parseInt(clientPort));
+//						returnSocket.setReuseAddress(true);
+//					}
 					socket.send(sendingPacket);
-
-//					DatagramSocket returnSocket = new DatagramSocket(
-//							Integer.parseInt(clientPort));
-//					returnSocket.send(sendingPacket);
 				}
-				// returnSocket.disconnect();
-				// returnSocket.close();
+//				returnSocket.close();
+//				returnSocket.disconnect();
 
 			} catch (SocketTimeoutException e) {
 

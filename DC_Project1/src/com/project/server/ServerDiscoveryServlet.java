@@ -94,7 +94,7 @@ public class ServerDiscoveryServlet extends DCServlet {
 		do {
 			try {
 				count++;
-				System.out.println("Here we go.");
+//				System.out.println("Here we go.");
 				String listeningPort = String.valueOf(MY_PORT);
 
 				String toServerStr = (InetAddress.getLocalHost().getHostName()
@@ -102,12 +102,12 @@ public class ServerDiscoveryServlet extends DCServlet {
 				buf = toServerStr.getBytes();
 
 				sendingPacket = new DatagramPacket(buf, buf.length,
-						InetAddress.getByName("T520"), 1337);
+						InetAddress.getByName("192.168.1.8"), 1337);
 				// dataGramSocket.setBroadcast(true);
 				// dataGramSocket.setReuseAddress(true);
 				dataGramSocket.send(sendingPacket);
 				
-				System.out.println("SENT!");
+//				System.out.println("SENT!");
 				
 				dataGramSocket.receive(receivedPacket);
 
