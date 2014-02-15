@@ -156,6 +156,8 @@ public class ServerIdentifierServlet extends DCServlet {
 //					}
 					socket.send(sendingPacket);
 				}
+				
+				Thread.sleep(2000);
 //				returnSocket.close();
 //				returnSocket.disconnect();
 				

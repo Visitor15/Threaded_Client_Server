@@ -98,7 +98,7 @@ public class ServerDiscoveryServlet extends DCServlet {
 				buf = toServerStr.getBytes();
 
 				sendingPacket = new DatagramPacket(buf, buf.length,
-						InetAddress.getByName("192.168.1.8"), 1337);
+						InetAddress.getByName("T520"), 1337);
 				// dataGramSocket.setBroadcast(true);
 				// dataGramSocket.setReuseAddress(true);
 				dataGramSocket.send(sendingPacket);
