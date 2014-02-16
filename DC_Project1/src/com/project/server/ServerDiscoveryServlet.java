@@ -53,155 +53,166 @@ public class ServerDiscoveryServlet extends DCServlet {
 		int count = 0;
 		DatagramSocket listeningSocket = null;
 		MulticastSocket socket = null;
-		try {
-
-			// socket = new MulticastSocket(1337);
-			// socket.setBroadcast(true);
-
-			// InetAddress localHost = Inet4Address.getLocalHost();
-			// NetworkInterface networkInterface =
-			// NetworkInterface.getByInetAddress(localHost);
-
-			// System.out.println(networkInterface.getInterfaceAddresses().get(0).getNetworkPrefixLength());
-
-			// for (InterfaceAddress address :
-			// networkInterface.getInterfaceAddresses()) {
-			// System.out.println(address.getNetworkPrefixLength());
-			// }
-
-			// listeningSocket = new DatagramSocket(MY_PORT);
-			// listeningSocket.setSoTimeout(3000);
-			dataGramSocket = new DatagramSocket(MY_PORT);
-			dataGramSocket.setBroadcast(true);
-			dataGramSocket.setReuseAddress(true);
-			dataGramSocket.setSoTimeout(50);
-		} catch (SocketException e) {
-			MY_PORT = MY_PORT + 100;
-			execute();
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		byte[] buf = new byte[1024];
-		DatagramPacket receivedPacket = new DatagramPacket(buf, buf.length);
-		DatagramPacket sendingPacket;
-
-		System.out.println("Looking for server");
-
-		RoutingTable.getInstance();
-
-		System.out.print("Waiting for default gateway to resolve...");
 		do {
 			try {
-				System.out.print("...");
 
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} while (RoutingTable.getInstance().getDefaultGetway()
-				.equalsIgnoreCase("NULL"));
+				// socket = new MulticastSocket(1337);
+				// socket.setBroadcast(true);
 
-		String defGateway = RoutingTable.getInstance().getDefaultGetway();
-		
-		System.out.println("DEF GATEWAY IS: " + defGateway);
+				// InetAddress localHost = Inet4Address.getLocalHost();
+				// NetworkInterface networkInterface =
+				// NetworkInterface.getByInetAddress(localHost);
 
-		String ipPiece = defGateway.substring(0, defGateway.length() - 1);
+				// System.out.println(networkInterface.getInterfaceAddresses().get(0).getNetworkPrefixLength());
 
-		for (int i = 0; i < 255; i++) {
+				// for (InterfaceAddress address :
+				// networkInterface.getInterfaceAddresses()) {
+				// System.out.println(address.getNetworkPrefixLength());
+				// }
 
-			String listeningPort = String.valueOf(MY_PORT);
-
-			String toServerStr;
-			try {
-				toServerStr = (InetAddress.getLocalHost().getHostName() + "|" + listeningPort);
-
-				buf = toServerStr.getBytes();
-
-				String builtIP = ipPiece + Integer.toString(i);
-
-//				System.out.println("BUILT IP: " + builtIP);
-
-				sendingPacket = new DatagramPacket(buf, buf.length,
-						InetAddress.getByName(ipPiece + String.valueOf(i)),
-						1337);
-				// dataGramSocket.setBroadcast(true);
-				// dataGramSocket.setReuseAddress(true);
-				dataGramSocket.send(sendingPacket);
-
-				dataGramSocket.receive(receivedPacket);
-
-				String localHost = InetAddress.getLocalHost().getHostAddress();
-				buf = localHost.getBytes();
-
-				InetAddress address = receivedPacket.getAddress();
-				int port = receivedPacket.getPort();
-
-				String serverData = new String(receivedPacket.getData());
-
-				String serverPort = "NULL";
-				String serverAddress = "NULL";
-
-				serverAddress = serverData
-						.substring(0, serverData.indexOf("|"));
-				serverPort = serverData.substring(serverData.indexOf("|") + 1,
-						serverData.indexOf("|") + 5);
-
-				System.out.println("Got server: " + serverData);
-
-				boolean register = false;
-				if (serverAddress.equalsIgnoreCase(InetAddress.getLocalHost()
-						.getHostName())) {
-					// System.out.println("I don't need my own kind around here.");
-					// onFinished();
-					// continue;
-
-				} else {
-					register = true;
-				}
-
-				if (register) {
-					Server foundServer = new Server(serverAddress,
-							Integer.parseInt(serverPort));
-
-					// if
-					// (RoutingTable.getInstance().registerServer(foundServer))
-					// {
-					// System.out.println("Server already registered.");
-					// continue;
-					// }
-
-					System.out.println("Found server: " + foundServer.getId()
-							+ ":" + foundServer.getPort());
-
-					// if
-					// (RoutingTable.getInstance().registerServer(foundServer))
-					// {
-					// System.out.println("Server already registered.");
-					// }
-				}
-
-//				Thread.sleep(2000);
-
-			} catch (SocketTimeoutException e) {
-				
-			}
-			catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
+				// listeningSocket = new DatagramSocket(MY_PORT);
+				// listeningSocket.setSoTimeout(3000);
+				dataGramSocket = new DatagramSocket(MY_PORT);
+				dataGramSocket.setBroadcast(true);
+				dataGramSocket.setReuseAddress(true);
+				dataGramSocket.setSoTimeout(50);
+			} catch (SocketException e) {
+				MY_PORT = MY_PORT + 100;
+				execute();
 				e.printStackTrace();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-		}
-		
-		System.out.println("STOPPING DISCOVERY TASK");
-		
-		stopTask();
+			byte[] buf = new byte[1024];
+			DatagramPacket receivedPacket = new DatagramPacket(buf, buf.length);
+			DatagramPacket sendingPacket;
+
+			System.out.println("Looking for server");
+
+			RoutingTable.getInstance();
+
+			System.out.print("Waiting for default gateway to resolve...");
+			do {
+				try {
+					System.out.print("...");
+
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} while (RoutingTable.getInstance().getDefaultGetway()
+					.equalsIgnoreCase("NULL"));
+
+			String defGateway = RoutingTable.getInstance().getDefaultGetway();
+
+			System.out.println("DEF GATEWAY IS: " + defGateway);
+
+			String ipPiece = defGateway.substring(0, defGateway.length() - 1);
+
+			for (int i = 0; i < 255; i++) {
+
+				String listeningPort = String.valueOf(MY_PORT);
+
+				String toServerStr;
+				try {
+					toServerStr = (InetAddress.getLocalHost().getHostName()
+							+ "|" + listeningPort);
+
+					buf = toServerStr.getBytes();
+
+					String builtIP = ipPiece + Integer.toString(i);
+
+					// System.out.println("BUILT IP: " + builtIP);
+
+					sendingPacket = new DatagramPacket(buf, buf.length,
+							InetAddress.getByName(ipPiece + String.valueOf(i)),
+							1337);
+					// dataGramSocket.setBroadcast(true);
+					// dataGramSocket.setReuseAddress(true);
+					dataGramSocket.send(sendingPacket);
+
+					dataGramSocket.receive(receivedPacket);
+
+					String localHost = InetAddress.getLocalHost()
+							.getHostAddress();
+					buf = localHost.getBytes();
+
+					InetAddress address = receivedPacket.getAddress();
+					int port = receivedPacket.getPort();
+
+					String serverData = new String(receivedPacket.getData());
+
+					String serverPort = "NULL";
+					String serverAddress = "NULL";
+
+					serverAddress = serverData.substring(0,
+							serverData.indexOf("|"));
+					serverPort = serverData.substring(
+							serverData.indexOf("|") + 1,
+							serverData.indexOf("|") + 5);
+
+					System.out.println("Got server: " + serverData);
+
+					boolean register = false;
+					if (serverAddress.equalsIgnoreCase(InetAddress
+							.getLocalHost().getHostName())) {
+						// System.out.println("I don't need my own kind around here.");
+						// onFinished();
+						// continue;
+
+					} else {
+						register = true;
+					}
+
+					if (register) {
+						Server foundServer = new Server(serverAddress,
+								Integer.parseInt(serverPort));
+
+						// if
+						// (RoutingTable.getInstance().registerServer(foundServer))
+						// {
+						// System.out.println("Server already registered.");
+						// continue;
+						// }
+
+						System.out.println("Found server: "
+								+ foundServer.getId() + ":"
+								+ foundServer.getPort());
+
+						// if
+						// (RoutingTable.getInstance().registerServer(foundServer))
+						// {
+						// System.out.println("Server already registered.");
+						// }
+					}
+
+					// Thread.sleep(2000);
+
+				} catch (SocketTimeoutException e) {
+
+				} catch (UnknownHostException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+
+			System.out.println("30 PAUSE - DISCOVERY TASK");
+			
+			try {
+				Thread.sleep(30000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		} while (isExecuting());
 
 		// do {
 		// try {
@@ -295,7 +306,7 @@ public class ServerDiscoveryServlet extends DCServlet {
 		// // } while (isExecuting());
 		// } while (count < 25);
 
-//		onFinished();
+		// onFinished();
 	}
 
 	@Override
@@ -307,7 +318,7 @@ public class ServerDiscoveryServlet extends DCServlet {
 	@Override
 	public void onFinished() {
 		System.out.println("FINISHED!");
-//		this.stopServlet();
+		// this.stopServlet();
 	}
 
 }
