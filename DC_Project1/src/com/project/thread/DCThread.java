@@ -194,6 +194,8 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 
 	@Override
 	public void onTaskFinished(Task task) {
+		
+		System.out.println(this.getClass().getSimpleName() + " on Task Finished HIT");
 
 		taskList.remove(task);
 

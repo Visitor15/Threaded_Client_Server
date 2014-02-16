@@ -71,13 +71,14 @@ public abstract class SimpleTask implements Task {
 
 	@Override
 	public void stopTask() {
-		m_Callback.onTaskFinished(this);
 		onFinished();
+		m_Callback.onTaskFinished(this);
+//		onFinished();
 	}
 
 	@Override
 	public void stopAtomicTask() {
-//		m_Callback.onTaskFinished(this);
+		m_Callback.onTaskFinished(this);
 		onFinished();
 	}
 

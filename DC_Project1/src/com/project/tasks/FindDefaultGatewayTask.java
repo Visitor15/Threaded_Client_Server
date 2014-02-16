@@ -41,7 +41,7 @@ public class FindDefaultGatewayTask extends SimpleTask {
 
 	@Override
 	public void onFinished() {
-
+		System.out.println(this.getClass().getSimpleName() + " finished");
 	}
 
 	public String getDefaultGateway() {

@@ -115,7 +115,7 @@ public abstract class DCServlet extends SimplePersistentTask implements
 	
 	@Override
 	public void onFinished() {
-		
+		System.out.println(this.getClass().getSimpleName() + " finished");
 	}
 
 	public synchronized ServerSocket getServerSocket() {

@@ -213,7 +213,7 @@ public class Main implements ITaskCallback {
 
 	@Override
 	public void onTaskFinished(Task task) {
-
+		System.out.println(this.getClass().getSimpleName() + " finished");
 	}
 
 	@Override

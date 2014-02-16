@@ -29,6 +29,6 @@ public abstract class PersistentTask extends SimpleTask {
 	@Override
 	public void onFinished() {
 		// TODO Auto-generated method stub
-		
+		System.out.println("LALALALLA HIT HERE");
 	}
 }
