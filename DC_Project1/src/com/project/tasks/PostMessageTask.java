@@ -53,6 +53,10 @@ public class PostMessageTask extends SimpleAbstractTask {
 		
 		try {
 			out = new ObjectOutputStream(os);
+			
+			int length = (getTaskId().getBytes().length + getStringData().getBytes().length);
+			
+			out.writeInt(length);
 			out.writeUTF(getTaskId());
 			out.writeUTF(getStringData());
 			out.flush();

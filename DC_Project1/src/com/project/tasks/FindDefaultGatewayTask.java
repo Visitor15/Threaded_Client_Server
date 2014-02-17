@@ -99,7 +99,7 @@ public class FindDefaultGatewayTask extends SimpleAbstractTask {
 						result.getInputStream()));
 				while (output.readLine() != null) {
 					String tmp = output.readLine();
-					SynchedInOut.getInstance().postMessageNewLine(tmp);
+					// SynchedInOut.getInstance().postMessageNewLine(tmp);
 					// System.out.println("LINE: " + tmp);
 					if (tmp.equalsIgnoreCase("IPv4 Route Table")) {
 						hasRouteTable = true;
@@ -108,22 +108,21 @@ public class FindDefaultGatewayTask extends SimpleAbstractTask {
 					}
 					if (hasRouteTable) {
 
-						if (tmp.contains("Network Destination")) {
-							hasColumns = true;
-						}
+//						if (tmp.contains("Network Destination")) {
+//							hasColumns = true;
+//						}
 
-						if (hasColumns) {
-							String splitData[] = tmp.split("\\s+");
-							decidedDNS = "NULL";
-							if (splitData.length > 3) {
-								decidedDNS = splitData[3];
-								if (!decidedDNS.equalsIgnoreCase("On-link")) {
-									System.out.println("Found DNS: "
-											+ decidedDNS);
-									break;
-								}
+						// if (hasColumns) {
+						String splitData[] = tmp.split("\\s+");
+						decidedDNS = "NULL";
+						if (splitData.length > 3) {
+							decidedDNS = splitData[3];
+							if (!decidedDNS.equalsIgnoreCase("On-link")) {
+								System.out.println("Found DNS: " + decidedDNS);
+								break;
 							}
 						}
+						// }
 					}
 				}
 				this.stringData = decidedDNS;

@@ -1,7 +1,7 @@
 package com.project.tasks;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -34,6 +34,8 @@ public class PostRemoteMessageTask extends SimpleAbstractTask {
 	@Override
 	public void execute() {
 
+		System.out.println("Running " + this.getClass().getSimpleName());
+
 		String message = "NULL";
 
 		do {
@@ -42,14 +44,25 @@ public class PostRemoteMessageTask extends SimpleAbstractTask {
 					"MESSAGE: ");
 
 			try {
-				m_SendingSocket = new Socket(connectedPeers.get(0).getIP(),
-						connectedPeers.get(0).getMessagePort());
+				// m_SendingSocket = new Socket(connectedPeers.get(0).getIP(),
+				// connectedPeers.get(0).getMessagePort());
+
+				m_SendingSocket = new Socket("192.168.1.9", 9797);
 
 				PostMessageTask task = new PostMessageTask();
 				task.setMessage(message);
+				
+				System.out.println("Wrote " + task.toBytes().length + " bytes");
 
-				m_SendingSocket.getOutputStream().write(task.toBytes());
-
+				DataOutputStream dataOutStream = new DataOutputStream(m_SendingSocket.getOutputStream());
+				
+				dataOutStream.writeUTF(getTaskId());
+				dataOutStream.writeUTF(getStringData());
+				dataOutStream.flush();
+				dataOutStream.close();
+				
+//				m_SendingSocket.getOutputStream().flush();
+//				m_SendingSocket.getOutputStream().close();
 				m_SendingSocket.close();
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
