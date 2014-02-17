@@ -240,4 +240,16 @@ public class ServerIdentifierServlet extends DCServlet implements ITaskCallback 
 
 		isLocatingDNS = false;
 	}
+
+	@Override
+	public byte[] toBytes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Task fromBytes(byte[] byteArray) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

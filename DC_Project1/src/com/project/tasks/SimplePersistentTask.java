@@ -1,6 +1,6 @@
 package com.project.tasks;
 
-public abstract class SimplePersistentTask extends SimpleTask {
+public abstract class SimplePersistentTask extends SimpleAbstractTask {
 
 	public SimplePersistentTask() {
 		logTask();

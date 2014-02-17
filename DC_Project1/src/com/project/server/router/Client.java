@@ -6,7 +6,11 @@ public class Client {
 	
 	private String message;
 	
+	private String IP;
+	
 	private int PORT;
+	
+	private int messagePort;
 
 	public Client(final String name, final int port) {
 		ID = name;
@@ -31,5 +35,13 @@ public class Client {
 	
 	public boolean hasMessage() {
 		return (message.length() > 0);
+	}
+	
+	public String getIP() {
+		return IP;
+	}
+	
+	public int getMessagePort() {
+		return messagePort;
 	}
 }

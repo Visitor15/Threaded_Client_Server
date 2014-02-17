@@ -2,7 +2,7 @@ package com.project.tasks;
 
 
 
-public abstract class PersistentTask extends SimpleTask {
+public abstract class PersistentTask extends SimpleAbstractTask {
 
 	public PersistentTask() {
 		super();

@@ -1,8 +1,10 @@
 package com.project.tasks;
 
+import java.io.Serializable;
+
 import com.project.framework.Task;
 
-public interface ITaskCallback {
+public interface ITaskCallback extends Serializable {
 	
 	public void onTaskStart(final Task task);
 	

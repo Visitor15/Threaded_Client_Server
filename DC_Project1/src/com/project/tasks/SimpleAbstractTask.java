@@ -1,8 +1,15 @@
 package com.project.tasks;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Locale.Category;
+
 import com.project.framework.Task;
 
-public abstract class SimpleTask implements Task {
+public abstract class SimpleAbstractTask implements Task {
 
 	protected ITaskCallback m_Callback;
 
@@ -12,17 +19,17 @@ public abstract class SimpleTask implements Task {
 	
 	public String stringData = "";
 
-	public SimpleTask() {
+	public SimpleAbstractTask() {
 		logTask();
 	}
 
-	public SimpleTask(String id) {
+	public SimpleAbstractTask(String id) {
 		logTask();
 		taskId = id;
 	}
 
-	public SimpleTask(final ITaskCallback callback) {
-		this.m_Callback = callback;
+	public SimpleAbstractTask(final ITaskCallback callback) {
+		m_Callback = callback;
 	}
 
 	public void logTask() {
@@ -31,25 +38,12 @@ public abstract class SimpleTask implements Task {
 
 	@Override
 	public void beginTask(ITaskCallback callback) {
-
-//			System.out.println("Beginning task");
-//			this.m_Callback = callback;
-//			// if (!isExecuting()) {
-//			m_Callback.onTaskStart(this);
-//			execute();
-//			m_Callback.onTaskFinished(this);
-//			// }
-//
-//			System.out.println("End task");
-			
 			synchronized (this) {
 				callback.onTaskStart(this);
 				if (!isExecuting()) {
-					// startServlet();
 					isRunning = true;
 					execute();
 				}
-//				callback.onTaskFinished(this);
 			}
 		
 	}
@@ -60,7 +54,6 @@ public abstract class SimpleTask implements Task {
 		if (!isExecuting()) {
 			m_Callback.onAtomicTaskStart(this);
 			execute();
-//			m_Callback.onTaskFinished(this);
 		}
 	}
 
@@ -71,6 +64,11 @@ public abstract class SimpleTask implements Task {
 
 	@Override
 	public void stopTask() {
+		/*
+		 * Calling m_Callback.onTaskFinished(this) first doesn't call onFinished()
+		 * after for some reason. Referencing/blocking issue in callback?
+		 */
+		
 		onFinished();
 		m_Callback.onTaskFinished(this);
 //		onFinished();
@@ -95,6 +93,11 @@ public abstract class SimpleTask implements Task {
 	@Override
 	public String getStringData() {
 		return stringData;
+	}
+	
+	@Override
+	public void setStringData(final String data) {
+		stringData = data;
 	}
 
 	public ITaskCallback getTaskCallback() {

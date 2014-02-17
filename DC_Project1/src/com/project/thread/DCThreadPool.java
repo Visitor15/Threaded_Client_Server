@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.project.framework.Task;
-import com.project.tasks.SimpleTask;
+import com.project.tasks.SimpleAbstractTask;
 import com.project.thread.DCThread.THREAD_STATE;
 
 public class DCThreadPool<T extends Task> implements IThreadPoolCallback {
@@ -41,7 +41,7 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback {
 
 	private void startTaskMonitorThread() {
 
-		this.forceNewTaskThread(new SimpleTask() {
+		this.forceNewTaskThread(new SimpleAbstractTask() {
 
 			@Override
 			public void execute() {
@@ -69,6 +69,18 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback {
 			public void onFinished() {
 				// TODO Auto-generated method stub
 
+			}
+
+			@Override
+			public byte[] toBytes() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public Task fromBytes(byte[] byteArray) {
+				// TODO Auto-generated method stub
+				return null;
 			}
 
 		});

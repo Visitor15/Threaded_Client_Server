@@ -1,5 +1,7 @@
 package com.project.server;
 
+import com.project.framework.Task;
+
 public class ClientResponderServlet extends DCServlet {
 
 	public ClientResponderServlet(final boolean autoStart,
@@ -61,6 +63,18 @@ public class ClientResponderServlet extends DCServlet {
 	public void onFinished() {
 		System.out.println("Client Responder shutting down.");
 		getCallback().onFinishServlet(this);
+	}
+
+	@Override
+	public byte[] toBytes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Task fromBytes(byte[] byteArray) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

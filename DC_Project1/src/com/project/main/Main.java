@@ -11,7 +11,7 @@ import com.project.framework.Task;
 import com.project.server.DCServer;
 import com.project.server.router.Client;
 import com.project.tasks.ITaskCallback;
-import com.project.tasks.SimpleTask;
+import com.project.tasks.SimpleAbstractTask;
 import com.project.tasks.TaskManager;
 
 /**

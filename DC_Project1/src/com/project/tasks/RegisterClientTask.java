@@ -1,8 +1,9 @@
 package com.project.tasks;
 
+import com.project.framework.Task;
 import com.project.io.SynchedInOut;
 
-public class RegisterClientTask extends SimpleTask {
+public class RegisterClientTask extends SimpleAbstractTask {
 
 	private int id;
 
@@ -47,5 +48,17 @@ public class RegisterClientTask extends SimpleTask {
 	public void onFinished() {
 		System.out.println("Client Responder shutting down.");
 //		getTaskCallback().onTaskFinished(this);
+	}
+
+	@Override
+	public byte[] toBytes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Task fromBytes(byte[] byteArray) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

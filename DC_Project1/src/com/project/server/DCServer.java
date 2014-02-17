@@ -9,12 +9,13 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 
+import com.project.framework.Task;
 import com.project.io.SynchedInOut;
 import com.project.server.DCServlet.SERVLET_TYPE;
 import com.project.server.router.Client;
 import com.project.server.router.RoutingTable;
 import com.project.tasks.FindDefaultGatewayTask;
-import com.project.tasks.SimpleTask;
+import com.project.tasks.SimpleAbstractTask;
 import com.project.tasks.TaskManager;
 
 public class DCServer implements IServletCallback {
@@ -190,7 +191,7 @@ public class DCServer implements IServletCallback {
 		boolean success;
 		do {
 			count++;
-			success = TaskManager.DO_TASK(new SimpleTask("MESSAGE TASK") {
+			success = TaskManager.DO_TASK(new SimpleAbstractTask("MESSAGE TASK") {
 
 				@Override
 				public synchronized void execute() {
@@ -273,6 +274,18 @@ public class DCServer implements IServletCallback {
 				public void onFinished() {
 					// TODO Auto-generated method stub
 					System.out.println(this.getClass().getSimpleName() + " finished");
+				}
+
+				@Override
+				public byte[] toBytes() {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public Task fromBytes(byte[] byteArray) {
+					// TODO Auto-generated method stub
+					return null;
 				}
 
 			});

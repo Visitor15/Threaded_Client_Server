@@ -1,12 +1,23 @@
 package com.project.tasks;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.StringTokenizer;
 
-public class FindDefaultGatewayTask extends SimpleTask {
+import com.project.framework.Task;
 
+public class FindDefaultGatewayTask extends SimpleAbstractTask {
+
+	/*
+	 * Generated ID for Serializable
+	 */
+	private static final long serialVersionUID = 7828459616841892908L;
+	
 	private String def_Gateway = "NULL";
 
 	public FindDefaultGatewayTask() {
@@ -50,117 +61,107 @@ public class FindDefaultGatewayTask extends SimpleTask {
 
 	private String lookUpDefaultGateway() throws IOException {
 		Process result;
+
 		String gateway = "NULL";
-		StringTokenizer st;
-		String thisLine = "";
 		String decidedDNS = "NULL";
+
 		BufferedReader output;
 
 		boolean hasRouteTable = false;
 
 		try {
-
 			System.out.println("Executing traceroute");
 			result = Runtime.getRuntime()
 					.exec("traceroute -m 1 www.google.com");
-
 			output = new BufferedReader(new InputStreamReader(
 					result.getInputStream()));
-			// thisLine = output.readLine();
-
-			// System.out.println("OUTPUT: " + output.readLine());
-
 			while (output.readLine() != null) {
-
 				String tmp = output.readLine();
-
 				System.out.println("OUTPUT: " + tmp);
-
-				// if (tmp.equalsIgnoreCase("IPv4 Route Table")) {
-				// hasRouteTable = true;
-				// } else if (tmp.contains("========")) {
-				// hasRouteTable = false;
-				// }
-				//
-				// if (hasRouteTable) {
-
-				// System.out.println(tmp);
-
 				String splitData[] = tmp.split("\\s+");
-				st = new StringTokenizer(tmp);
-				decidedDNS = "NULL";
 				if (splitData.length > 2) {
 					decidedDNS = splitData[2];
-
 					if (!decidedDNS.equalsIgnoreCase("On-link")) {
 						System.out.println("Found DNS: " + decidedDNS);
-
 						break;
 					}
 				}
 			}
-
 			this.stringData = decidedDNS;
-//			this.stopTask();
-
-			// thisLine += tmp;
-			// }
-
-			// st = new StringTokenizer(thisLine);
-			// st.nextToken();
-			// gateway = st.nextToken();
-			// System.out.printf("The gateway is %s\n", gateway);
 		} catch (IOException e) {
 			try {
 				result = Runtime.getRuntime().exec("netstat -rn");
-
 				output = new BufferedReader(new InputStreamReader(
 						result.getInputStream()));
 				while (output.readLine() != null) {
-
 					String tmp = output.readLine();
 					if (tmp.equalsIgnoreCase("IPv4 Route Table")) {
 						hasRouteTable = true;
 					} else if (tmp.contains("========")) {
 						hasRouteTable = false;
 					}
-
 					if (hasRouteTable) {
-
-						// System.out.println(tmp);
-
 						String splitData[] = tmp.split("\\s+");
-						st = new StringTokenizer(tmp);
 						decidedDNS = "NULL";
 						if (splitData.length > 3) {
 							decidedDNS = splitData[3];
-
 							if (!decidedDNS.equalsIgnoreCase("On-link")) {
 								System.out.println("Found DNS: " + decidedDNS);
-
 								break;
 							}
 						}
 					}
-					// thisLine += tmp;
 				}
-
 				this.stringData = decidedDNS;
-//				this.stopTask();
-
-				// System.out.println("LINE FOUND: " + thisLine);
-
-				// st = new StringTokenizer(thisLine);
-				// st.nextToken();
-				// gateway = st.nextToken();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
-				System.out.println("CAUGHT IO EXCEPTION");
 			}
 		}
 
 		return gateway;
 	}
 
+	@Override
+	public byte[] toBytes() {
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		ObjectOutputStream out;
+		
+		try {
+			out = new ObjectOutputStream(os);
+			out.writeUTF(getTaskId());
+			out.writeUTF(getStringData());
+			out.flush();
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+
+		final byte[] res = os.toByteArray();
+
+		return res;
+	}
+
+	@Override
+	public Task fromBytes(final byte[] byteArray) {
+		FindDefaultGatewayTask task = new FindDefaultGatewayTask();
+		ByteArrayInputStream is;
+		ObjectInputStream in;
+		
+		String tmpTaskId;
+		String tmpStringData;
+		
+		try {
+			is = new ByteArrayInputStream(byteArray);
+			in = new ObjectInputStream(is);
+
+			tmpTaskId = in.readUTF();
+			tmpStringData = in.readUTF();
+			
+			task.setTaskId(tmpTaskId);
+			task.setStringData(tmpStringData);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return task;
+	}
 }

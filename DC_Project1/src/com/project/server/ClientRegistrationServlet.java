@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.SocketTimeoutException;
 
+import com.project.framework.Task;
 import com.project.server.router.Client;
 import com.project.server.router.RoutingTable;
 
@@ -136,6 +137,18 @@ public class ClientRegistrationServlet extends DCServlet {
 		System.out.println("Client Registration shutting down.");
 
 		getCallback().onFinishServlet(this);
+	}
+
+	@Override
+	public byte[] toBytes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Task fromBytes(byte[] byteArray) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

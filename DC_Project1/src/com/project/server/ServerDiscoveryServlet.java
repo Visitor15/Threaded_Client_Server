@@ -9,6 +9,7 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
+import com.project.framework.Task;
 import com.project.server.router.RoutingTable;
 import com.project.server.router.Server;
 
@@ -319,6 +320,18 @@ public class ServerDiscoveryServlet extends DCServlet {
 	public void onFinished() {
 		System.out.println("FINISHED!");
 		// this.stopServlet();
+	}
+
+	@Override
+	public byte[] toBytes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Task fromBytes(byte[] byteArray) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
