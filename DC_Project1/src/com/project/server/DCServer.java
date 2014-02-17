@@ -15,6 +15,7 @@ import com.project.server.DCServlet.SERVLET_TYPE;
 import com.project.server.router.Client;
 import com.project.server.router.RoutingTable;
 import com.project.tasks.FindDefaultGatewayTask;
+import com.project.tasks.ReceiveRemoteMessagesTask;
 import com.project.tasks.SimpleAbstractTask;
 import com.project.tasks.TaskManager;
 
@@ -71,6 +72,9 @@ public class DCServer implements IServletCallback {
 //				new ClientRegistrationServlet(true, this));
 		m_ServletMap.put(SERVLET_TYPE.CLIENT_RESPONDER_SERVLET, new ServerIdentifierServlet(true, this));
 		m_ServletMap.put(SERVLET_TYPE.SERVER_DISCOVERY_SERVLET, new ServerDiscoveryServlet(true, this));
+		
+		TaskManager.DO_TASK(new ReceiveRemoteMessagesTask());
+		
 		// m_ServletMap.put(SERVLET_TYPE.CLIENT_RESPONDER_SERVLET,
 		// new ClientResponderServlet(true, this));
 

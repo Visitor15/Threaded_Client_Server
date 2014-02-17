@@ -92,7 +92,7 @@ public class ServerIdentifierServlet extends DCServlet implements ITaskCallback 
 			try {
 
 				if (socket != null) {
-//					System.out.println("BEGIN");
+					// System.out.println("BEGIN");
 					socket.receive(receivedPacket);
 				}
 
