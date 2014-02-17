@@ -91,4 +91,27 @@ public class PostMessageTask extends SimpleAbstractTask {
 	}
 
 
+	public static Task fromNewBytes(byte[] byteArray) {
+		PostMessageTask task = new PostMessageTask();
+		ByteArrayInputStream is;
+		ObjectInputStream in;
+		
+		String tmpTaskId;
+		String tmpStringData;
+		
+		try {
+			is = new ByteArrayInputStream(byteArray);
+			in = new ObjectInputStream(is);
+
+			tmpTaskId = in.readUTF();
+			tmpStringData = in.readUTF();
+			
+			task.setTaskId(tmpTaskId);
+			task.setStringData(tmpStringData);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return task;
+	}
 }
