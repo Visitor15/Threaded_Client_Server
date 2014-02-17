@@ -1,32 +1,31 @@
 package com.project.tasks;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import com.project.framework.Task;
+import com.project.io.SynchedInOut;
 import com.project.server.router.Client;
 
 public class PostRemoteMessageTask extends SimpleAbstractTask {
-	
-	private ServerSocket m_ServerSocket;
-	
-	private Socket m_RecievingSocket;
+
+	/*
+	 * Generated ID for Serializable.
+	 */
+	private static final long serialVersionUID = -5335728610568586645L;
+
 	private Socket m_SendingSocket;
-	
+
 	private final String mUser;
-	
+
 	private final ArrayList<Client> connectedPeers;
-	
+
 	private static final int LISTEN_PORT = 9898;
 	private static final int SEND_PORT = 9797;
-	
+
 	public PostRemoteMessageTask(final String user) {
 		mUser = user;
 		connectedPeers = new ArrayList<Client>();
@@ -34,115 +33,56 @@ public class PostRemoteMessageTask extends SimpleAbstractTask {
 
 	@Override
 	public void execute() {
-		
-		try {
-			m_SendingSocket = new Socket(connectedPeers.get(0).getIP(), connectedPeers.get(0).getMessagePort());
-			
-			m_SendingSocket.getOutputStream().write(new SimpleAbstractTask("RemoteMessagingTask") {
-				/*
-				 *	Generated ID for Serializable. 
-				 */
-				private static final long serialVersionUID = 7775240721976465481L;
-				
 
-				@Override
-				public void execute() {
-					setStringData("Penis Bob");
-					
-					System.out.println("Message received from " + getStringData());
-					
-					stopTask();
-				}
+		String message = "NULL";
 
-				@Override
-				public void onProgressUpdate() {
-					// TODO Auto-generated method stub
-					
-				}
+		do {
+			message = "NULL";
+			message = SynchedInOut.getInstance().postMessageForUserInput(
+					"MESSAGE: ");
 
-				@Override
-				public void onFinished() {
-					// TODO Auto-generated method stub
-					
-				}
+			try {
+				m_SendingSocket = new Socket(connectedPeers.get(0).getIP(),
+						connectedPeers.get(0).getMessagePort());
 
-				@Override
-				public byte[] toBytes() {
-					// TODO Auto-generated method stub
-					return null;
-				}
+				PostMessageTask task = new PostMessageTask();
+				task.setMessage(message);
 
-				@Override
-				public Task fromBytes(byte[] byteArray) {
-					// TODO Auto-generated method stub
-					return null;
-				}
-				
-			}.toBytes());
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+				m_SendingSocket.getOutputStream().write(task.toBytes());
+
+				m_SendingSocket.close();
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} while (!message.equalsIgnoreCase("/q"));
+
+		stopTask();
 	}
 
 	@Override
 	public void onProgressUpdate() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onFinished() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public byte[] toBytes() {
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		ObjectOutputStream out;
-		
-		try {
-			out = new ObjectOutputStream(os);
-			out.writeUTF(getTaskId());
-			out.writeUTF(getStringData());
-			out.flush();
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
-
-		final byte[] res = os.toByteArray();
-
-		return res;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public Task fromBytes(byte[] byteArray) {
-		SimpleAbstractTask task = new FindDefaultGatewayTask();
-		ByteArrayInputStream is;
-		ObjectInputStream in;
-		
-		String tmpTaskId;
-		String tmpStringData;
-		
-		try {
-			is = new ByteArrayInputStream(byteArray);
-			in = new ObjectInputStream(is);
-
-			tmpTaskId = in.readUTF();
-			tmpStringData = in.readUTF();
-			
-			task.setTaskId(tmpTaskId);
-			task.setStringData(tmpStringData);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		return task;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

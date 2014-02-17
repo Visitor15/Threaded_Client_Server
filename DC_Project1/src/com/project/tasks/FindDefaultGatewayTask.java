@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.util.StringTokenizer;
 
 import com.project.framework.Task;
+import com.project.io.SynchedInOut;
 
 public class FindDefaultGatewayTask extends SimpleAbstractTask {
 
@@ -17,7 +18,7 @@ public class FindDefaultGatewayTask extends SimpleAbstractTask {
 	 * Generated ID for Serializable
 	 */
 	private static final long serialVersionUID = 7828459616841892908L;
-	
+
 	private String def_Gateway = "NULL";
 
 	public FindDefaultGatewayTask() {
@@ -33,15 +34,17 @@ public class FindDefaultGatewayTask extends SimpleAbstractTask {
 	@Override
 	public void execute() {
 
-		try {
-			System.out.println("ATTEMPTING TO FIND DEFAULT GATEWAY");
-			def_Gateway = lookUpDefaultGateway();
-		} catch (IOException e) {
-			System.out.println("ERROR!");
-			e.printStackTrace();
-		}
+		synchronized (this) {
+			try {
+				System.out.println("ATTEMPTING TO FIND DEFAULT GATEWAY");
+				def_Gateway = lookUpDefaultGateway();
+			} catch (IOException e) {
+				System.out.println("ERROR!");
+				e.printStackTrace();
+			}
 
-		stopTask();
+			stopTask();
+		}
 	}
 
 	@Override
@@ -68,6 +71,7 @@ public class FindDefaultGatewayTask extends SimpleAbstractTask {
 		BufferedReader output;
 
 		boolean hasRouteTable = false;
+		boolean hasColumns = false;
 
 		try {
 			System.out.println("Executing traceroute");
@@ -95,19 +99,29 @@ public class FindDefaultGatewayTask extends SimpleAbstractTask {
 						result.getInputStream()));
 				while (output.readLine() != null) {
 					String tmp = output.readLine();
+					SynchedInOut.getInstance().postMessageNewLine(tmp);
+					// System.out.println("LINE: " + tmp);
 					if (tmp.equalsIgnoreCase("IPv4 Route Table")) {
 						hasRouteTable = true;
 					} else if (tmp.contains("========")) {
 						hasRouteTable = false;
 					}
 					if (hasRouteTable) {
-						String splitData[] = tmp.split("\\s+");
-						decidedDNS = "NULL";
-						if (splitData.length > 3) {
-							decidedDNS = splitData[3];
-							if (!decidedDNS.equalsIgnoreCase("On-link")) {
-								System.out.println("Found DNS: " + decidedDNS);
-								break;
+
+						if (tmp.contains("Network Destination")) {
+							hasColumns = true;
+						}
+
+						if (hasColumns) {
+							String splitData[] = tmp.split("\\s+");
+							decidedDNS = "NULL";
+							if (splitData.length > 3) {
+								decidedDNS = splitData[3];
+								if (!decidedDNS.equalsIgnoreCase("On-link")) {
+									System.out.println("Found DNS: "
+											+ decidedDNS);
+									break;
+								}
 							}
 						}
 					}
@@ -125,7 +139,7 @@ public class FindDefaultGatewayTask extends SimpleAbstractTask {
 	public byte[] toBytes() {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		ObjectOutputStream out;
-		
+
 		try {
 			out = new ObjectOutputStream(os);
 			out.writeUTF(getTaskId());
@@ -145,23 +159,23 @@ public class FindDefaultGatewayTask extends SimpleAbstractTask {
 		FindDefaultGatewayTask task = new FindDefaultGatewayTask();
 		ByteArrayInputStream is;
 		ObjectInputStream in;
-		
+
 		String tmpTaskId;
 		String tmpStringData;
-		
+
 		try {
 			is = new ByteArrayInputStream(byteArray);
 			in = new ObjectInputStream(is);
 
 			tmpTaskId = in.readUTF();
 			tmpStringData = in.readUTF();
-			
+
 			task.setTaskId(tmpTaskId);
 			task.setStringData(tmpStringData);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return task;
 	}
 }
