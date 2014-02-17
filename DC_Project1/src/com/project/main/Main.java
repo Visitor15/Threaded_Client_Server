@@ -1,17 +1,8 @@
 package com.project.main;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.Scanner;
-
 import com.project.framework.Task;
 import com.project.server.DCServer;
-import com.project.server.router.Client;
 import com.project.tasks.ITaskCallback;
-import com.project.tasks.SimpleAbstractTask;
+import com.project.tasks.PostRemoteMessageTask;
 import com.project.tasks.TaskManager;
 
 /**
@@ -30,6 +21,8 @@ public class Main implements ITaskCallback {
 
 	public static final void main(String[] args) {
 		DCServer.GET_INSTANCE().start();
+		
+//		TaskManager.DO_TASK(new PostRemoteMessageTask("visitor15"));
 		
 //		try {
 //			Thread.sleep(2000);
