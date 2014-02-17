@@ -1,20 +1,16 @@
 package com.project.tasks;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
-import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import com.project.framework.Task;
-import com.project.io.SynchedInOut;
 import com.project.server.router.Client;
 
 public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
@@ -40,55 +36,78 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 
 	@Override
 	public void execute() {
-		
 		System.out.println("Listening for remote messages...");
 
 		String message = "NULL";
+		try {
+			
+			m_SendingSocket = new ServerSocket(LISTEN_PORT);
+			m_SendingSocket.setReuseAddress(true);
 
-		do {
-
-			try {
-				m_SendingSocket = new ServerSocket(LISTEN_PORT);
+			do {
 
 				m_RecievingSocket = m_SendingSocket.accept();
+				
 
-				InputStream sockInputStream = m_RecievingSocket.getInputStream();
+				InputStream sockInputStream = m_RecievingSocket
+						.getInputStream();
+				
+				DataInputStream dataStream = new DataInputStream(sockInputStream);
+				
+//				long properLength = dataStream.readLong();
 				
 				
-				byte[] objLength = new byte[Long.SIZE / 8];
 				
-				sockInputStream.read(objLength, 0, (Long.SIZE / 8));
+//				System.out.println("LENGTH: " + properLength);
 				
-						ByteArrayInputStream is = new ByteArrayInputStream(objLength);
-				ObjectInputStream in = new ObjectInputStream(is);
-				
-				long properLength = in.readLong();
-				
-				
+//				ObjectInputStream in = new ObjectInputStream(sockInputStream);
+
+//				byte[] objLength = new byte[Long.SIZE / 8];
 //
-//				long byteArrayLength = in.readLong();
-//				tmpStringData = in.readUTF();
-				byte[] messageTaskBytes = new byte[(int) properLength];
+//				sockInputStream.read(objLength, 0, (Long.SIZE / 8));
+//
+//				ByteArrayInputStream is = new ByteArrayInputStream(objLength);
+//				
+//
+//				long properLength = in.readLong();
+
+				//
+				// long byteArrayLength = in.readLong();
+				// tmpStringData = in.readUTF();
+//				byte[] messageTaskBytes = new byte[(int) properLength];
+
+//				dataStream.read(messageTaskBytes);
+//				is.read(messageTaskBytes, objLength.length, (int) properLength);
+
+				String taskId = dataStream.readUTF();
+				String mMessage = dataStream.readUTF();
 				
-				is.read(messageTaskBytes, objLength.length, (int)properLength);
+				dataStream.close();
 				
-				PostMessageTask task = (PostMessageTask) PostMessageTask.fromNewBytes(messageTaskBytes);
+				PostMessageTask task = new PostMessageTask();
+				task.setMessage(mMessage);
+				task.setTaskId(taskId);
+
 				
-//				PrintWriter out = new PrintWriter(
-//						m_RecievingSocket.getOutputStream(), true);
-//				BufferedReader in = new BufferedReader(
-//						new InputStreamReader(
-//								m_RecievingSocket.getInputStream()));
 				
+				System.out.println("Got message: " + mMessage);
+				// PrintWriter out = new PrintWriter(
+				// m_RecievingSocket.getOutputStream(), true);
+				// BufferedReader in = new BufferedReader(
+				// new InputStreamReader(
+				// m_RecievingSocket.getInputStream()));
+				
+				System.out.println("DOING TASK");
+				
+
 				TaskManager.DO_TASK(task);
-				
-				
-			} catch (UnknownHostException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} while (!message.equalsIgnoreCase("/q"));
+
+			} while (!message.equalsIgnoreCase("/q"));
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		stopTask();
 	}

@@ -43,7 +43,7 @@ public class PostMessageTask extends SimpleAbstractTask {
 	@Override
 	public void onFinished() {
 		// TODO Auto-generated method stub
-		
+		System.out.println("PostMessageTask finishing");
 	}
 
 	@Override
