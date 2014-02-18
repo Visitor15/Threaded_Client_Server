@@ -2,19 +2,26 @@ package com.project.server.router;
 
 public class Server {
 
-	private final String ID;
+	private String IP;
 
 	private String message;
+	
+	private String hostName;
 
 	private int PORT;
 
-	public Server(final String name, final int port) {
-		ID = name;
+	public Server(final String ipAddress, final String serverName, final int port) {
+		hostName = serverName;
+		IP = ipAddress;
 		PORT = port;
 	}
 
-	public String getId() {
-		return ID;
+	public String getIP() {
+		return IP;
+	}
+	
+	public void setHostname(final String hostName) {
+		this.hostName = hostName;
 	}
 
 	public void setPort(final int port) {
@@ -35,5 +42,9 @@ public class Server {
 	
 	public int getPort() {
 		return PORT;
+	}
+	
+	public String getHostname() {
+		return hostName;
 	}
 }

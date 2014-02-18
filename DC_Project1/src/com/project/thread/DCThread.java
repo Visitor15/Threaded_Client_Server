@@ -1,7 +1,6 @@
 package com.project.thread;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.project.framework.Task;
@@ -9,6 +8,11 @@ import com.project.tasks.ITaskCallback;
 
 public class DCThread<T extends Task> extends Thread implements IDCThread,
 		ITaskCallback {
+
+	/*
+	 *	Generated ID for Serializa 
+	 */
+	private static final long serialVersionUID = -7555148602849298330L;
 
 	public enum THREAD_STATE {
 		STOPPED, IDLE, PAUSED, RUNNING, FINISHED, FREE
@@ -211,5 +215,7 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 		// TODO Auto-generated method stub
 
 	}
+	
+	
 
 }

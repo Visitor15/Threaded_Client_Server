@@ -44,9 +44,9 @@ public class RoutingTable implements ITaskCallback {
 	}
 
 	public boolean registerServer(final Server s) {
-		if (!m_ServerMap.containsKey(s.getId())) {
+		if (!m_ServerMap.containsKey(s.getIP())) {
 
-			m_ServerMap.put(s.getId(), s);
+			m_ServerMap.put(s.getHostname(), s);
 
 			return true;
 		}
