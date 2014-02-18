@@ -74,7 +74,7 @@ public class DCServer implements IServletCallback {
 		m_ServletMap.put(SERVLET_TYPE.CLIENT_RESPONDER_SERVLET, new ServerIdentifierServlet(true, this));
 		m_ServletMap.put(SERVLET_TYPE.SERVER_DISCOVERY_SERVLET, new ServerDiscoveryServlet(true, this));
 		
-		TaskManager.DO_TASK(new PostRemoteMessageTask("visitor15"));
+//		TaskManager.DO_TASK(new PostRemoteMessageTask("visitor15"));
 		
 //		TaskManager.DO_TASK(new ReceiveRemoteMessagesTask());
 		
