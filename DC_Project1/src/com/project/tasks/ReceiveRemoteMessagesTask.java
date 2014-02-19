@@ -2,7 +2,6 @@ package com.project.tasks;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
@@ -36,6 +35,13 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 	@Override
 	public void execute() {
 
+		try {
+			m_SendingSocket = new ServerSocket(LISTEN_PORT);
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		
 		System.out.println("Listening for remote messages...");
 
 		String message = "NULL";
