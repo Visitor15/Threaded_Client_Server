@@ -2,9 +2,9 @@ package com.project.tasks;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -36,6 +36,8 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 	@Override
 	public void execute() {
 
+		ObjectInputStream objIn = null;
+		
 		System.out.println("Listening for remote messages...");
 
 		String message = "NULL";
@@ -56,6 +58,10 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 
 			try {
 				is = m_RecievingSocket.getInputStream();
+				
+				objIn = new ObjectInputStream(is);
+				
+				
 
 				bufferSize = m_RecievingSocket.getReceiveBufferSize();
 				System.out.println("Buffer size: " + bufferSize);
@@ -91,6 +97,10 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 //				bos.flush();
 //				bos.close();
 				is.close();
+				
+				buf = new byte[bufferSize];
+				
+				objIn.read(buf);
 				
 				task = (PostMessageTask) PostMessageTask.fromNewBytes(buf);
 

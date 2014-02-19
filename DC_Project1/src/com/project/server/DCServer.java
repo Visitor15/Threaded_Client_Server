@@ -16,7 +16,7 @@ import com.project.server.router.Client;
 import com.project.server.router.RoutingTable;
 import com.project.tasks.FindDefaultGatewayTask;
 import com.project.tasks.ITaskCallback;
-import com.project.tasks.SendNetworkFileTask;
+import com.project.tasks.PostRemoteMessageTask;
 import com.project.tasks.SimpleAbstractTask;
 import com.project.tasks.TaskManager;
 
@@ -56,7 +56,7 @@ public class DCServer implements IServletCallback, ITaskCallback {
 		tryFindDefaultGateway();
 		
 		
-		TaskManager.DO_TASK(new SendNetworkFileTask());
+//		TaskManager.DO_TASK(new SendNetworkFileTask());
 		
 		
 		registerDefaultServlets();
@@ -81,7 +81,7 @@ public class DCServer implements IServletCallback, ITaskCallback {
 		m_ServletMap.put(SERVLET_TYPE.CLIENT_RESPONDER_SERVLET, new ServerIdentifierServlet(true, this));
 		m_ServletMap.put(SERVLET_TYPE.SERVER_DISCOVERY_SERVLET, new ServerDiscoveryServlet(true, this));
 		
-//		TaskManager.DO_TASK(new PostRemoteMessageTask("visitor15"));
+		TaskManager.DO_TASK(new PostRemoteMessageTask("visitor15"));
 		
 //		TaskManager.DO_TASK(new ReceiveRemoteMessagesTask());
 		
