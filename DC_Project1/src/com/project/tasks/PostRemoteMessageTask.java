@@ -50,7 +50,7 @@ public class PostRemoteMessageTask extends SimpleAbstractTask {
 				// m_SendingSocket = new Socket(connectedPeers.get(0).getIP(),
 				// connectedPeers.get(0).getMessagePort());
 
-//				m_SendingSocket = new Socket("192.168.1.9", 9797);
+				m_SendingSocket = new Socket("192.168.1.9", 9797);
 //
 				PostMessageTask task = new PostMessageTask();
 				task.setMessage(message);
