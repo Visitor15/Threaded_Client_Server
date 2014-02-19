@@ -145,17 +145,6 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback {
 
 	/* Thread-safe instance */
 	public synchronized boolean doTaskSynchronus(T task) {
-		// IDCThread<T> thread = (IDCThread<T>) getFreeThread();
-		//
-		// if (thread != null) {
-		// thread.addTask(task);
-		// thread.startThread(false);
-		//
-		// return true;
-		// } else {
-		// m_TaskQueue.add(task);
-		// }
-
 		m_TaskQueue.add(task);
 
 		return true;
@@ -163,22 +152,6 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback {
 
 	/* Thread-safe instance */
 	public synchronized boolean doTask(final T task) {
-
-		// if(task instanceof SimplePersistentTask) {
-		// return doTaskPersistent(task);
-		// }
-
-		// IDCThread<T> thread = getFreeThread();
-		//
-		// if (thread != null) {
-		// thread.setCallback(this);
-		// thread.addTask(task);
-		// thread.startThread(false);
-		//
-		// return true;
-		// } else {
-		// m_TaskQueue.add(task);
-		// }
 
 		System.out.println("Adding task");
 
@@ -188,19 +161,6 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback {
 	}
 
 	public boolean doTaskPersistent(T persistentTask) {
-
-		// IDCThread<T> thread = getFreeThread();
-		//
-		// if (thread != null) {
-		// thread.setCallback(this);
-		// thread.addTask(persistentTask);
-		// thread.startThread(false);
-		//
-		// return true;
-		// } else {
-		// m_TaskQueue.add(persistentTask);
-		// }
-
 		m_TaskQueue.add(persistentTask);
 
 		return true;
@@ -208,18 +168,6 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback {
 
 	/* This is the heart */
 	public boolean doTasks(final List<T> taskList) {
-
-		// IDCThread<T> thread = getFreeThread();
-
-		// if (thread != null) {
-		// thread.addBatchTasks(taskList);
-		// thread.startThread(false);
-		//
-		// return true;
-		// } else {
-		//
-		// }
-
 		m_BatchedTaskQueue.add(taskList);
 
 		return true;

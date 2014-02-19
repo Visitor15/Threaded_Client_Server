@@ -42,49 +42,6 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 
 		do {
 
-			// try {
-			// m_SendingSocket = new ServerSocket(LISTEN_PORT);
-			//
-			// m_RecievingSocket = m_SendingSocket.accept();
-			//
-			// InputStream sockInputStream = m_RecievingSocket.getInputStream();
-			//
-			//
-			// byte[] objLength = new byte[Long.SIZE / 8];
-			//
-			// sockInputStream.read(objLength, 0, (Long.SIZE / 8));
-			//
-			// ByteArrayInputStream is = new ByteArrayInputStream(objLength);
-			// ObjectInputStream in = new ObjectInputStream(is);
-			//
-			// long properLength = in.readLong();
-			//
-			//
-			// //
-			// // long byteArrayLength = in.readLong();
-			// // tmpStringData = in.readUTF();
-			// byte[] messageTaskBytes = new byte[(int) properLength];
-			//
-			// is.read(messageTaskBytes, objLength.length, (int)properLength);
-			//
-			
-			// PostMessageTask.fromNewBytes(messageTaskBytes);
-			//
-			// // PrintWriter out = new PrintWriter(
-			// // m_RecievingSocket.getOutputStream(), true);
-			// // BufferedReader in = new BufferedReader(
-			// // new InputStreamReader(
-			// // m_RecievingSocket.getInputStream()));
-			//
-			// TaskManager.DO_TASK(task);
-			//
-			//
-			// } catch (UnknownHostException e) {
-			// e.printStackTrace();
-			// } catch (IOException e) {
-			// e.printStackTrace();
-			// }
-
 			PostMessageTask task;
 			InputStream is = null;
 			ByteArrayOutputStream dataOutStream = null;
@@ -106,24 +63,36 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 				System.out.println("Can't get socket input stream. ");
 			}
 
+			byte[] buf = new byte[bufferSize];
 			// fos = new FileOutputStream("M:\\test2.xml");
 			dataOutStream = new ByteArrayOutputStream();
-			bos = new BufferedOutputStream(dataOutStream);
+			
+			
+			try {
+				is.read(buf);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+//			bos = new BufferedOutputStream(dataOutStream);
 
 			byte[] bytes = new byte[bufferSize];
 
 			int count;
 
 			try {
-				while ((count = is.read(bytes)) > 0) {
-					bos.write(bytes, 0, count);
-				}
+//				while ((count = is.read(bytes)) > 0) {
+//					bos.write(bytes, 0, count);
+//				}
 
-				bos.flush();
-				bos.close();
+				dataOutStream.flush();
+				dataOutStream.close();
+//				bos.flush();
+//				bos.close();
 				is.close();
 				
-				task = (PostMessageTask) PostMessageTask.fromNewBytes(dataOutStream.toByteArray());
+				task = (PostMessageTask) PostMessageTask.fromNewBytes(buf);
 
 				TaskManager.DO_TASK(task);
 			} catch (IOException e) {

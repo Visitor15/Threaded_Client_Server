@@ -16,6 +16,7 @@ import com.project.server.router.Client;
 import com.project.server.router.RoutingTable;
 import com.project.tasks.FindDefaultGatewayTask;
 import com.project.tasks.ITaskCallback;
+import com.project.tasks.SendNetworkFileTask;
 import com.project.tasks.SimpleAbstractTask;
 import com.project.tasks.TaskManager;
 
@@ -53,6 +54,11 @@ public class DCServer implements IServletCallback, ITaskCallback {
 
 	public void start() {
 		tryFindDefaultGateway();
+		
+		
+		TaskManager.DO_TASK(new SendNetworkFileTask());
+		
+		
 		registerDefaultServlets();
 
 //		testCode();

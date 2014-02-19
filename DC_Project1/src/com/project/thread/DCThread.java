@@ -10,7 +10,7 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 		ITaskCallback {
 
 	/*
-	 *	Generated ID for Serializa 
+	 * Generated ID for Serializa
 	 */
 	private static final long serialVersionUID = -7555148602849298330L;
 
@@ -44,7 +44,7 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 	public DCThread(T task) {
 		this.taskList.add(task);
 	}
-	
+
 	public DCThread(String id, T task) {
 		this.threadId = id;
 		this.taskList.add(task);
@@ -77,9 +77,9 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 		this.atomicOperationInProgress = isAtomicOperation;
 
 		if (atomicOperationInProgress) {
-//			System.out.println("Starting ATOMIC task(s)");
+			// System.out.println("Starting ATOMIC task(s)");
 		} else {
-//			System.out.println("Starting task(s)");
+			// System.out.println("Starting task(s)");
 		}
 
 		this.start();
@@ -98,25 +98,27 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 
 	@Override
 	public void executeTasks() {
-		
-		System.out.println("Thread: " + threadId + " is executing a task");
-		
-		setThreadState(THREAD_STATE.RUNNING);
-		for (int i = 0; i < taskList.size(); i++) {
-			Task task = taskList.remove(i);
-//			System.out.println("EXECUTING ON THREAD: " + threadId);
 
-			task.beginTask(this);
-			/*
-			 * If tasks are to be executed in a specific order, we do nothing
-			 * until this task has finished.
-			 */
+		synchronized (this) {
+			System.out.println("Thread: " + threadId + " is executing a task");
 
-			// do {
-			// task.beginAtomicTask(this);
-			// } while (atomicOperationInProgress);
+			setThreadState(THREAD_STATE.RUNNING);
+			for (int i = 0; i < taskList.size(); i++) {
+				Task task = taskList.remove(i);
+				// System.out.println("EXECUTING ON THREAD: " + threadId);
 
-			onFinished();
+				task.beginTask(this);
+				/*
+				 * If tasks are to be executed in a specific order, we do
+				 * nothing until this task has finished.
+				 */
+
+				// do {
+				// task.beginAtomicTask(this);
+				// } while (atomicOperationInProgress);
+
+				onFinished();
+			}
 		}
 	}
 
@@ -128,7 +130,7 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 
 	@Override
 	public void onFinished() {
-//		System.out.println("Thread finished: " + threadId);
+		// System.out.println("Thread finished: " + threadId);
 		this.setThreadState(THREAD_STATE.FINISHED);
 		this.callback.onThreadFinished(this);
 		this.idleThread();
@@ -157,10 +159,8 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 				if (callback != null) {
 					// System.out.println("Thread: " + threadId +
 					// " polling for tasks.");
-//					Thread.sleep(500);
+					// Thread.sleep(500);
 
-					
-					
 					int prev_Size = taskList.size();
 					if (taskList.size() == 0) {
 						this.addTask(callback.getNextTask());
@@ -168,9 +168,9 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 					}
 				}
 
-//				Thread.sleep(THREAD_IDLE_LENGTH);
+				// Thread.sleep(THREAD_IDLE_LENGTH);
 			} catch (NullPointerException e) {
-//				System.out.println("No tasks available");
+				// System.out.println("No tasks available");
 			}
 		} while (getThreadState() == THREAD_STATE.IDLE);
 	}
@@ -198,8 +198,9 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 
 	@Override
 	public void onTaskFinished(Task task) {
-		
-		System.out.println(this.getClass().getSimpleName() + " on Task Finished HIT");
+
+		System.out.println(this.getClass().getSimpleName()
+				+ " on Task Finished HIT");
 
 		taskList.remove(task);
 
@@ -215,7 +216,5 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 		// TODO Auto-generated method stub
 
 	}
-	
-	
 
 }

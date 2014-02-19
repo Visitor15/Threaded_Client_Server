@@ -16,7 +16,7 @@ public abstract class SimpleAbstractTask implements Task {
 	public boolean isRunning = false;
 
 	private String taskId = "";
-	
+
 	public String stringData = "";
 
 	public SimpleAbstractTask() {
@@ -38,15 +38,14 @@ public abstract class SimpleAbstractTask implements Task {
 
 	@Override
 	public void beginTask(ITaskCallback callback) {
-			synchronized (this) {
-				m_Callback = callback;
-				m_Callback.onTaskStart(this);
-				if (!isExecuting()) {
-					isRunning = true;
-					execute();
-				}
+		synchronized (this) {
+			m_Callback = callback;
+			m_Callback.onTaskStart(this);
+			if (!isExecuting()) {
+				isRunning = true;
+				execute();
 			}
-		
+		}
 	}
 
 	@Override
@@ -66,13 +65,14 @@ public abstract class SimpleAbstractTask implements Task {
 	@Override
 	public void stopTask() {
 		/*
-		 * Calling m_Callback.onTaskFinished(this) first doesn't call onFinished()
-		 * after for some reason. Referencing/blocking issue in callback?
+		 * Calling m_Callback.onTaskFinished(this) first doesn't call
+		 * onFinished() after for some reason. Referencing/blocking issue in
+		 * callback?
 		 */
 		isRunning = false;
 		onFinished();
 		m_Callback.onTaskFinished(this);
-//		onFinished();
+		// onFinished();
 	}
 
 	@Override
@@ -90,18 +90,18 @@ public abstract class SimpleAbstractTask implements Task {
 	public String getTaskId() {
 		return this.taskId;
 	}
-	
+
 	@Override
 	public String getStringData() {
 		return stringData;
 	}
-	
+
 	@Override
 	public void setStringData(final String data) {
 		stringData = data;
 	}
 
-//	public ITaskCallback getTaskCallback() {
-//		return m_Callback;
-//	}
+	// public ITaskCallback getTaskCallback() {
+	// return m_Callback;
+	// }
 }
