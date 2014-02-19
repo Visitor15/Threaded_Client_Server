@@ -52,30 +52,34 @@ public class ServerDiscoveryServlet extends DCServlet {
 
 	@Override
 	public void execute() {
+		System.out.println("Looking for server");
+
+		waitForDefaultGateway();
+
+		String defGateway = DCServer.GetDefaultGateway();
+
+		System.out.println("DEF GATEWAY IS: " + defGateway);
+		
+		int count = 0;
+		
 		do {
 			try {
 				dataGramSocket = new DatagramSocket(MY_PORT);
 				dataGramSocket.setBroadcast(true);
 				dataGramSocket.setReuseAddress(true);
-				dataGramSocket.setSoTimeout(1);
+				dataGramSocket.setSoTimeout(10);
 			} catch (SocketException e) {
 				MY_PORT = MY_PORT + 100;
 				execute();
 				e.printStackTrace();
 			}
 
-			int count = 0;
+			
 			byte[] buf = new byte[1024];
 			DatagramPacket receivedPacket = new DatagramPacket(buf, buf.length);
 			DatagramPacket sendingPacket;
 
-			System.out.println("Looking for server");
-
-			waitForDefaultGateway();
-
-			String defGateway = DCServer.GetDefaultGateway();
-
-			System.out.println("DEF GATEWAY IS: " + defGateway);
+			
 
 			String ipPiece = defGateway.substring(0, defGateway.length() - 1);
 
@@ -83,13 +87,14 @@ public class ServerDiscoveryServlet extends DCServlet {
 
 			ipPiece = ipPieces[0] + "." + ipPieces[1] + ".";
 
-			System.out.println("Scanning....");
+			System.out.println("Scan: " + ++count);
+			System.out.println("\nScanning....");
 
 			/*
 			 *	This is rather slow. Multithread this.
 			 */
 			
-			for (int i = 0; i < 255; i++) {
+			for (int i = 0; i < 2; i++) {
 
 				for (int j = 0; j < 255; j++) {
 
@@ -152,9 +157,10 @@ public class ServerDiscoveryServlet extends DCServlet {
 //				}
 			}
 
-			stopTask();
+//			stopTask();
 			
-//			pauseServerDiscoveryTask();
+			pauseServerDiscoveryTask();
+			dataGramSocket.close();
 
 		} while (isExecuting());
 
