@@ -39,7 +39,8 @@ public abstract class SimpleAbstractTask implements Task {
 	@Override
 	public void beginTask(ITaskCallback callback) {
 			synchronized (this) {
-				callback.onTaskStart(this);
+				m_Callback = callback;
+				m_Callback.onTaskStart(this);
 				if (!isExecuting()) {
 					isRunning = true;
 					execute();

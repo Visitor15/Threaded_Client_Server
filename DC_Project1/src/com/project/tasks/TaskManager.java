@@ -39,6 +39,14 @@ public class TaskManager {
 		return m_Instance.initTask(taskList);
 	}
 	
+	public synchronized static <T extends Task> boolean DoTaskOnCurrentThread(final T task, final ITaskCallback callback) {
+		if(m_Instance == null) {
+			new TaskManager();
+		}
+		
+		return m_Instance.initTaskOnCurrentThread(task, callback);
+	}
+	
 	private void initPools() {
 		POOLS = new ArrayList<DCThreadPool<Task>>();
 		POOLS.add(new DCThreadPool<Task>());
@@ -66,6 +74,12 @@ public class TaskManager {
 //		}
 //		
 //		return false;
+	}
+	
+	private <T extends Task> boolean initTaskOnCurrentThread(final T task, final ITaskCallback callback) {
+		task.beginTask(callback);
+		
+		return true;
 	}
 	
 	/* Synchronized.

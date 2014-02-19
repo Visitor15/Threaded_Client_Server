@@ -53,17 +53,17 @@ public class ServerIdentifierServlet extends DCServlet implements ITaskCallback 
 	@Override
 	public void execute() {
 
-		executeFindDNSTask();
+//		executeFindDNSTask();
 		System.out.print("Locating DNS...");
-		do {
-			try {
-				Thread.sleep(1000);
-				System.out.print("...");
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} while (isLocatingDNS);
+//		do {
+//			try {
+//				Thread.sleep(1000);
+//				System.out.print("...");
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		} while (isLocatingDNS);
 
 		MulticastSocket socket = null;
 		DatagramSocket returnSocket = null;
@@ -209,10 +209,10 @@ public class ServerIdentifierServlet extends DCServlet implements ITaskCallback 
 		System.out.println(this.getClass().getSimpleName() + " finished");
 	}
 
-	private void executeFindDNSTask() {
-		isLocatingDNS = true;
-		TaskManager.DO_TASK(new FindDefaultGatewayTask(this));
-	}
+//	private void executeFindDNSTask() {
+//		isLocatingDNS = true;
+//		TaskManager.DO_TASK(new FindDefaultGatewayTask(this));
+//	}
 
 	@Override
 	public void onTaskStart(Task task) {

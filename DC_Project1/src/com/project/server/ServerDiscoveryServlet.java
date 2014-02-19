@@ -8,8 +8,9 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
+import javax.swing.text.NumberFormatter;
+
 import com.project.framework.Task;
-import com.project.server.router.Client;
 import com.project.server.router.RoutingTable;
 import com.project.server.router.Server;
 import com.project.tasks.ThreadHelper;
@@ -56,13 +57,14 @@ public class ServerDiscoveryServlet extends DCServlet {
 				dataGramSocket = new DatagramSocket(MY_PORT);
 				dataGramSocket.setBroadcast(true);
 				dataGramSocket.setReuseAddress(true);
-				dataGramSocket.setSoTimeout(25);
+				dataGramSocket.setSoTimeout(1);
 			} catch (SocketException e) {
 				MY_PORT = MY_PORT + 100;
 				execute();
 				e.printStackTrace();
 			}
 
+			int count = 0;
 			byte[] buf = new byte[1024];
 			DatagramPacket receivedPacket = new DatagramPacket(buf, buf.length);
 			DatagramPacket sendingPacket;
@@ -71,7 +73,7 @@ public class ServerDiscoveryServlet extends DCServlet {
 
 			waitForDefaultGateway();
 
-			String defGateway = RoutingTable.getInstance().getDefaultGetway();
+			String defGateway = DCServer.GetDefaultGateway();
 
 			System.out.println("DEF GATEWAY IS: " + defGateway);
 
@@ -81,6 +83,12 @@ public class ServerDiscoveryServlet extends DCServlet {
 
 			ipPiece = ipPieces[0] + "." + ipPieces[1] + ".";
 
+			System.out.println("Scanning....");
+
+			/*
+			 *	This is rather slow. Multithread this.
+			 */
+			
 			for (int i = 0; i < 255; i++) {
 
 				for (int j = 0; j < 255; j++) {
@@ -135,11 +143,18 @@ public class ServerDiscoveryServlet extends DCServlet {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					
+					
 				}
 
+//				if ((i % 5) == 0) {
+//					System.out.println("%" + ((i / 254.0) * 100));
+//				}
 			}
 
-			pauseServerDiscoveryTask();
+			stopTask();
+			
+//			pauseServerDiscoveryTask();
 
 		} while (isExecuting());
 
@@ -174,8 +189,7 @@ public class ServerDiscoveryServlet extends DCServlet {
 		System.out.print("Waiting for default gateway to resolve...");
 		do {
 			ThreadHelper.sleepThread(1000);
-		} while (RoutingTable.getInstance().getDefaultGetway()
-				.equalsIgnoreCase("NULL"));
+		} while (DCServer.GetDefaultGateway().equalsIgnoreCase("NULL"));
 	}
 
 	private boolean registerServer(final Server server) {

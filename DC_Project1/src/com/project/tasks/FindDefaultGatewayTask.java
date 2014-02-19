@@ -71,8 +71,7 @@ public class FindDefaultGatewayTask extends SimpleAbstractTask {
 		BufferedReader output;
 
 		boolean hasRouteTable = false;
-		boolean hasColumns = false;
-
+		
 		try {
 			System.out.println("Executing traceroute");
 			result = Runtime.getRuntime()
@@ -99,20 +98,12 @@ public class FindDefaultGatewayTask extends SimpleAbstractTask {
 						result.getInputStream()));
 				while (output.readLine() != null) {
 					String tmp = output.readLine();
-					// SynchedInOut.getInstance().postMessageNewLine(tmp);
-					// System.out.println("LINE: " + tmp);
 					if (tmp.equalsIgnoreCase("IPv4 Route Table")) {
 						hasRouteTable = true;
 					} else if (tmp.contains("========")) {
 						hasRouteTable = false;
 					}
 					if (hasRouteTable) {
-
-//						if (tmp.contains("Network Destination")) {
-//							hasColumns = true;
-//						}
-
-						// if (hasColumns) {
 						String splitData[] = tmp.split("\\s+");
 						decidedDNS = "NULL";
 						if (splitData.length > 3) {
@@ -122,7 +113,6 @@ public class FindDefaultGatewayTask extends SimpleAbstractTask {
 								break;
 							}
 						}
-						// }
 					}
 				}
 				this.stringData = decidedDNS;

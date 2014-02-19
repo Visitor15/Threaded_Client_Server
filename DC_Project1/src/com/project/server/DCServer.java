@@ -15,20 +15,21 @@ import com.project.server.DCServlet.SERVLET_TYPE;
 import com.project.server.router.Client;
 import com.project.server.router.RoutingTable;
 import com.project.tasks.FindDefaultGatewayTask;
-import com.project.tasks.PostRemoteMessageTask;
-import com.project.tasks.ReceiveRemoteMessagesTask;
+import com.project.tasks.ITaskCallback;
 import com.project.tasks.SimpleAbstractTask;
 import com.project.tasks.TaskManager;
 
-public class DCServer implements IServletCallback {
+public class DCServer implements IServletCallback, ITaskCallback {
 
-	private static DCServer mInstance;
+	private static volatile DCServer mInstance;
 
-	private static HashMap<SERVLET_TYPE, DCServlet> m_ServletMap;
+	private static volatile HashMap<SERVLET_TYPE, DCServlet> m_ServletMap;
+	
+	private static volatile String DEFAULT_GATEWAY = "NULL";
 
-	private static final String HOSTNAME = "com.dcproject.def_hostname";
+	private static volatile String HOSTNAME = "com.dcproject.def_hostname";
 
-	private static final int DEF_PORT = 1337;
+	private static volatile int DEF_PORT = 1337;
 
 	private DCServer(final boolean autoStart) {
 		m_ServletMap = new HashMap<SERVLET_TYPE, DCServlet>();
@@ -51,7 +52,7 @@ public class DCServer implements IServletCallback {
 	}
 
 	public void start() {
-//		tryFindDefaultGateway();
+		tryFindDefaultGateway();
 		registerDefaultServlets();
 
 //		testCode();
@@ -158,8 +159,16 @@ public class DCServer implements IServletCallback {
 		}
 	}
 	
+	public void setDefaultGateway(final String gateway) {
+		DEFAULT_GATEWAY = gateway;
+	}
+	
+	public String getDefaultGateway() {
+		return DEFAULT_GATEWAY;
+	}
+	
 	private void tryFindDefaultGateway() {
-		TaskManager.DO_TASK(new FindDefaultGatewayTask());
+		TaskManager.DoTaskOnCurrentThread(new FindDefaultGatewayTask(), this);
 	}
 
 	@Override
@@ -191,6 +200,10 @@ public class DCServer implements IServletCallback {
 
 	public static int GET_DEF_PORT() {
 		return DEF_PORT;
+	}
+	
+	public static String GetDefaultGateway() {
+		return DEFAULT_GATEWAY;
 	}
 
 	public void testCode() {
@@ -298,5 +311,28 @@ public class DCServer implements IServletCallback {
 			});
 
 		} while (count < 1);
+	}
+
+	@Override
+	public void onTaskStart(Task task) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAtomicTaskStart(Task task) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTaskProgress(Task task) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTaskFinished(Task task) {
+		setDefaultGateway(task.getStringData());
 	}
 }
