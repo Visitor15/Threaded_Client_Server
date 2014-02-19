@@ -69,7 +69,7 @@ public abstract class SimpleAbstractTask implements Task {
 		 * Calling m_Callback.onTaskFinished(this) first doesn't call onFinished()
 		 * after for some reason. Referencing/blocking issue in callback?
 		 */
-		
+		isRunning = false;
 		onFinished();
 		m_Callback.onTaskFinished(this);
 //		onFinished();
@@ -101,7 +101,7 @@ public abstract class SimpleAbstractTask implements Task {
 		stringData = data;
 	}
 
-	public ITaskCallback getTaskCallback() {
-		return m_Callback;
-	}
+//	public ITaskCallback getTaskCallback() {
+//		return m_Callback;
+//	}
 }
