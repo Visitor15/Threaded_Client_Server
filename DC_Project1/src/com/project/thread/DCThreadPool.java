@@ -46,13 +46,17 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback,
 
 	private void startTaskMonitorThread() {
 
-		this.forceNewTaskThread(new SimpleAbstractTask(this, MONITOR_TASK_ID) {
+		this.forceNewTaskThread(new SimpleAbstractTask(DCThreadPool.this,
+				MONITOR_TASK_ID) {
 
 			@Override
 			public void executeTask() {
 				do {
 					// System.out.println("Attempting to execute next task.");
-					executeNextTask();
+					synchronized (this) {
+						System.out.println("Attempting to execute next task.");
+						executeNextTask();
+					}
 
 					ThreadHelper.sleepThread(3000);
 
@@ -87,32 +91,41 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback,
 
 	}
 
-	private synchronized void executeNextTask() {
+	public synchronized void executeNextTask() {
+		System.out.println("HIT");
 		if (this.m_TaskQueue.size() > 0) {
 
-			for (int i = 0; i < this.m_Threads.size(); i++) {
-				DCThread thread = this.m_Threads.get(i);
+			synchronized (this) {
+				for (int i = 0; i < this.m_Threads.size(); i++) {
+					DCThread thread = this.m_Threads.get(i);
+					System.out.println("HIT2");
+					if (thread.getThreadState() == THREAD_STATE.FREE) {
+						System.out.println("HIT3");
+						try {
+							Task mTask = getNextTask();
 
-				if (thread.getThreadState() == THREAD_STATE.FREE) {
-					try {
-						Task mTask = getNextTask();
+							if (mTask == null) {
+								System.out.println("No tasks in task queue.");
+								return;
+							}
 
-						if (mTask == null) {
-							System.out.println("No tasks in task queue.");
-							return;
+							System.out.println("Giving task "
+									+ mTask.getTaskId() + " to thread "
+									+ thread.getThreadId());
+
+							thread.addTask(mTask);
+							// thread.startThread(false);
+						} catch (final NullPointerException e) {
+
 						}
-
-						System.out.println("Giving task " + mTask.getTaskId()
-								+ " to thread " + thread.getThreadId());
-
-						thread.addTask(mTask);
-						// thread.startThread(false);
-					} catch (final NullPointerException e) {
-
+					} else {
+						System.out.println("Bing Bong");
 					}
 				}
 			}
 
+		} else {
+			System.out.println("HONG DONG");
 		}
 	}
 
@@ -143,9 +156,9 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback,
 
 	private void forceNewTaskThread(Task task) {
 
-		DCThread<Task> thread = new DCThread<Task>("Forced thread", task);
+		DCThread<Task> thread = new DCThread<Task>("Forced thread - Monitoring", task);
 		thread.setCallback(this);
-		thread.addTask(task);
+//		thread.addTask(task);
 		thread.startThread(false);
 		m_ForcedThreads.add(thread);
 	}
@@ -171,7 +184,11 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback,
 	}
 
 	public boolean doTaskPersistent(T persistentTask) {
-		m_TaskQueue.add(persistentTask);
+		DCThread<Task> thread = new DCThread<Task>("Forced thread - DCServer", persistentTask);
+		thread.setCallback(this);
+//		thread.addTask(persistentTask);
+		thread.startThread(false);
+		m_ForcedThreads.add(thread);
 
 		return true;
 	}

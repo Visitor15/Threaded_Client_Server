@@ -2,7 +2,6 @@ package com.project.main;
 import com.project.framework.Task;
 import com.project.server.DCServer;
 import com.project.tasks.ITaskCallback;
-import com.project.tasks.PostRemoteMessageTask;
 import com.project.tasks.TaskManager;
 
 /**
@@ -20,7 +19,33 @@ import com.project.tasks.TaskManager;
 public class Main implements ITaskCallback {
 
 	public static final void main(String[] args) {
-		TaskManager.DO_TASK(new DCServer());
+		TaskManager.DoPersistentTask(new DCServer(), new ITaskCallback() {
+
+			@Override
+			public void onTaskStart(Task task) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onAtomicTaskStart(Task task) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onTaskProgress(Task task) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onTaskFinished(Task task) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
 	}
 
 	@Override

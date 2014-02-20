@@ -31,7 +31,7 @@ public class ServletManager {
 	
 	private <T extends DCServlet> boolean startServlet(final T servlet) {
 		
-		System.out.println("Starting servlet");
+		System.out.println("Starting servlet: " + servlet.getTaskId());
 		
 		if(TaskManager.DO_TASK(servlet)) {
 			activeServlets.add(servlet);

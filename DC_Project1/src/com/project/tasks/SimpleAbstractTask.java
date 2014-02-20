@@ -88,12 +88,12 @@ public abstract class SimpleAbstractTask implements Task {
 
 	@Override
 	public void setTaskId(String id) {
-		this.taskId = id;
+		taskId = id;
 	}
 
 	@Override
 	public String getTaskId() {
-		return this.taskId;
+		return taskId;
 	}
 
 	@Override

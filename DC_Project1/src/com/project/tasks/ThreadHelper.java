@@ -6,7 +6,7 @@ public class ThreadHelper {
 		
 	}
 	
-	public static void sleepThread(final int sleepLength) {
+	public synchronized static void sleepThread(final int sleepLength) {
 		try {
 			Thread.sleep(sleepLength);
 		} catch (InterruptedException e) {

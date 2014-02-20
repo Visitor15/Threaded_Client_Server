@@ -23,8 +23,9 @@ public class ServerIdentifierServlet extends DCServlet implements ITaskCallback 
 
 	public ServerIdentifierServlet(final boolean autoStart,
 			final IServletCallback callback) {
-		super(SERVLET_TYPE.SERVER_IDENTIFIER_SERVLET, autoStart, callback);
+		super("ServerIdentifierServlet", SERVLET_TYPE.SERVER_IDENTIFIER_SERVLET, autoStart, callback);
 
+//		setTaskId("ServerIdentifierServlet");
 		// if (autoStart) {
 		// startServlet();
 		// }

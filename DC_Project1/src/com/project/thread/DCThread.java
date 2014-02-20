@@ -111,6 +111,7 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 			System.out.println("Thread: " + threadId + " is executing a task");
 
 			setThreadState(THREAD_STATE.RUNNING);
+			System.out.println("Task list size: " + taskList.size());
 			for (int i = 0; i < taskList.size(); i++) {
 				Task task = taskList.remove(i);
 				System.out.println("Executing task " + task.getTaskId()
@@ -123,15 +124,6 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 						stopThread();
 					}
 				} while (getThreadState() != THREAD_STATE.READY_FOR_NEXT_TASK);
-
-				/*
-				 * If tasks are to be executed in a specific order, we do
-				 * nothing until this task has finished.
-				 */
-
-				// do {
-				// task.beginAtomicTask(this);
-				// } while (atomicOperationInProgress);
 			}
 
 		}
@@ -172,7 +164,6 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 		do {
 
 			synchronized (this) {
-				System.out.println("Task list size: " + taskList.size());
 				if (taskList.size() > 0) {
 					System.out.println("Thread " + getThreadId()
 							+ " Found tasks to execute.");
@@ -180,7 +171,7 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 				}
 			}
 
-			System.out.println("Thread " + getThreadId() + " sleeping.");
+//			System.out.println("Thread " + getThreadId() + " sleeping.");
 			ThreadHelper.sleepThread(3000);
 
 		} while (getThreadState() == THREAD_STATE.FREE);

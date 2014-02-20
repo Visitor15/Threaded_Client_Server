@@ -24,6 +24,7 @@ public class ServerDiscoveryServlet extends DCServlet {
 			final IServletCallback callback) {
 		super(SERVLET_TYPE.REGISTRATION_SERVLET, autoStart, callback);
 
+		setTaskId("ServerDiscoveryServlet");
 		// if (autoStart) {
 		// startServlet();
 		// }

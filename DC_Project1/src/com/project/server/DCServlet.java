@@ -35,8 +35,18 @@ public abstract class DCServlet extends SimplePersistentTask implements
 
 		if (startServlet) {
 			startServlet();
-		} else {
-			initBaseServlet();
+		}
+	}
+
+	DCServlet(final String serverId, final SERVLET_TYPE servletType,
+			final boolean startServlet, final IServletCallback callback) {
+
+		setTaskId(serverId);
+		this.TYPE = servletType;
+		this.m_Callback = callback;
+
+		if (startServlet) {
+			startServlet();
 		}
 	}
 
@@ -53,18 +63,18 @@ public abstract class DCServlet extends SimplePersistentTask implements
 		registerServlet(autoStart);
 	}
 
-//	@Override
-//	public void beginTask(ITaskCallback callback) {
-//
-//		synchronized (this) {
-//
-//			if (!isExecuting()) {
-//				// startServlet();
-//				isRunning = true;
-//				execute();
-//			}
-//		}
-//	}
+	// @Override
+	// public void beginTask(ITaskCallback callback) {
+	//
+	// synchronized (this) {
+	//
+	// if (!isExecuting()) {
+	// // startServlet();
+	// isRunning = true;
+	// execute();
+	// }
+	// }
+	// }
 
 	@Override
 	public boolean isExecuting() {
@@ -83,7 +93,7 @@ public abstract class DCServlet extends SimplePersistentTask implements
 				getServerSocket().close();
 			} catch (IOException e) {
 				e.printStackTrace();
-				
+
 				return false;
 			}
 		}
@@ -101,9 +111,9 @@ public abstract class DCServlet extends SimplePersistentTask implements
 			return false;
 		}
 
-//		if (autoStart) {
-//			return startServlet();
-//		}
+		// if (autoStart) {
+		// return startServlet();
+		// }
 
 		return true;
 	}
@@ -112,7 +122,7 @@ public abstract class DCServlet extends SimplePersistentTask implements
 	public void checkResponses() {
 		respondToRequest();
 	}
-	
+
 	@Override
 	public void onFinished() {
 		System.out.println(this.getClass().getSimpleName() + " finished");

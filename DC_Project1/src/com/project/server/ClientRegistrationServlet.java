@@ -19,9 +19,9 @@ public class ClientRegistrationServlet extends DCServlet {
 			final IServletCallback callback) {
 		super(SERVLET_TYPE.REGISTRATION_SERVLET, autoStart, callback);
 
-		if (autoStart) {
-			startServlet();
-		}
+//		if (autoStart) {
+//			startServlet();
+//		}
 
 		// init();
 	}
