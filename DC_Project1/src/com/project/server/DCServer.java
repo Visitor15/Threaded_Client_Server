@@ -13,16 +13,21 @@ import com.project.framework.Task;
 import com.project.io.SynchedInOut;
 import com.project.server.DCServlet.SERVLET_TYPE;
 import com.project.server.router.Client;
-import com.project.server.router.RoutingTable;
 import com.project.tasks.FindDefaultGatewayTask;
 import com.project.tasks.ITaskCallback;
-import com.project.tasks.ReceiveRemoteMessagesTask;
+import com.project.tasks.PostRemoteMessageTask;
 import com.project.tasks.SimpleAbstractTask;
+import com.project.tasks.SimplePersistentTask;
 import com.project.tasks.TaskManager;
 
-public class DCServer implements IServletCallback, ITaskCallback {
+public class DCServer extends SimplePersistentTask implements IServletCallback, ITaskCallback {
 
-	private static volatile DCServer mInstance;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9080202556294508589L;
+
+//	private static volatile DCServer mInstance;
 
 	private static volatile HashMap<SERVLET_TYPE, DCServlet> m_ServletMap;
 	
@@ -32,25 +37,22 @@ public class DCServer implements IServletCallback, ITaskCallback {
 
 	private static volatile int DEF_PORT = 1337;
 
-	private DCServer(final boolean autoStart) {
+	public DCServer() {
+		setTaskId("DCServer Task");
 		m_ServletMap = new HashMap<SERVLET_TYPE, DCServlet>();
 
-		if (autoStart) {
-			start();
-		}
-
-		mInstance = this;
+//		mInstance = this;
 	}
 
-	public static synchronized DCServer GET_INSTANCE() {
-		if (mInstance == null) {
-			new DCServer(false);
-			
-			RoutingTable.getInstance();
-		}
-
-		return mInstance;
-	}
+//	public static synchronized DCServer startServer() {
+//		if (mInstance == null) {
+//			new DCServer(false);
+//			
+//			RoutingTable.getInstance();
+//		}
+//
+//		return mInstance;
+//	}
 
 	public void start() {
 		tryFindDefaultGateway();
@@ -75,15 +77,14 @@ public class DCServer implements IServletCallback, ITaskCallback {
 	}
 
 	public void registerDefaultServlets() {
-
 //		m_ServletMap.put(SERVLET_TYPE.REGISTRATION_SERVLET,
 //				new ClientRegistrationServlet(true, this));
 		m_ServletMap.put(SERVLET_TYPE.CLIENT_RESPONDER_SERVLET, new ServerIdentifierServlet(true, this));
 		m_ServletMap.put(SERVLET_TYPE.SERVER_DISCOVERY_SERVLET, new ServerDiscoveryServlet(true, this));
 		
-//		TaskManager.DO_TASK(new PostRemoteMessageTask("visitor15"));
+		TaskManager.DO_TASK(new PostRemoteMessageTask("visitor15"));
 		
-		TaskManager.DO_TASK(new ReceiveRemoteMessagesTask());
+//		TaskManager.DO_TASK(new ReceiveRemoteMessagesTask());
 		
 		// m_ServletMap.put(SERVLET_TYPE.CLIENT_RESPONDER_SERVLET,
 		// new ClientResponderServlet(true, this));
@@ -219,6 +220,11 @@ public class DCServer implements IServletCallback, ITaskCallback {
 			count++;
 			success = TaskManager.DO_TASK(new SimpleAbstractTask("MESSAGE TASK") {
 
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = -354957472036892394L;
+
 				@Override
 				public synchronized void executeTask() {
 
@@ -340,5 +346,35 @@ public class DCServer implements IServletCallback, ITaskCallback {
 	@Override
 	public void onTaskFinished(Task task) {
 		setDefaultGateway(task.getStringData());
+	}
+
+	@Override
+	public void executeTask() {
+		System.out.println("Starting Server");
+		start();
+	}
+
+	@Override
+	public void onProgressUpdate() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onFinished() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public byte[] toBytes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Task fromBytes(byte[] byteArray) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

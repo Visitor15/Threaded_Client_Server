@@ -105,7 +105,7 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback,
 						System.out.println("Giving task " + mTask.getTaskId()
 								+ " to thread " + thread.getThreadId());
 
-						thread.addTask(getNextTask());
+						thread.addTask(mTask);
 						// thread.startThread(false);
 					} catch (final NullPointerException e) {
 
@@ -161,7 +161,7 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback,
 	/* Thread-safe instance */
 	public synchronized boolean doTask(final T task) {
 
-		System.out.println("Adding task");
+		System.out.println("Adding task: " + task.getTaskId());
 
 		synchronized (this) {
 			m_TaskQueue.add(task);

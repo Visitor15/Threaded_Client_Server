@@ -61,7 +61,7 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 		this.setThreadState(THREAD_STATE.FREE);
 		this.start();
 	}
-	
+
 	public String getThreadId() {
 		return threadId;
 	}
@@ -75,7 +75,9 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 
 	@Override
 	public void addTask(Task task) {
-		this.taskList.add(task);
+		synchronized (this) {
+			this.taskList.add(task);
+		}
 	}
 
 	@Override
@@ -168,12 +170,16 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 	public void idleThread() {
 		this.setThreadState(THREAD_STATE.FREE);
 		do {
-			
-			if(taskList.size() > 0) {
-				System.out.println("Thread " + getThreadId() + " Found tasks to execute.");
-				executeTasks();
+
+			synchronized (this) {
+				System.out.println("Task list size: " + taskList.size());
+				if (taskList.size() > 0) {
+					System.out.println("Thread " + getThreadId()
+							+ " Found tasks to execute.");
+					executeTasks();
+				}
 			}
-			
+
 			System.out.println("Thread " + getThreadId() + " sleeping.");
 			ThreadHelper.sleepThread(3000);
 

@@ -20,7 +20,7 @@ import com.project.tasks.TaskManager;
 public class Main implements ITaskCallback {
 
 	public static final void main(String[] args) {
-		DCServer.GET_INSTANCE().start();
+		TaskManager.DO_TASK(new DCServer());
 	}
 
 	@Override

@@ -71,8 +71,8 @@ public class ServerIdentifierServlet extends DCServlet implements ITaskCallback 
 			System.out.println("HIT");
 
 			socket = new MulticastSocket(1337);
-			socket.setBroadcast(true);
-			socket.joinGroup(InetAddress.getByName("228.5.6.7"));
+//			socket.setBroadcast(true);
+//			socket.joinGroup(InetAddress.getByName("228.5.6.7"));
 
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block

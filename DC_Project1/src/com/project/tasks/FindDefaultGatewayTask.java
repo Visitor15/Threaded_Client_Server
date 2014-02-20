@@ -7,10 +7,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.StringTokenizer;
 
 import com.project.framework.Task;
-import com.project.io.SynchedInOut;
 
 public class FindDefaultGatewayTask extends SimpleAbstractTask {
 
@@ -96,8 +94,9 @@ public class FindDefaultGatewayTask extends SimpleAbstractTask {
 				result = Runtime.getRuntime().exec("netstat -rn");
 				output = new BufferedReader(new InputStreamReader(
 						result.getInputStream()));
+				String tmp = output.readLine();
 				while (output.readLine() != null) {
-					String tmp = output.readLine();
+					tmp = output.readLine();
 					if (tmp.equalsIgnoreCase("IPv4 Route Table")) {
 						hasRouteTable = true;
 					} else if (tmp.contains("========")) {
