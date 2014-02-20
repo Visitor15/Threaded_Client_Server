@@ -9,11 +9,13 @@ import com.project.thread.DCThreadPool;
 
 public class TaskManager {
 	
-	public static final int POOL_SIZE = 2;
+	public static final int POOL_SIZE = 1;
 	
 	private static TaskManager m_Instance;
 
-	private ArrayList<DCThreadPool<Task>> POOLS;
+//	private ArrayList<DCThreadPool<Task>> POOLS;
+	
+	private static DCThreadPool<Task> ThreadPool;
 	
 	private TaskManager() {
 		
@@ -48,8 +50,10 @@ public class TaskManager {
 	}
 	
 	private void initPools() {
-		POOLS = new ArrayList<DCThreadPool<Task>>();
-		POOLS.add(new DCThreadPool<Task>());
+		ThreadPool = new DCThreadPool<Task>();
+		
+//		POOLS = new ArrayList<DCThreadPool<Task>>();
+//		POOLS.add(new DCThreadPool<Task>());
 //		for(int i = 0; i < POOL_SIZE; i++) {
 //			POOLS.add(new DCThreadPool<Task>());
 //		}
@@ -60,9 +64,11 @@ public class TaskManager {
 	private <T extends Task> boolean initTask(final T task) {
 		System.out.println("Initing task");
 		
-		POOLS.get(0).doTask(task);
+		return ThreadPool.doTask(task);
 		
-		return true;
+//		POOLS.get(0).doTask(task);
+		
+//		return true;
 		
 //		for(int i = 0; i < POOLS.size(); i++) {
 //			DCThreadPool<Task> pool = POOLS.get(i);
@@ -86,15 +92,15 @@ public class TaskManager {
 	 * Called internally, but could potentially be called from multiple threads. */
 	private synchronized <T extends Task> boolean initTask(final List<T> taskList) {
 		
-		for (Iterator<DCThreadPool<Task>> it = POOLS.iterator(); it.hasNext();) {
-			DCThreadPool<Task> pool = it.next();
-			
-//			if(pool.doTasks(taskList)) {
-//				return true;
-//			}
-			
-			
-		}
+//		for (Iterator<DCThreadPool<Task>> it = POOLS.iterator(); it.hasNext();) {
+//			DCThreadPool<Task> pool = it.next();
+//			
+////			if(pool.doTasks(taskList)) {
+////				return true;
+////			}
+//			
+//			
+//		}
 		
 		return false;
 	}

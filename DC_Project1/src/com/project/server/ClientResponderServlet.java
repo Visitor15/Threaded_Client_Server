@@ -33,7 +33,7 @@ public class ClientResponderServlet extends DCServlet {
 	}
 
 	@Override
-	public void execute() {
+	public void executeTask() {
 		do {
 			for (int i = 0; i < 15; i++) {
 				System.out.println("Client Responder checking in.");

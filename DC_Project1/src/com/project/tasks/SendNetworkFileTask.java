@@ -9,7 +9,7 @@ public class SendNetworkFileTask extends SimpleAbstractTask {
 	}
 
 	@Override
-	public void execute() {
+	public void executeTask() {
 		
 		System.out.println("SendNetworkFileTask STARTING!");
 		int count = 0;

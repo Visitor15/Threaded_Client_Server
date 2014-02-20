@@ -14,7 +14,7 @@ public interface Task extends Serializable {
 	
 	public void setStringData(final String data);
 
-	public void execute();
+	public void executeTask();
 	
 	public void beginTask(ITaskCallback callback);
 	

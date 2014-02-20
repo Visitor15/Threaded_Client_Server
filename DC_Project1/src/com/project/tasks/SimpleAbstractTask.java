@@ -31,6 +31,11 @@ public abstract class SimpleAbstractTask implements Task {
 	public SimpleAbstractTask(final ITaskCallback callback) {
 		m_Callback = callback;
 	}
+	
+	public SimpleAbstractTask(final ITaskCallback callback, final String id) {
+		m_Callback = callback;
+		taskId = id;
+	}
 
 	public void logTask() {
 
@@ -43,7 +48,7 @@ public abstract class SimpleAbstractTask implements Task {
 			m_Callback.onTaskStart(this);
 			if (!isExecuting()) {
 				isRunning = true;
-				execute();
+				executeTask();
 			}
 		}
 	}
@@ -53,7 +58,7 @@ public abstract class SimpleAbstractTask implements Task {
 		this.m_Callback = callback;
 		if (!isExecuting()) {
 			m_Callback.onAtomicTaskStart(this);
-			execute();
+			executeTask();
 		}
 	}
 

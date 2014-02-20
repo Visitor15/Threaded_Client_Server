@@ -4,14 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.project.framework.Task;
+import com.project.tasks.ITaskCallback;
 import com.project.tasks.SimpleAbstractTask;
+import com.project.tasks.ThreadHelper;
 import com.project.thread.DCThread.THREAD_STATE;
 
-public class DCThreadPool<T extends Task> implements IThreadPoolCallback {
+public class DCThreadPool<T extends Task> implements IThreadPoolCallback,
+		ITaskCallback {
 
 	public static final int POOL_SIZE = 4;
 
 	public static final long DEF_WAIT_TIME = 250;
+
+	private static final String MONITOR_TASK_ID = "Monitor Tasks... Task";
 
 	private List<DCThread<T>> m_Threads;
 	private List<DCThread<Task>> m_ForcedThreads;
@@ -41,21 +46,16 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback {
 
 	private void startTaskMonitorThread() {
 
-		this.forceNewTaskThread(new SimpleAbstractTask() {
+		this.forceNewTaskThread(new SimpleAbstractTask(this, MONITOR_TASK_ID) {
 
 			@Override
-			public void execute() {
+			public void executeTask() {
 				do {
-//					System.out.println("Attempting to execute next task.");
+					// System.out.println("Attempting to execute next task.");
 					executeNextTask();
-					
-					try {
-						Thread.sleep(3000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
+
+					ThreadHelper.sleepThread(3000);
+
 				} while (this.isExecuting());
 			}
 
@@ -95,11 +95,18 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback {
 
 				if (thread.getThreadState() == THREAD_STATE.FREE) {
 					try {
-						
-						System.out.println("Adding task from 'executeNextTask'");
-						
+						Task mTask = getNextTask();
+
+						if (mTask == null) {
+							System.out.println("No tasks in task queue.");
+							return;
+						}
+
+						System.out.println("Giving task " + mTask.getTaskId()
+								+ " to thread " + thread.getThreadId());
+
 						thread.addTask(getNextTask());
-						thread.startThread(false);
+						// thread.startThread(false);
 					} catch (final NullPointerException e) {
 
 					}
@@ -145,8 +152,9 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback {
 
 	/* Thread-safe instance */
 	public synchronized boolean doTaskSynchronus(T task) {
-		m_TaskQueue.add(task);
-
+		synchronized (this) {
+			m_TaskQueue.add(task);
+		}
 		return true;
 	}
 
@@ -155,7 +163,9 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback {
 
 		System.out.println("Adding task");
 
-		m_TaskQueue.add(task);
+		synchronized (this) {
+			m_TaskQueue.add(task);
+		}
 
 		return true;
 	}
@@ -176,10 +186,6 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback {
 	@Override
 	public synchronized T getNextTask() {
 		if (this.m_TaskQueue.size() > 0) {
-
-			System.out
-					.println("Giving task: " + m_TaskQueue.get(0).getTaskId());
-
 			return m_TaskQueue.remove(0);
 		}
 
@@ -190,12 +196,37 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback {
 	public void onThreadFinished(IDCThread thread) {
 		thread.setThreadState(THREAD_STATE.FREE);
 
-//		try {
-//			thread.addTask(getNextTask());
-//			thread.executeTasks();
-//		} catch (final NullPointerException e) {
-//
-//		}
+		// try {
+		// thread.addTask(getNextTask());
+		// thread.executeTasks();
+		// } catch (final NullPointerException e) {
+		//
+		// }
+	}
+
+	@Override
+	public void onTaskStart(Task task) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onAtomicTaskStart(Task task) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onTaskProgress(Task task) {
+		if (task.getTaskId().equals(MONITOR_TASK_ID)) {
+			executeNextTask();
+		}
+	}
+
+	@Override
+	public void onTaskFinished(Task task) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

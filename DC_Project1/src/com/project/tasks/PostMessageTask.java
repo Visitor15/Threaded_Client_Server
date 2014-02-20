@@ -29,7 +29,7 @@ public class PostMessageTask extends SimpleAbstractTask {
 	}
 
 	@Override
-	public void execute() {
+	public void executeTask() {
 		SynchedInOut.getInstance().postMessageNewLine("Message received: " + getStringData());
 		stopTask();
 	}

@@ -17,7 +17,7 @@ public class RegisterClientTask extends SimpleAbstractTask {
 	}
 
 	@Override
-	public void execute() {
+	public void executeTask() {
 		do {
 			for (int i = 0; i < 15; i++) {
 				

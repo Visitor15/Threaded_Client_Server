@@ -51,7 +51,7 @@ public class ServerIdentifierServlet extends DCServlet implements ITaskCallback 
 	}
 
 	@Override
-	public void execute() {
+	public void executeTask() {
 
 //		executeFindDNSTask();
 		System.out.print("Locating DNS...");

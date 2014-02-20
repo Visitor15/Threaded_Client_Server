@@ -32,7 +32,7 @@ public class FindDefaultGatewayTask extends SimpleAbstractTask {
 	}
 
 	@Override
-	public void execute() {
+	public void executeTask() {
 
 		synchronized (this) {
 			try {

@@ -9,7 +9,7 @@ public abstract class PersistentTask extends SimpleAbstractTask {
 	}
 	
 	@Override
-	public void execute() {
+	public void executeTask() {
 		// TODO Auto-generated method stub
 		
 	}

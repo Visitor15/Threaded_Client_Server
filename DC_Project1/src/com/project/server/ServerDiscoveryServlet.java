@@ -52,7 +52,7 @@ public class ServerDiscoveryServlet extends DCServlet {
 	int MY_PORT = 5555;
 
 	@Override
-	public void execute() {
+	public void executeTask() {
 		waitForDefaultGateway();
 		String defGateway = DCServer.GetDefaultGateway();
 
@@ -71,7 +71,7 @@ public class ServerDiscoveryServlet extends DCServlet {
 				dataGramSocket.setSoTimeout(5);
 			} catch (SocketException e) {
 				MY_PORT = MY_PORT + 100;
-				execute();
+				executeTask();
 				e.printStackTrace();
 			}
 
@@ -160,7 +160,7 @@ public class ServerDiscoveryServlet extends DCServlet {
 					.postMessageForUserInput("Scan finished. Rescan? (y/n): ");
 
 			if (userOpt.equalsIgnoreCase("y")) {
-				execute();
+				executeTask();
 			}
 
 			else {

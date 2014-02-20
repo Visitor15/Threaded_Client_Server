@@ -54,7 +54,7 @@ public class ClientRegistrationServlet extends DCServlet {
 	}
 
 	@Override
-	public void execute() {
+	public void executeTask() {
 
 
 			System.out.println(this.getClass().getSimpleName() + " EXECUTING");

@@ -34,7 +34,7 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 	}
 
 	@Override
-	public void execute() {
+	public void executeTask() {
 
 		try {
 			m_SendingSocket = new ServerSocket(LISTEN_PORT);
@@ -103,7 +103,7 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 				dataOutStream.close();
 //				bos.flush();
 //				bos.close();
-				is.close();
+//				is.close();
 				
 				buf = new byte[bufferSize];
 				
