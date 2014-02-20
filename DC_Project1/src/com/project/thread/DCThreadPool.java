@@ -102,7 +102,7 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback,
 				// System.out.println("HIT2");
 				synchronized (this) {
 					DCThread thread = this.m_Threads.get(i);
-					System.out.println("Got thread: " + thread.getThreadId());
+//					System.out.println("Got thread: " + thread.getThreadId());
 					if (thread.getThreadState() == THREAD_STATE.FREE) {
 						// System.out.println("HIT3");
 						try {
