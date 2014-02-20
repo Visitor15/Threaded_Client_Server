@@ -111,7 +111,7 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 				
 				task = (PostMessageTask) PostMessageTask.fromNewBytes(buf);
 
-				TaskManager.DO_TASK(task);
+				TaskManager.DoTask(task);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

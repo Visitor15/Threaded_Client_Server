@@ -11,13 +11,13 @@ public interface IDCThread {
 	
 	public void addBatchTasks(List<Task> taskList);
 	
-	void executeTasks();
+	void executeCurrentTasks();
 	
 	public void startThread(boolean isAtomicOperation);
 	
 	public void stopThread();
 	
-	public void idleThread();
+//	public void idleThread();
 	
 	public void onFinished();
 	

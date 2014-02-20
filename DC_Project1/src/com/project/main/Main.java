@@ -1,8 +1,12 @@
 package com.project.main;
+import java.util.Random;
+
 import com.project.framework.Task;
 import com.project.server.DCServer;
 import com.project.tasks.ITaskCallback;
+import com.project.tasks.SimpleAbstractTask;
 import com.project.tasks.TaskManager;
+import com.project.tasks.ThreadHelper;
 
 /**
  * Created by Alex on 1/15/14.
@@ -46,5 +50,50 @@ public class Main {
 			}
 			
 		});
+		
+//		doTests();
+	}
+	
+	public static void doTests() {
+		for(int i = 0; i < 50; i++) {
+			TaskManager.DoTask(new SimpleAbstractTask("Task - " + i) {
+				
+				Random random = new Random();
+
+				@Override
+				public void executeTask() {
+					for (int j = 0; j < 5; j++) {
+						System.out.println("HELLO FROM TEST TASK: " + getTaskId());
+						ThreadHelper.sleepThread(random.nextInt(1800) + 200);
+					}
+					
+					stopTask();
+				}
+
+				@Override
+				public void onProgressUpdate() {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void onFinished() {
+					System.out.println("TEST TASK: " + getTaskId() + " is finished");
+				}
+
+				@Override
+				public byte[] toBytes() {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public Task fromBytes(byte[] byteArray) {
+					// TODO Auto-generated method stub
+					return null;
+				}
+				
+			});
+		}
 	}
 }

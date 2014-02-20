@@ -23,7 +23,7 @@ public class TaskManager {
 		m_Instance = this;
 	}
 
-	public synchronized static <T extends Task> boolean DO_TASK(final T task) {
+	public synchronized static <T extends Task> boolean DoTask(final T task) {
 
 		if (m_Instance == null) {
 			new TaskManager();
@@ -32,7 +32,7 @@ public class TaskManager {
 		return m_Instance.initTask(task);
 	}
 
-	public synchronized static <T extends Task> boolean DO_TASK(
+	public synchronized static <T extends Task> boolean DoTask(
 			final List<T> taskList) {
 
 		if (m_Instance == null) {

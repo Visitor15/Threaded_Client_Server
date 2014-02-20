@@ -82,7 +82,7 @@ public class DCServer extends SimplePersistentTask implements IServletCallback, 
 		m_ServletMap.put(SERVLET_TYPE.CLIENT_RESPONDER_SERVLET, new ServerIdentifierServlet(true, this));
 		m_ServletMap.put(SERVLET_TYPE.SERVER_DISCOVERY_SERVLET, new ServerDiscoveryServlet(true, this));
 		
-		TaskManager.DO_TASK(new PostRemoteMessageTask("visitor15"));
+		TaskManager.DoTask(new PostRemoteMessageTask("visitor15"));
 		
 //		TaskManager.DO_TASK(new ReceiveRemoteMessagesTask());
 		
@@ -144,7 +144,7 @@ public class DCServer extends SimplePersistentTask implements IServletCallback, 
 				// e.printStackTrace();
 				// }
 
-			} while (m_ServletMap.size() > 0);
+			} while (isExecuting());
 		}
 	}
 
@@ -218,7 +218,7 @@ public class DCServer extends SimplePersistentTask implements IServletCallback, 
 		boolean success;
 		do {
 			count++;
-			success = TaskManager.DO_TASK(new SimpleAbstractTask("MESSAGE TASK") {
+			success = TaskManager.DoTask(new SimpleAbstractTask("MESSAGE TASK") {
 
 				/**
 				 * 

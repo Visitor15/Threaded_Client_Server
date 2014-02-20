@@ -59,7 +59,6 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 	private void init() {
 		taskList = new ArrayList<Task>();
 		this.setThreadState(THREAD_STATE.FREE);
-		this.start();
 	}
 
 	public String getThreadId() {
@@ -75,13 +74,16 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 
 	@Override
 	public void addTask(Task task) {
-		synchronized (this) {
-			this.taskList.add(task);
-		}
+		System.out.println("Adding task: " + task.getTaskId() + " to thread: "
+				+ getThreadId());
+
+		this.taskList.add(task);
+
 	}
 
 	@Override
 	public void startThread(boolean isAtomicOperation) {
+		setThreadState(THREAD_STATE.READY_FOR_NEXT_TASK);
 		this.atomicOperationInProgress = isAtomicOperation;
 
 		if (atomicOperationInProgress) {
@@ -98,35 +100,33 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 		setThreadState(THREAD_STATE.RUNNING);
 
 		if (taskList.size() > 0) {
-			executeTasks();
+			executeCurrentTasks();
 		}
 
-		idleThread();
+//		idleThread();
 	}
 
 	@Override
-	public void executeTasks() {
+	public void executeCurrentTasks() {
 
-		synchronized (this) {
-			System.out.println("Thread: " + threadId + " is executing a task");
+		// System.out.println("Thread: " + threadId + " is executing a task");
 
-			setThreadState(THREAD_STATE.RUNNING);
-			System.out.println("Task list size: " + taskList.size());
-			for (int i = 0; i < taskList.size(); i++) {
-				Task task = taskList.remove(i);
-				System.out.println("Executing task " + task.getTaskId()
-						+ " on thread " + getThreadId());
+		setThreadState(THREAD_STATE.RUNNING);
+		 System.out.println("Task list size: " + taskList.size());
+		for (int i = 0; i < taskList.size(); i++) {
+			Task task = taskList.remove(i);
+			System.out.println("Executing task " + task.getTaskId()
+					+ " on thread " + getThreadId());
 
-				task.beginTask(this);
+			task.beginTask(this);
 
-				do {
-					if (getThreadState() == THREAD_STATE.FINISHED) {
-						stopThread();
-					}
-				} while (getThreadState() != THREAD_STATE.READY_FOR_NEXT_TASK);
-			}
-
+			do {
+				if (getThreadState() == THREAD_STATE.FINISHED) {
+					stopThread();
+				}
+			} while (getThreadState() != THREAD_STATE.READY_FOR_NEXT_TASK || getThreadState() != THREAD_STATE.FINISHED);
 		}
+
 	}
 
 	@Override
@@ -138,9 +138,7 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 	@Override
 	public void onFinished() {
 		System.out.println("Thread " + getThreadId() + " finished: ");
-		setThreadState(THREAD_STATE.FREE);
 		callback.onThreadFinished(this);
-		idleThread();
 	}
 
 	@Override
@@ -158,24 +156,27 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 		this.onFinished();
 	}
 
-	@Override
-	public void idleThread() {
-		this.setThreadState(THREAD_STATE.FREE);
-		do {
-
-			synchronized (this) {
-				if (taskList.size() > 0) {
-					System.out.println("Thread " + getThreadId()
-							+ " Found tasks to execute.");
-					executeTasks();
-				}
-			}
-
+//	@Override
+//	public void idleThread() {
+//		setThreadState(THREAD_STATE.FREE);
+//		do {
+//
+//			// System.out.println("Task list size (Thread: " + getThreadId() +
+//			// "): " + taskList.size());
+//			synchronized (this) {
+//				if (taskList.size() > 0) {
+//					System.out.println("Thread " + getThreadId()
+//							+ " Found tasks to execute.");
+//					executeCurrentTasks();
+//
+//				}
+//			}
+//
 //			System.out.println("Thread " + getThreadId() + " sleeping.");
-			ThreadHelper.sleepThread(3000);
-
-		} while (getThreadState() == THREAD_STATE.FREE);
-	}
+//			ThreadHelper.sleepThread(3000);
+//
+//		} while (getThreadState() == THREAD_STATE.FREE);
+//	}
 
 	@Override
 	public void setThreadState(THREAD_STATE state) {

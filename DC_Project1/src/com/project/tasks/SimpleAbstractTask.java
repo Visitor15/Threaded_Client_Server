@@ -43,14 +43,14 @@ public abstract class SimpleAbstractTask implements Task {
 
 	@Override
 	public void beginTask(ITaskCallback callback) {
-		synchronized (this) {
+//		synchronized (this) {
 			m_Callback = callback;
 			m_Callback.onTaskStart(this);
 			if (!isExecuting()) {
 				isRunning = true;
 				executeTask();
 			}
-		}
+//		}
 	}
 
 	@Override

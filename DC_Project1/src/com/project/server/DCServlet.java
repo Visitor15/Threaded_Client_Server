@@ -83,7 +83,7 @@ public abstract class DCServlet extends SimplePersistentTask implements
 
 	@Override
 	public boolean startServlet() {
-		return ServletManager.REGISTER_SERVLET(this);
+		return ServletManager.REGISTER_SERVLET(this, ((ITaskCallback) this.m_Callback));
 	}
 
 	@Override

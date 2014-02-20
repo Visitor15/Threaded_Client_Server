@@ -41,7 +41,7 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback,
 		}
 
 		startTaskMonitorThread();
-		System.out.println("Finished starting threads");
+		// System.out.println("Finished starting threads");
 	}
 
 	private void startTaskMonitorThread() {
@@ -53,12 +53,14 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback,
 			public void executeTask() {
 				do {
 					// System.out.println("Attempting to execute next task.");
-					synchronized (this) {
-						System.out.println("Attempting to execute next task.");
+					// synchronized (this) {
+					// System.out.println("Attempting to execute next task.");
+					synchronized (DCThreadPool.this) {
 						executeNextTask();
 					}
+					// }
 
-					ThreadHelper.sleepThread(3000);
+					ThreadHelper.sleepThread(500);
 
 				} while (this.isExecuting());
 			}
@@ -92,40 +94,41 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback,
 	}
 
 	public synchronized void executeNextTask() {
-		System.out.println("HIT");
+		// System.out.println("HIT");
 		if (this.m_TaskQueue.size() > 0) {
 
-			synchronized (this) {
-				for (int i = 0; i < this.m_Threads.size(); i++) {
+			for (int i = 0; i < this.m_Threads.size(); i++) {
+
+				// System.out.println("HIT2");
+				synchronized (this) {
 					DCThread thread = this.m_Threads.get(i);
-					System.out.println("HIT2");
+					System.out.println("Got thread: " + thread.getThreadId());
 					if (thread.getThreadState() == THREAD_STATE.FREE) {
-						System.out.println("HIT3");
+						// System.out.println("HIT3");
 						try {
 							Task mTask = getNextTask();
 
 							if (mTask == null) {
-								System.out.println("No tasks in task queue.");
+								// System.out.println("No tasks in task queue.");
 								return;
 							}
 
-							System.out.println("Giving task "
-									+ mTask.getTaskId() + " to thread "
-									+ thread.getThreadId());
+							// System.out.println("Giving task "
+							// + mTask.getTaskId() + " to thread "
+							// + thread.getThreadId());
 
 							thread.addTask(mTask);
+
+							thread.startThread(false);
 							// thread.startThread(false);
 						} catch (final NullPointerException e) {
 
 						}
 					} else {
-						System.out.println("Bing Bong");
+						// System.out.println("Bing Bong");
 					}
 				}
 			}
-
-		} else {
-			System.out.println("HONG DONG");
 		}
 	}
 
@@ -156,9 +159,10 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback,
 
 	private void forceNewTaskThread(Task task) {
 
-		DCThread<Task> thread = new DCThread<Task>("Forced thread - Monitoring", task);
+		DCThread<Task> thread = new DCThread<Task>(
+				"Forced thread - Monitoring", task);
 		thread.setCallback(this);
-//		thread.addTask(task);
+		// thread.addTask(task);
 		thread.startThread(false);
 		m_ForcedThreads.add(thread);
 	}
@@ -174,19 +178,18 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback,
 	/* Thread-safe instance */
 	public synchronized boolean doTask(final T task) {
 
-		System.out.println("Adding task: " + task.getTaskId());
+		// System.out.println("Adding task: " + task.getTaskId());
 
-		synchronized (this) {
-			m_TaskQueue.add(task);
-		}
+		m_TaskQueue.add(task);
 
 		return true;
 	}
 
 	public boolean doTaskPersistent(T persistentTask) {
-		DCThread<Task> thread = new DCThread<Task>("Forced thread - DCServer", persistentTask);
+		DCThread<Task> thread = new DCThread<Task>("Forced thread - DCServer",
+				persistentTask);
 		thread.setCallback(this);
-//		thread.addTask(persistentTask);
+		// thread.addTask(persistentTask);
 		thread.startThread(false);
 		m_ForcedThreads.add(thread);
 
@@ -212,6 +215,15 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback,
 	@Override
 	public void onThreadFinished(IDCThread thread) {
 		thread.setThreadState(THREAD_STATE.FREE);
+
+		System.out.println("THREAD FINISHED: ");
+
+		if (this.m_Threads.contains(thread)) {
+			System.out.println("THREAD REMOVED: ");
+			m_Threads.remove(thread);
+
+			m_Threads.add(new DCThread<T>("New thread", this));
+		}
 
 		// try {
 		// thread.addTask(getNextTask());

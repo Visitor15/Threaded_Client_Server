@@ -2,6 +2,7 @@ package com.project.server;
 
 import java.util.ArrayList;
 
+import com.project.tasks.ITaskCallback;
 import com.project.tasks.TaskManager;
 
 
@@ -20,20 +21,20 @@ public class ServletManager {
 		unactiveServlets = new ArrayList<DCServlet>();
 	}
 	
-	public static synchronized <T extends DCServlet> boolean REGISTER_SERVLET(final T servlet) {
+	public static synchronized <T extends DCServlet> boolean REGISTER_SERVLET(final T servlet, final ITaskCallback callback) {
 		
 		if(m_Instance == null) {
 			new ServletManager();
 		}
 		
-		return m_Instance.startServlet(servlet);
+		return m_Instance.startServlet(servlet, callback);
 	}
 	
-	private <T extends DCServlet> boolean startServlet(final T servlet) {
+	private <T extends DCServlet> boolean startServlet(final T servlet, final ITaskCallback callback) {
 		
 		System.out.println("Starting servlet: " + servlet.getTaskId());
 		
-		if(TaskManager.DO_TASK(servlet)) {
+		if(TaskManager.DoPersistentTask(servlet, callback)) {
 			activeServlets.add(servlet);
 			
 			return true;
