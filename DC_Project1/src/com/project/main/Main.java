@@ -16,7 +16,7 @@ import com.project.tasks.TaskManager;
 // these main two files
 // with "working code" so they will compile
 
-public class Main implements ITaskCallback {
+public class Main {
 
 	public static final void main(String[] args) {
 		TaskManager.DoPersistentTask(new DCServer(), new ITaskCallback() {
@@ -46,28 +46,5 @@ public class Main implements ITaskCallback {
 			}
 			
 		});
-	}
-
-	@Override
-	public void onTaskFinished(Task task) {
-		System.out.println(this.getClass().getSimpleName() + " finished");
-	}
-
-	@Override
-	public void onTaskStart(Task task) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onAtomicTaskStart(Task task) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onTaskProgress(Task task) {
-		// TODO Auto-generated method stub
-		
 	}
 }
