@@ -8,6 +8,7 @@ import java.net.ServerSocket;
 
 import com.project.framework.Task;
 import com.project.server.ServerReceiverServelet;
+import com.project.server.SocketManager;
 import com.project.server.router.Client;
 import com.project.server.router.RoutingTable;
 
@@ -35,9 +36,6 @@ public class RegisterClientTask extends SimpleAbstractTask {
 		if (RoutingTable.getInstance().registerClient(client)) {
 			System.out.println("Registered client: " + client.getHostname());
 			try {
-				sendingSocket = new DatagramSocket(SENDING_PORT);
-				
-				
 				client = new Client();
 				client.setCurrentIP(InetAddress.getLocalHost().getHostAddress());
 				client.setHostname(InetAddress.getLocalHost().getHostName());
@@ -49,9 +47,8 @@ public class RegisterClientTask extends SimpleAbstractTask {
 				dataGram = new DatagramPacket(buffer, buffer.length);
 				dataGram.setPort(client.getCurrentPort());
 				dataGram.setAddress(InetAddress.getByName(client.getCurrentIP()));
-
-				sendingSocket.send(dataGram);
-				sendingSocket.close();
+				
+				SocketManager.getInstance().sendDatagram(dataGram);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -64,8 +64,6 @@ public class ServerReceiverServelet extends DCServlet {
 
 				/* Blocking receive */
 				receivingSocket.receive(dataGram);
-
-				
 				
 				buffer = dataGram.getData();
 				
