@@ -1,41 +1,64 @@
 package com.project.tasks;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+
 import com.project.framework.Task;
-import com.project.io.SynchedInOut;
+import com.project.server.ServerReceiverServelet;
+import com.project.server.router.Client;
+import com.project.server.router.RoutingTable;
 
 public class RegisterClientTask extends SimpleAbstractTask {
 
-	private int id;
+	public static final int BUFFER_SIZE = 64;
 
-	public RegisterClientTask(int id) {
-		super();
-		this.id = id;
-	}
+	public static final int SENDING_PORT = 11235;
 
-	public RegisterClientTask(final ITaskCallback callback) {
-		super(callback);
+	private DatagramSocket sendingSocket;
+
+	private DatagramPacket dataGram;
+
+	private byte[] buffer;
+
+	private Client client;
+
+	public RegisterClientTask(final Client c) {
+		setTaskId("RegisterClientTask");
+		client = c;
 	}
 
 	@Override
 	public void executeTask() {
-		do {
-			for (int i = 0; i < 15; i++) {
+		if (RoutingTable.getInstance().registerClient(client)) {
+			System.out.println("Registered client: " + client.getHostname());
+			try {
+				sendingSocket = new DatagramSocket(SENDING_PORT);
 				
-				SynchedInOut.getInstance().postMessageNewLine("RegistrationTask checking in.");
+				
+				client = new Client();
+				client.setCurrentIP(InetAddress.getLocalHost().getHostAddress());
+				client.setHostname(InetAddress.getLocalHost().getHostName());
+				client.setPort(ServerReceiverServelet.LISTENING_PORT);
+				client.setUsername("Server " + client.getHostname());
+				
+				buffer = client.toBytes();
 
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				dataGram = new DatagramPacket(buffer, buffer.length);
+				dataGram.setPort(client.getCurrentPort());
+				dataGram.setAddress(InetAddress.getByName(client.getCurrentIP()));
+
+				sendingSocket.send(dataGram);
+				sendingSocket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			
-			stopTask();
+		}
 
-		} while (isExecuting());
-
-		onFinished();
+		stopTask();
 	}
 
 	@Override
@@ -46,8 +69,7 @@ public class RegisterClientTask extends SimpleAbstractTask {
 
 	@Override
 	public void onFinished() {
-		System.out.println("Client Responder shutting down.");
-//		getTaskCallback().onTaskFinished(this);
+
 	}
 
 	@Override

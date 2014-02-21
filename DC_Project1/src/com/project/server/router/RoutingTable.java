@@ -29,9 +29,9 @@ public class RoutingTable implements ITaskCallback {
 
 	public boolean registerClient(final Client c) {
 
-		if (!m_ClientMap.containsKey(c.getId())) {
+		if (!m_ClientMap.containsKey(c.getUsername())) {
 
-			m_ClientMap.put(c.getId(), c);
+			m_ClientMap.put(c.getUsername(), c);
 
 			return true;
 		}

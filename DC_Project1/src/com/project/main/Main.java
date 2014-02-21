@@ -4,6 +4,7 @@ import java.util.Random;
 import com.project.framework.Task;
 import com.project.server.DCServer;
 import com.project.tasks.ITaskCallback;
+import com.project.tasks.ServerFinderTask;
 import com.project.tasks.SimpleAbstractTask;
 import com.project.tasks.TaskManager;
 import com.project.tasks.ThreadHelper;
@@ -50,6 +51,12 @@ public class Main {
 			}
 			
 		});
+		
+		ThreadHelper.sleepThread(5000);
+		
+		System.out.println("Beginning other tasks.");
+		
+		TaskManager.DoTask(new ServerFinderTask());
 		
 //		doTests();
 	}

@@ -216,13 +216,13 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback,
 	public void onThreadFinished(IDCThread thread) {
 		thread.setThreadState(THREAD_STATE.FREE);
 
-		System.out.println("THREAD FINISHED: ");
+//		System.out.println("THREAD FINISHED: ");
 
 		if (this.m_Threads.contains(thread)) {
-			System.out.println("THREAD REMOVED: ");
+//			System.out.println("THREAD REMOVED: ");
 			m_Threads.remove(thread);
 
-			m_Threads.add(new DCThread<T>("New thread", this));
+			m_Threads.add(new DCThread<T>("New thread " + m_Threads.size(), this));
 		}
 
 		// try {

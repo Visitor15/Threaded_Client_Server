@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 
 import com.project.framework.Task;
+import com.project.server.DCServer;
 
 public class FindDefaultGatewayTask extends SimpleAbstractTask {
 
@@ -70,6 +72,9 @@ public class FindDefaultGatewayTask extends SimpleAbstractTask {
 
 		boolean hasRouteTable = false;
 		
+		DCServer.setLocalHostname(InetAddress.getLocalHost().getHostName());
+		DCServer.setCurrentIP(InetAddress.getLocalHost().getHostAddress());
+		
 		try {
 			System.out.println("Executing traceroute");
 			result = Runtime.getRuntime()
@@ -94,9 +99,9 @@ public class FindDefaultGatewayTask extends SimpleAbstractTask {
 				result = Runtime.getRuntime().exec("netstat -rn");
 				output = new BufferedReader(new InputStreamReader(
 						result.getInputStream()));
-				String tmp = output.readLine();
+//				String tmp = output.readLine();
 				while (output.readLine() != null) {
-					tmp = output.readLine();
+					String tmp = output.readLine();
 					if (tmp.equalsIgnoreCase("IPv4 Route Table")) {
 						hasRouteTable = true;
 					} else if (tmp.contains("========")) {

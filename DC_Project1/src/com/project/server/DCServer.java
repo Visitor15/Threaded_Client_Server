@@ -29,13 +29,17 @@ public class DCServer extends SimplePersistentTask implements IServletCallback, 
 
 //	private static volatile DCServer mInstance;
 
-	private static volatile HashMap<SERVLET_TYPE, DCServlet> m_ServletMap;
+	private static HashMap<SERVLET_TYPE, DCServlet> m_ServletMap;
 	
-	private static volatile String DEFAULT_GATEWAY = "NULL";
+	private static String DEFAULT_GATEWAY = "NULL";
 
-	private static volatile String HOSTNAME = "com.dcproject.def_hostname";
-
-	private static volatile int DEF_PORT = 1337;
+	private static String HOSTNAME = "com.dcproject.def_hostname";
+	
+	private static String LOCAL_HOSTNAME = "NULL";
+	
+	private static String CURRENT_IP = "NULL";
+	
+	private static int DEFAULT_LISTENING_PORT = 6666;
 
 	public DCServer() {
 		setTaskId("DCServer Task");
@@ -77,12 +81,23 @@ public class DCServer extends SimplePersistentTask implements IServletCallback, 
 	}
 
 	public void registerDefaultServlets() {
+		
+		
+		
+		m_ServletMap.put(SERVLET_TYPE.CLIENT_RESPONDER_SERVLET, new ServerReceiverServelet(true, this));
+		
+		
+		
+		
+		
+		
+		
 //		m_ServletMap.put(SERVLET_TYPE.REGISTRATION_SERVLET,
 //				new ClientRegistrationServlet(true, this));
-		m_ServletMap.put(SERVLET_TYPE.CLIENT_RESPONDER_SERVLET, new ServerIdentifierServlet(true, this));
-		m_ServletMap.put(SERVLET_TYPE.SERVER_DISCOVERY_SERVLET, new ServerDiscoveryServlet(true, this));
+//		m_ServletMap.put(SERVLET_TYPE.CLIENT_RESPONDER_SERVLET, new ServerIdentifierServlet(true, this));
+//		m_ServletMap.put(SERVLET_TYPE.SERVER_DISCOVERY_SERVLET, new ServerDiscoveryServlet(true, this));
 		
-		TaskManager.DoTask(new PostRemoteMessageTask("visitor15"));
+//		TaskManager.DoTask(new PostRemoteMessageTask("visitor15"));
 		
 //		TaskManager.DO_TASK(new ReceiveRemoteMessagesTask());
 		
@@ -205,12 +220,24 @@ public class DCServer extends SimplePersistentTask implements IServletCallback, 
 		return HOSTNAME;
 	}
 
-	public static int GET_DEF_PORT() {
-		return DEF_PORT;
-	}
+//	public static int GET_DEF_PORT() {
+//		return DEF_PORT;
+//	}
 	
 	public static String GetDefaultGateway() {
 		return DEFAULT_GATEWAY;
+	}
+	
+	public static synchronized void setLocalHostname(final String hostName) {
+		DCServer.LOCAL_HOSTNAME = hostName;
+	}
+	
+	public static synchronized void setCurrentIP(final String IP) {
+		DCServer.CURRENT_IP = IP;
+	}
+	
+	public static synchronized int getServerListenerPort() {
+		return DCServer.DEFAULT_LISTENING_PORT;
 	}
 
 	public void testCode() {
@@ -246,8 +273,10 @@ public class DCServer extends SimplePersistentTask implements IServletCallback, 
 							
 							System.out.println("Message " + i + ": ");
 
-							Client client = new Client(sock.getInetAddress()
-									.getHostAddress(), sock.getLocalPort());
+							Client client = new Client();
+							
+							client.setCurrentIP(sock.getInetAddress().getHostAddress());
+							client.setPort(sock.getLocalPort());
 
 							client.addStringMessage(mMessage);
 

@@ -36,7 +36,7 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 	}
 
 	public DCThread(String id, IThreadPoolCallback callback) {
-		System.out.println("Created thread: " + id);
+//		System.out.println("Created thread: " + id);
 		this.callback = callback;
 		this.threadId = id;
 		this.init();
@@ -74,8 +74,8 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 
 	@Override
 	public void addTask(Task task) {
-		System.out.println("Adding task: " + task.getTaskId() + " to thread: "
-				+ getThreadId());
+//		System.out.println("Adding task: " + task.getTaskId() + " to thread: "
+//				+ getThreadId());
 
 		this.taskList.add(task);
 
@@ -112,11 +112,11 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 		// System.out.println("Thread: " + threadId + " is executing a task");
 
 		setThreadState(THREAD_STATE.RUNNING);
-		 System.out.println("Task list size: " + taskList.size());
+//		 System.out.println("Task list size: " + taskList.size());
 		for (int i = 0; i < taskList.size(); i++) {
 			Task task = taskList.remove(i);
-			System.out.println("Executing task " + task.getTaskId()
-					+ " on thread " + getThreadId());
+//			System.out.println("Executing task " + task.getTaskId()
+//					+ " on thread " + getThreadId());
 
 			task.beginTask(this);
 
@@ -137,7 +137,7 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 
 	@Override
 	public void onFinished() {
-		System.out.println("Thread " + getThreadId() + " finished: ");
+//		System.out.println("Thread " + getThreadId() + " finished: ");
 		callback.onThreadFinished(this);
 	}
 
@@ -208,8 +208,8 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 	@Override
 	public void onTaskFinished(Task task) {
 
-		System.out.println(this.getClass().getSimpleName()
-				+ " on Task Finished HIT");
+//		System.out.println(this.getClass().getSimpleName()
+//				+ " on Task Finished HIT");
 
 		taskList.remove(task);
 

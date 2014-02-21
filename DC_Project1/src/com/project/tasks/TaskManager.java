@@ -69,14 +69,14 @@ public class TaskManager {
 	 * multiple threads.
 	 */
 	private <T extends Task> boolean initTask(final T task) {
-		System.out.println("Initing task: " + task.getTaskId());
+//		System.out.println("Initing task: " + task.getTaskId());
 
 		return ThreadPool.doTask(task);
 	}
 
 	private boolean initPersistentTask(final Task task,
 			final ITaskCallback callback) {
-		System.out.println("Initing persistent task: " + task.getTaskId());
+//		System.out.println("Initing persistent task: " + task.getTaskId());
 
 		return ThreadPool.doTaskPersistent(task);
 	}

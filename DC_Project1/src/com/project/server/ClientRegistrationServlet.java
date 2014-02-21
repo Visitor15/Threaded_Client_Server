@@ -89,9 +89,11 @@ public class ClientRegistrationServlet extends DCServlet {
 						break;
 					}
 
-					Client client = new Client(m_Input, 1337);
+					Client client = new Client();
+					client.setUsername(m_Input);
+					client.setPort(1337);
 
-					System.out.println("Got client: " + client.getId());
+					System.out.println("Got client: " + client.getUsername());
 
 					if (RoutingTable.getInstance().registerClient(client)) {
 						response = "200";
