@@ -67,6 +67,8 @@ public class ServerFinderTask extends SimpleAbstractTask {
 					sendingSocket.send(dataGram);
 				}
 			}
+			
+			sendingSocket.close();
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

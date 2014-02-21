@@ -3,6 +3,7 @@ package com.project.server;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
 
 import com.project.framework.Task;
@@ -55,7 +56,7 @@ public class ServerReceiverServelet extends DCServlet {
 	@Override
 	public void executeTask() {
 		System.out.println("Server is listening");
-		
+
 		try {
 			receivingSocket = new DatagramSocket(LISTENING_PORT);
 
@@ -64,16 +65,19 @@ public class ServerReceiverServelet extends DCServlet {
 
 				/* Blocking receive */
 				receivingSocket.receive(dataGram);
-				
+
 				buffer = dataGram.getData();
-				
+
 				client = Client.fromBytes(dataGram.getData());
-				
-				System.out.println("Server received client: " + client.getUsername());
 
 				if (buffer != null && buffer.length > 0) {
 					client = Client.fromBytes(dataGram.getData());
-					TaskManager.DoTask(new RegisterClientTask(client));
+					if (!client.getHostname().equalsIgnoreCase(
+							InetAddress.getLocalHost().getHostName())) {
+						System.out.println("Server received client: "
+								+ client.getUsername());
+						TaskManager.DoTask(new RegisterClientTask(client));
+					}
 				} else {
 					// Received no data.
 				}
