@@ -14,11 +14,4 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>src_group</name>
-			<type>2</type>
-			<location>E:/Developement/Projects/DCproject/src</location>
-		</link>
-	</linkedResources>
 </projectDescription>

@@ -13,7 +13,7 @@ import com.project.server.router.Server;
 import com.project.tasks.RegisterNodeTask;
 import com.project.tasks.TaskManager;
 
-public class ServerReceiverServelet extends DCServlet {
+public class ServerReceiverServlet extends DCServlet {
 
 	public static final int LISTENING_PORT = 11337;
 
@@ -23,10 +23,6 @@ public class ServerReceiverServelet extends DCServlet {
 
 	private byte[] buffer;
 
-	private Client client;
-
-	private Server server;
-
 	private Node node;
 
 	/**
@@ -34,7 +30,7 @@ public class ServerReceiverServelet extends DCServlet {
 	 */
 	private static final long serialVersionUID = 1288745814717362014L;
 
-	public ServerReceiverServelet(final boolean autoStart,
+	public ServerReceiverServlet(final boolean autoStart,
 			final IServletCallback callback) {
 		super(SERVLET_TYPE.REGISTRATION_SERVLET, autoStart, callback);
 
@@ -71,23 +67,25 @@ public class ServerReceiverServelet extends DCServlet {
 				receivingSocket.receive(dataGram);
 
 				buffer = dataGram.getData();
-				node = Node.fromBytes(dataGram.getData());
+				if (buffer != null || buffer.length > 0) {
+					node = Node.fromBytes(dataGram.getData());
 
-				switch (node.COMMAND) {
-				case REGISTER_NODE: {
-					if (!node.getHostname().equalsIgnoreCase(
-							InetAddress.getLocalHost().getHostName())) {
-						TaskManager.DoTask(new RegisterNodeTask(node));
+					switch (node.COMMAND) {
+					case REGISTER_NODE: {
+						if (!node.getHostname().equalsIgnoreCase(
+								InetAddress.getLocalHost().getHostName())) {
+							TaskManager.DoTask(new RegisterNodeTask(node));
+						}
+						break;
 					}
-					break;
-				}
-				case EXECUTE_TASK: {
-					/* Implement me */
-					break;
-				}
-				default: {
-					break;
-				}
+					case EXECUTE_TASK: {
+						/* Implement me */
+						break;
+					}
+					default: {
+						break;
+					}
+					}
 				}
 			} while (isExecuting());
 

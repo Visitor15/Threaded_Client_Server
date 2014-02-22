@@ -9,7 +9,7 @@ import java.net.UnknownHostException;
 
 import com.project.framework.Task;
 import com.project.server.DCServer;
-import com.project.server.ServerReceiverServelet;
+import com.project.server.ServerReceiverServlet;
 import com.project.server.DCServer.COMMAND_TYPE;
 import com.project.server.router.Client;
 
@@ -43,7 +43,7 @@ public class ServerFinderTask extends SimpleAbstractTask {
 			client = new Client();
 			client.setCurrentIP(InetAddress.getLocalHost().getHostAddress());
 			client.setHostname(InetAddress.getLocalHost().getHostName());
-			client.setPort(ServerReceiverServelet.LISTENING_PORT);
+			client.setPort(ServerReceiverServlet.LISTENING_PORT);
 			client.setUsername("Client " + client.getHostname());
 			
 			client.COMMAND = COMMAND_TYPE.REGISTER_NODE;
@@ -64,7 +64,7 @@ public class ServerFinderTask extends SimpleAbstractTask {
 							+ Integer.toString(j);
 
 					dataGram = new DatagramPacket(buffer, buffer.length);
-					dataGram.setPort(ServerReceiverServelet.LISTENING_PORT);
+					dataGram.setPort(ServerReceiverServlet.LISTENING_PORT);
 					dataGram.setAddress(InetAddress.getByName(builtIP));
 
 					sendingSocket.send(dataGram);

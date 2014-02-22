@@ -92,7 +92,7 @@ public class DCServer extends SimplePersistentTask implements IServletCallback, 
 		
 		
 		
-		m_ServletMap.put(SERVLET_TYPE.CLIENT_RESPONDER_SERVLET, new ServerReceiverServelet(true, this));
+		m_ServletMap.put(SERVLET_TYPE.CLIENT_RESPONDER_SERVLET, new ServerReceiverServlet(true, this));
 		
 		
 		

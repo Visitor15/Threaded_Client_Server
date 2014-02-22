@@ -7,7 +7,7 @@ import java.net.InetAddress;
 import com.project.framework.Task;
 import com.project.server.DCServer;
 import com.project.server.DCServer.COMMAND_TYPE;
-import com.project.server.ServerReceiverServelet;
+import com.project.server.ServerReceiverServlet;
 import com.project.server.SocketManager;
 import com.project.server.router.Client;
 import com.project.server.router.Node;
@@ -63,7 +63,7 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 							.getHostAddress());
 					selfClient.setHostname(InetAddress.getLocalHost()
 							.getHostName());
-					selfClient.setPort(ServerReceiverServelet.LISTENING_PORT);
+					selfClient.setPort(ServerReceiverServlet.LISTENING_PORT);
 					selfClient.setUsername("Client "
 							+ DCServer.getLocalHostname());
 					selfClient.COMMAND = COMMAND_TYPE.REGISTER_NODE;
@@ -90,7 +90,7 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 							.getHostAddress());
 					selfServer.setHostname(InetAddress.getLocalHost()
 							.getHostName());
-					selfServer.setPort(ServerReceiverServelet.LISTENING_PORT);
+					selfServer.setPort(ServerReceiverServlet.LISTENING_PORT);
 					selfServer.setUsername("Server "
 							+ DCServer.getLocalHostname());
 
