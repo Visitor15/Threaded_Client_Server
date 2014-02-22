@@ -23,8 +23,6 @@ public class ServerReceiverServlet extends DCServlet {
 
 	private byte[] buffer;
 
-	private Node node;
-
 	/**
 	 * Serializable
 	 */
@@ -69,7 +67,7 @@ public class ServerReceiverServlet extends DCServlet {
 
 				buffer = dataGram.getData();
 				if (buffer != null || buffer.length > 0) {
-					node = Node.fromBytes(dataGram.getData());
+					Node node = Node.fromBytes(dataGram.getData());
 
 					node.setCurrentIP(dataGram.getAddress().getHostAddress());
 					
@@ -77,10 +75,10 @@ public class ServerReceiverServlet extends DCServlet {
 					
 					switch (node.COMMAND) {
 					case REGISTER_NODE: {
-//						if (!node.getHostname().equalsIgnoreCase(
-//								InetAddress.getLocalHost().getHostName())) {
+						if (!node.getHostname().equalsIgnoreCase(
+								InetAddress.getLocalHost().getHostName())) {
 							TaskManager.DoTask(new RegisterNodeTask(node));
-//						}
+						}
 						break;
 					}
 					case EXECUTE_TASK: {
