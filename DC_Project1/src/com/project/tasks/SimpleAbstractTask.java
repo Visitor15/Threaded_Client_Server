@@ -6,6 +6,8 @@ public abstract class SimpleAbstractTask implements Task {
 
 	protected ITaskCallback m_Callback;
 
+	private ITaskCallback m_ThreadCallback;
+
 	public boolean isRunning = false;
 
 	private String taskId = "";
@@ -24,7 +26,7 @@ public abstract class SimpleAbstractTask implements Task {
 	public SimpleAbstractTask(final ITaskCallback callback) {
 		m_Callback = callback;
 	}
-	
+
 	public SimpleAbstractTask(final ITaskCallback callback, final String id) {
 		m_Callback = callback;
 		taskId = id;
@@ -35,15 +37,20 @@ public abstract class SimpleAbstractTask implements Task {
 	}
 
 	@Override
-	public void beginTask(ITaskCallback callback) {
-//		synchronized (this) {
-			m_Callback = callback;
+	public void beginTask(ITaskCallback threadCallback) {
+		// synchronized (this) {
+		m_ThreadCallback = threadCallback;
+
+		if (m_Callback != null) {
 			m_Callback.onTaskStart(this);
-			if (!isExecuting()) {
-				isRunning = true;
-				executeTask();
-			}
-//		}
+		}
+
+		m_ThreadCallback.onTaskStart(this);
+		if (!isExecuting()) {
+			isRunning = true;
+			executeTask();
+		}
+		// }
 	}
 
 	@Override
@@ -69,13 +76,18 @@ public abstract class SimpleAbstractTask implements Task {
 		 */
 		isRunning = false;
 		onFinished();
-		m_Callback.onTaskFinished(this);
+
+		if (m_Callback != null) {
+			m_Callback.onTaskFinished(this);
+		}
+		m_ThreadCallback.onTaskFinished(this);
 		// onFinished();
 	}
 
 	@Override
 	public void stopAtomicTask() {
 		m_Callback.onTaskFinished(this);
+		m_ThreadCallback.onTaskFinished(this);
 		onFinished();
 	}
 
