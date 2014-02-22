@@ -133,8 +133,8 @@ public class ServerDiscoveryServlet extends DCServlet {
 								serverData.indexOf("|") + 5);
 
 						System.out.println("Discovered server: " + hostName);
-						registerServer(new Server(serverAddress, hostName,
-								Integer.parseInt(serverPort)));
+//						registerServer(new Server(serverAddress, hostName,
+//								Integer.parseInt(serverPort)));
 
 					} catch (SocketTimeoutException e) {
 
@@ -220,8 +220,8 @@ public class ServerDiscoveryServlet extends DCServlet {
 			return false;
 		}
 
-		System.out.println("Found server: " + server.getHostname() + ":"
-				+ server.getPort());
+//		System.out.println("Found server: " + server.getHostname() + ":"
+//				+ server.getPort());
 
 		return true;
 	}

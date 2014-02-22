@@ -8,7 +8,9 @@ import java.net.SocketException;
 
 import com.project.framework.Task;
 import com.project.server.router.Client;
-import com.project.tasks.RegisterClientTask;
+import com.project.server.router.Node;
+import com.project.server.router.Server;
+import com.project.tasks.RegisterNodeTask;
 import com.project.tasks.TaskManager;
 
 public class ServerReceiverServelet extends DCServlet {
@@ -22,6 +24,10 @@ public class ServerReceiverServelet extends DCServlet {
 	private byte[] buffer;
 
 	private Client client;
+
+	private Server server;
+
+	private Node node;
 
 	/**
 	 * Serializable
@@ -56,10 +62,8 @@ public class ServerReceiverServelet extends DCServlet {
 	@Override
 	public void executeTask() {
 		System.out.println("Server is listening");
-
 		try {
 			receivingSocket = new DatagramSocket(LISTENING_PORT);
-
 			do {
 				dataGram = new DatagramPacket(new byte[512], 512);
 
@@ -67,47 +71,44 @@ public class ServerReceiverServelet extends DCServlet {
 				receivingSocket.receive(dataGram);
 
 				buffer = dataGram.getData();
+				node = Node.fromBytes(dataGram.getData());
 
-				client = Client.fromBytes(dataGram.getData());
-
-				if (buffer != null && buffer.length > 0) {
-					client = Client.fromBytes(dataGram.getData());
-					if (!client.getHostname().equalsIgnoreCase(
+				switch (node.COMMAND) {
+				case REGISTER_NODE: {
+					if (!node.getHostname().equalsIgnoreCase(
 							InetAddress.getLocalHost().getHostName())) {
-						System.out.println("Server received client: "
-								+ client.getUsername());
-						TaskManager.DoTask(new RegisterClientTask(client));
+						TaskManager.DoTask(new RegisterNodeTask(node));
 					}
-				} else {
-					// Received no data.
+					break;
 				}
-
+				case EXECUTE_TASK: {
+					/* Implement me */
+					break;
+				}
+				default: {
+					break;
+				}
+				}
 			} while (isExecuting());
 
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	@Override
 	public void onProgressUpdate() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public byte[] toBytes() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Task fromBytes(byte[] byteArray) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

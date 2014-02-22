@@ -5,6 +5,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
+import com.project.tasks.ThreadHelper;
+
 public class SocketManager {
 	
 	private static SocketManager instance;
@@ -14,6 +16,7 @@ public class SocketManager {
 	private SocketManager() {
 		try {
 			datagramSendSocket = new DatagramSocket(6868);
+			datagramSendSocket.setBroadcast(true);
 			instance = this;
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
@@ -32,6 +35,7 @@ public class SocketManager {
 	public synchronized boolean sendDatagram(final DatagramPacket dataGram) {
 		try {
 			datagramSendSocket.send(dataGram);
+			ThreadHelper.sleepThread(100);
 		} catch (IOException e) {
 			return false;
 		}

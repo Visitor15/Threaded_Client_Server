@@ -52,7 +52,7 @@ public class Main {
 			
 		});
 		
-		ThreadHelper.sleepThread(5000);
+		ThreadHelper.sleepThread(2000);
 		
 		System.out.println("Beginning other tasks.");
 		

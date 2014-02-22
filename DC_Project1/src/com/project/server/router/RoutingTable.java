@@ -16,6 +16,7 @@ public class RoutingTable implements ITaskCallback {
 
 	private RoutingTable() {
 		m_ClientMap = new HashMap<String, Client>();
+		m_ServerMap = new HashMap<String, Server>();
 		m_Instance = this;
 	}
 
@@ -40,7 +41,7 @@ public class RoutingTable implements ITaskCallback {
 	}
 
 	public boolean registerServer(final Server s) {
-		if (!m_ServerMap.containsKey(s.getIP())) {
+		if (!m_ServerMap.containsKey(s.getCurrentIP())) {
 
 			m_ServerMap.put(s.getHostname(), s);
 
