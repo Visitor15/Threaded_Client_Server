@@ -30,6 +30,8 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 	private String threadId;
 
 	private IThreadPoolCallback callback;
+	
+	private ITaskCallback taskCallback;
 
 	public DCThread() {
 		this.init();
@@ -118,6 +120,7 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 //			System.out.println("Executing task " + task.getTaskId()
 //					+ " on thread " + getThreadId());
 
+			taskCallback = task.getTaskCallback();
 			task.beginTask(this);
 
 			do {

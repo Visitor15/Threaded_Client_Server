@@ -77,10 +77,11 @@ public abstract class SimpleAbstractTask implements Task {
 		isRunning = false;
 		onFinished();
 
+		m_ThreadCallback.onTaskFinished(this);
 		if (m_Callback != null) {
 			m_Callback.onTaskFinished(this);
 		}
-		m_ThreadCallback.onTaskFinished(this);
+
 		// onFinished();
 	}
 
@@ -111,7 +112,7 @@ public abstract class SimpleAbstractTask implements Task {
 		stringData = data;
 	}
 
-	// public ITaskCallback getTaskCallback() {
-	// return m_Callback;
-	// }
+	public ITaskCallback getTaskCallback() {
+		return m_Callback;
+	}
 }

@@ -30,6 +30,8 @@ public interface Task extends Serializable {
 	
 	public void onFinished();
 	
+	public ITaskCallback getTaskCallback();
+	
 	public byte[] toBytes();
 	
 	public Task fromBytes(final byte[] byteArray);
