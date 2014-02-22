@@ -8,6 +8,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import com.project.framework.Task;
+import com.project.io.SynchedInOut;
 import com.project.server.DCServer;
 import com.project.server.ServerReceiverServlet;
 import com.project.server.DCServer.COMMAND_TYPE;
@@ -81,6 +82,12 @@ public class ServerFinderTask extends SimpleAbstractTask {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		
+		String userInput = SynchedInOut.getInstance().postMessageForUserInput("Network scan finished. Scan again? (y/n): ");
+		
+		if(userInput.equalsIgnoreCase("y")) {
+			executeTask();
 		}
 		
 		stopTask();

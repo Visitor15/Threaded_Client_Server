@@ -52,27 +52,11 @@ public class DCServer extends SimplePersistentTask implements IServletCallback, 
 	public DCServer() {
 		setTaskId("DCServer Task");
 		m_ServletMap = new HashMap<SERVLET_TYPE, DCServlet>();
-
-//		mInstance = this;
 	}
 
-//	public static synchronized DCServer startServer() {
-//		if (mInstance == null) {
-//			new DCServer(false);
-//			
-//			RoutingTable.getInstance();
-//		}
-//
-//		return mInstance;
-//	}
-
 	public void start() {
+		/* This is blocking until it succeeds or fails */
 		tryFindDefaultGateway();
-		
-		
-//		TaskManager.DO_TASK(new SendNetworkFileTask());
-		
-		
 		registerDefaultServlets();
 
 //		testCode();
@@ -89,30 +73,7 @@ public class DCServer extends SimplePersistentTask implements IServletCallback, 
 	}
 
 	public void registerDefaultServlets() {
-		
-		
-		
 		m_ServletMap.put(SERVLET_TYPE.CLIENT_RESPONDER_SERVLET, new ServerReceiverServlet(true, this));
-		
-		
-		
-		
-		
-		
-		
-//		m_ServletMap.put(SERVLET_TYPE.REGISTRATION_SERVLET,
-//				new ClientRegistrationServlet(true, this));
-//		m_ServletMap.put(SERVLET_TYPE.CLIENT_RESPONDER_SERVLET, new ServerIdentifierServlet(true, this));
-//		m_ServletMap.put(SERVLET_TYPE.SERVER_DISCOVERY_SERVLET, new ServerDiscoveryServlet(true, this));
-		
-//		TaskManager.DoTask(new PostRemoteMessageTask("visitor15"));
-		
-//		TaskManager.DO_TASK(new ReceiveRemoteMessagesTask());
-		
-		// m_ServletMap.put(SERVLET_TYPE.CLIENT_RESPONDER_SERVLET,
-		// new ClientResponderServlet(true, this));
-
-		// m_ServletMap.get(SERVLET_TYPE.REGISTRATION_SERVLET).startServlet();
 	}
 
 	private void beginServing() {

@@ -70,6 +70,8 @@ public class ServerReceiverServlet extends DCServlet {
 				if (buffer != null || buffer.length > 0) {
 					node = Node.fromBytes(dataGram.getData());
 
+					System.out.println("Got node: " + node.getHostname());
+					
 					switch (node.COMMAND) {
 					case REGISTER_NODE: {
 						if (!node.getHostname().equalsIgnoreCase(
