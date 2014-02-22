@@ -214,10 +214,8 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 //		System.out.println(this.getClass().getSimpleName()
 //				+ " on Task Finished HIT");
 
-		taskList.remove(task);
-
+		setThreadState(THREAD_STATE.FINISHED);
 		if (taskList.size() == 0) {
-			setThreadState(THREAD_STATE.FINISHED);
 			onFinished();
 		} else {
 			setThreadState(THREAD_STATE.READY_FOR_NEXT_TASK);

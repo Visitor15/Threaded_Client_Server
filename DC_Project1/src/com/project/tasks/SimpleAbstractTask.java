@@ -41,9 +41,9 @@ public abstract class SimpleAbstractTask implements Task {
 		// synchronized (this) {
 		m_ThreadCallback = threadCallback;
 
-		if (m_Callback != null) {
-			m_Callback.onTaskStart(this);
-		}
+//		if (m_Callback != null) {
+//			m_Callback.onTaskStart(this);
+//		}
 
 		m_ThreadCallback.onTaskStart(this);
 		if (!isExecuting()) {
@@ -78,16 +78,16 @@ public abstract class SimpleAbstractTask implements Task {
 		onFinished();
 
 		m_ThreadCallback.onTaskFinished(this);
-		if (m_Callback != null) {
-			m_Callback.onTaskFinished(this);
-		}
+//		if (m_Callback != null) {
+//			m_Callback.onTaskFinished(this);
+//		}
 
 		// onFinished();
 	}
 
 	@Override
 	public void stopAtomicTask() {
-		m_Callback.onTaskFinished(this);
+//		m_Callback.onTaskFinished(this);
 		m_ThreadCallback.onTaskFinished(this);
 		onFinished();
 	}
