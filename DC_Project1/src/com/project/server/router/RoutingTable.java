@@ -48,7 +48,7 @@ public class RoutingTable implements ITaskCallback {
 			return true;
 		}
 
-		return false;
+		return true;
 	}
 
 	@Override

@@ -133,7 +133,7 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 
 	@Override
 	public void onFinished() {
-
+//		System.out.println("Node registered*");
 	}
 
 	@Override

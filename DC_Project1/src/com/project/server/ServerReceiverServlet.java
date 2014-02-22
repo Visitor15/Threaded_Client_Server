@@ -61,6 +61,7 @@ public class ServerReceiverServlet extends DCServlet {
 		try {
 			receivingSocket = new DatagramSocket(LISTENING_PORT);
 			do {
+//				System.out.println(("Server listening..."));
 				dataGram = new DatagramPacket(new byte[512], 512);
 
 				/* Blocking receive */
@@ -70,14 +71,16 @@ public class ServerReceiverServlet extends DCServlet {
 				if (buffer != null || buffer.length > 0) {
 					node = Node.fromBytes(dataGram.getData());
 
-					System.out.println("Got node: " + node.getHostname());
+					node.setCurrentIP(dataGram.getAddress().getHostAddress());
+					
+//					System.out.println("Got node: " + node.getHostname());
 					
 					switch (node.COMMAND) {
 					case REGISTER_NODE: {
-						if (!node.getHostname().equalsIgnoreCase(
-								InetAddress.getLocalHost().getHostName())) {
+//						if (!node.getHostname().equalsIgnoreCase(
+//								InetAddress.getLocalHost().getHostName())) {
 							TaskManager.DoTask(new RegisterNodeTask(node));
-						}
+//						}
 						break;
 					}
 					case EXECUTE_TASK: {
