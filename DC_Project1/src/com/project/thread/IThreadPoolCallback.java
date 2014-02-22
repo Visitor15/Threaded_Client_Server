@@ -4,7 +4,7 @@ import com.project.framework.Task;
 
 public interface IThreadPoolCallback {
 
-	public void onThreadFinished(IDCThread thread);
+	public void onThreadFinished(DCThread thread);
 	
 	public Task getNextTask();
 	

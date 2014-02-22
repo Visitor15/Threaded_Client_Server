@@ -25,12 +25,12 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 
 	private boolean atomicOperationInProgress;
 
-	private ArrayList<Task> taskList = new ArrayList<Task>();
+	private ArrayList<Task> taskList;
 
 	private String threadId;
 
 	private IThreadPoolCallback callback;
-	
+
 	private ITaskCallback taskCallback;
 
 	public DCThread() {
@@ -38,22 +38,25 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 	}
 
 	public DCThread(String id, IThreadPoolCallback callback) {
-//		System.out.println("Created thread: " + id);
+		// System.out.println("Created thread: " + id);
 		this.callback = callback;
 		this.threadId = id;
 		this.init();
 	}
 
 	public DCThread(T task) {
+		this.init();
 		this.taskList.add(task);
 	}
 
 	public DCThread(String id, T task) {
+		this.init();
 		this.threadId = id;
 		this.taskList.add(task);
 	}
 
 	public DCThread(List<T> taskList, IThreadPoolCallback callback) {
+		this.init();
 		this.callback = callback;
 		this.taskList.addAll(taskList);
 	}
@@ -76,8 +79,9 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 
 	@Override
 	public void addTask(Task task) {
-//		System.out.println("Adding task: " + task.getTaskId() + " to thread: "
-//				+ getThreadId());
+		// System.out.println("Adding task: " + task.getTaskId() +
+		// " to thread: "
+		// + getThreadId());
 
 		this.taskList.add(task);
 
@@ -105,7 +109,7 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 			executeCurrentTasks();
 		}
 
-//		idleThread();
+		// idleThread();
 	}
 
 	@Override
@@ -114,11 +118,11 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 		// System.out.println("Thread: " + threadId + " is executing a task");
 
 		setThreadState(THREAD_STATE.RUNNING);
-//		 System.out.println("Task list size: " + taskList.size());
+		// System.out.println("Task list size: " + taskList.size());
 		for (int i = 0; i < taskList.size(); i++) {
 			Task task = taskList.remove(i);
-//			System.out.println("Executing task " + task.getTaskId()
-//					+ " on thread " + getThreadId());
+			// System.out.println("Executing task " + task.getTaskId()
+			// + " on thread " + getThreadId());
 
 			taskCallback = task.getTaskCallback();
 			task.beginTask(this);
@@ -127,7 +131,8 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 				if (getThreadState() == THREAD_STATE.FINISHED) {
 					stopThread();
 				}
-			} while (getThreadState() != THREAD_STATE.READY_FOR_NEXT_TASK || getThreadState() != THREAD_STATE.FINISHED);
+			} while (getThreadState() != THREAD_STATE.READY_FOR_NEXT_TASK
+					|| getThreadState() != THREAD_STATE.FINISHED);
 		}
 
 	}
@@ -140,7 +145,7 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 
 	@Override
 	public void onFinished() {
-//		System.out.println("Thread " + getThreadId() + " finished: ");
+		 System.out.println("Thread " + getThreadId() + " finished: ");
 		callback.onThreadFinished(this);
 	}
 
@@ -159,27 +164,27 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 		this.onFinished();
 	}
 
-//	@Override
-//	public void idleThread() {
-//		setThreadState(THREAD_STATE.FREE);
-//		do {
-//
-//			// System.out.println("Task list size (Thread: " + getThreadId() +
-//			// "): " + taskList.size());
-//			synchronized (this) {
-//				if (taskList.size() > 0) {
-//					System.out.println("Thread " + getThreadId()
-//							+ " Found tasks to execute.");
-//					executeCurrentTasks();
-//
-//				}
-//			}
-//
-//			System.out.println("Thread " + getThreadId() + " sleeping.");
-//			ThreadHelper.sleepThread(3000);
-//
-//		} while (getThreadState() == THREAD_STATE.FREE);
-//	}
+	// @Override
+	// public void idleThread() {
+	// setThreadState(THREAD_STATE.FREE);
+	// do {
+	//
+	// // System.out.println("Task list size (Thread: " + getThreadId() +
+	// // "): " + taskList.size());
+	// synchronized (this) {
+	// if (taskList.size() > 0) {
+	// System.out.println("Thread " + getThreadId()
+	// + " Found tasks to execute.");
+	// executeCurrentTasks();
+	//
+	// }
+	// }
+	//
+	// System.out.println("Thread " + getThreadId() + " sleeping.");
+	// ThreadHelper.sleepThread(3000);
+	//
+	// } while (getThreadState() == THREAD_STATE.FREE);
+	// }
 
 	@Override
 	public void setThreadState(THREAD_STATE state) {
@@ -211,8 +216,7 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 	@Override
 	public void onTaskFinished(Task task) {
 
-//		System.out.println(this.getClass().getSimpleName()
-//				+ " on Task Finished HIT");
+		System.out.println(task.getTaskId() + " on Task Finished HIT");
 
 		setThreadState(THREAD_STATE.FINISHED);
 		if (taskList.size() == 0) {

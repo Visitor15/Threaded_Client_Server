@@ -98,35 +98,31 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback,
 		if (this.m_TaskQueue.size() > 0) {
 
 			for (int i = 0; i < this.m_Threads.size(); i++) {
+				DCThread thread = this.m_Threads.get(i);
+				// System.out.println("Got thread: " + thread.getThreadId());
+				if (thread.getThreadState() == THREAD_STATE.FREE) {
+					// System.out.println("HIT3");
+					try {
+						Task mTask = getNextTask();
 
-				// System.out.println("HIT2");
-				synchronized (this) {
-					DCThread thread = this.m_Threads.get(i);
-//					System.out.println("Got thread: " + thread.getThreadId());
-					if (thread.getThreadState() == THREAD_STATE.FREE) {
-						// System.out.println("HIT3");
-						try {
-							Task mTask = getNextTask();
-
-							if (mTask == null) {
-								// System.out.println("No tasks in task queue.");
-								return;
-							}
-
-							// System.out.println("Giving task "
-							// + mTask.getTaskId() + " to thread "
-							// + thread.getThreadId());
-
-							thread.addTask(mTask);
-
-							thread.startThread(false);
-							// thread.startThread(false);
-						} catch (final NullPointerException e) {
-
+						if (mTask == null) {
+							// System.out.println("No tasks in task queue.");
+							return;
 						}
-					} else {
-						// System.out.println("Bing Bong");
+
+						 System.out.println("Giving task "
+						 + mTask.getTaskId() + " to thread "
+						 + thread.getThreadId());
+
+						thread.addTask(mTask);
+
+						thread.startThread(false);
+						// thread.startThread(false);
+					} catch (final NullPointerException e) {
+
 					}
+				} else {
+					// System.out.println("Bing Bong");
 				}
 			}
 		}
@@ -213,16 +209,19 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback,
 	}
 
 	@Override
-	public void onThreadFinished(IDCThread thread) {
+	public void onThreadFinished(DCThread thread) {
 		thread.setThreadState(THREAD_STATE.FREE);
 
-//		System.out.println("THREAD FINISHED: ");
+		// System.out.println("THREAD FINISHED: ");
 
 		if (this.m_Threads.contains(thread)) {
-//			System.out.println("THREAD REMOVED: ");
+			// System.out.println("THREAD REMOVED: ");
 			m_Threads.remove(thread);
+			thread.interrupt();
+			thread = null;
 
-			m_Threads.add(new DCThread<T>("New thread " + m_Threads.size(), this));
+			m_Threads.add(new DCThread<T>("New thread " + m_Threads.size(),
+					this));
 		}
 
 		// try {
