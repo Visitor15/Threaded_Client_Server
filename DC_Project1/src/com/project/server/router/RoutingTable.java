@@ -1,11 +1,10 @@
 package com.project.server.router;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import com.project.framework.Task;
-import com.project.tasks.FindDefaultGatewayTask;
 import com.project.tasks.ITaskCallback;
-import com.project.tasks.TaskManager;
 
 public class RoutingTable implements ITaskCallback {
 
@@ -49,6 +48,34 @@ public class RoutingTable implements ITaskCallback {
 		}
 
 		return true;
+	}
+	
+	public Client getClientAtIndex(final int pos) {
+		Set<String> keys = m_ClientMap.keySet();
+		
+		int count = 0;
+		for(String s : keys) {
+			if(count == pos) {
+				return m_ClientMap.get(s);
+			}
+			count++;
+		}
+		
+		return null;
+	}
+	
+	public Server getServerAtIndex(final int pos) {
+		Set<String> keys = m_ServerMap.keySet();
+		
+		int count = 0;
+		for(String s : keys) {
+			if(count == pos) {
+				return m_ServerMap.get(s);
+			}
+			count++;
+		}
+		
+		return null;
 	}
 
 	@Override

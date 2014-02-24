@@ -1,5 +1,7 @@
 package com.project.ui;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -9,6 +11,7 @@ import javax.swing.JPanel;
 
 import com.project.framework.Task;
 import com.project.server.DCServer;
+import com.project.server.router.RoutingTable;
 import com.project.tasks.ITaskCallback;
 import com.project.tasks.ServerFinderTask;
 import com.project.tasks.TaskManager;
@@ -25,6 +28,9 @@ public class MainWindow extends JFrame implements ITaskCallback {
 		this.setTitle("Synchronizer");
 		this.setSize(java.awt.Toolkit.getDefaultToolkit().getScreenSize());
 		
+		this.setLayout(new BorderLayout());
+		
+		
 		serverPanel = new JPanel();
 		clientPanel = new JPanel();
 		pingServerBtn = new JButton("Ping Server");
@@ -40,8 +46,10 @@ public class MainWindow extends JFrame implements ITaskCallback {
 	}
 	
 	private void initMainComponents() {
-		serverPanel.add(pingClientBtn);
-		clientPanel.add(pingServerBtn);
+		serverPanel.setSize(this.getWidth() / 2, this.getHeight());
+		clientPanel.setSize(this.getWidth() / 2, this.getHeight());
+		serverPanel.add(pingClientBtn, BorderLayout.WEST);
+		clientPanel.add(pingServerBtn, BorderLayout.EAST);
 		this.add(serverPanel);
 		this.add(clientPanel);
 		serverPanel.setVisible(true);
@@ -85,6 +93,7 @@ public class MainWindow extends JFrame implements ITaskCallback {
 
 	@Override
 	public void onTaskStart(Task task) {
+		pingClientBtn.setText("...");
 		pingServerBtn.setText("Pinging...");
 	}
 
@@ -103,5 +112,6 @@ public class MainWindow extends JFrame implements ITaskCallback {
 	@Override
 	public void onTaskFinished(Task task) {
 		pingServerBtn.setText("Ping finished - " + task.getTaskId());
+		pingClientBtn.setText(RoutingTable.getInstance().getServerAtIndex(0).getHostname());
 	}
 }
