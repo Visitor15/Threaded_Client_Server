@@ -222,7 +222,9 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 
 		System.out.println(task.getTaskId() + " on Task Finished HIT");
 		task.setTaskCallback(taskCallback);
-		taskCallback.onTaskFinished(task);
+		if (taskCallback != null) {
+			taskCallback.onTaskFinished(task);
+		}
 
 		setThreadState(THREAD_STATE.FINISHED);
 		if (taskList.size() == 0) {
