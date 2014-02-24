@@ -34,6 +34,12 @@ public class ServerFinderTask extends SimpleAbstractTask {
 	public ServerFinderTask() {
 
 	}
+	
+	public ServerFinderTask(final ITaskCallback callback) {
+		super(callback);
+		
+		setTaskId("ServerFinderTask");
+	}
 
 	@Override
 	public void executeTask() {
@@ -84,11 +90,11 @@ public class ServerFinderTask extends SimpleAbstractTask {
 			e.printStackTrace();
 		}
 		
-		String userInput = SynchedInOut.getInstance().postMessageForUserInput("Network scan finished. Scan again? (y/n): ");
-		
-		if(userInput.equalsIgnoreCase("y")) {
-			executeTask();
-		}
+//		String userInput = SynchedInOut.getInstance().postMessageForUserInput("Network scan finished. Scan again? (y/n): ");
+//		
+//		if(userInput.equalsIgnoreCase("y")) {
+//			executeTask();
+//		}
 		
 		stopTask();
 	}

@@ -67,24 +67,27 @@ public class FindDefaultGatewayTask extends SimpleAbstractTask {
 
 		String gateway = "NULL";
 		String decidedDNS = "NULL";
+		String data = null;
 
 		BufferedReader output;
 
 		boolean hasRouteTable = false;
-		
+
 		DCServer.setLocalHostname(InetAddress.getLocalHost().getHostName());
 		DCServer.setCurrentIP(InetAddress.getLocalHost().getHostAddress());
-		
+
 		try {
+			data = null;
 			System.out.println("Executing traceroute");
 			result = Runtime.getRuntime()
 					.exec("traceroute -m 1 www.google.com");
 			output = new BufferedReader(new InputStreamReader(
 					result.getInputStream()));
-			while (output.readLine() != null) {
-				String tmp = output.readLine();
-				System.out.println("OUTPUT: " + tmp);
-				String splitData[] = tmp.split("\\s+");
+
+			do {
+				data = output.readLine();
+				System.out.println("OUTPUT: " + data);
+				String splitData[] = data.split("\\s+");
 				if (splitData.length > 2) {
 					decidedDNS = splitData[2];
 					if (!decidedDNS.equalsIgnoreCase("On-link")) {
@@ -92,33 +95,79 @@ public class FindDefaultGatewayTask extends SimpleAbstractTask {
 						break;
 					}
 				}
-			}
+			} while (data != null);
+
+			// while (output.readLine() != null) {
+			// String tmp = output.readLine();
+			// System.out.println("OUTPUT: " + tmp);
+			// String splitData[] = tmp.split("\\s+");
+			// if (splitData.length > 2) {
+			// decidedDNS = splitData[2];
+			// if (!decidedDNS.equalsIgnoreCase("On-link")) {
+			// System.out.println("Found DNS: " + decidedDNS);
+			// break;
+			// }
+			// }
+			// }
 			this.stringData = decidedDNS;
 		} catch (IOException e) {
 			try {
-				result = Runtime.getRuntime().exec("netstat -rn");
-				output = new BufferedReader(new InputStreamReader(
-						result.getInputStream()));
-//				String tmp = output.readLine();
-				while (output.readLine() != null) {
-					String tmp = output.readLine();
-					if (tmp.equalsIgnoreCase("IPv4 Route Table")) {
-						hasRouteTable = true;
-					} else if (tmp.contains("========")) {
-						hasRouteTable = false;
-					}
-					if (hasRouteTable) {
-						String splitData[] = tmp.split("\\s+");
-						decidedDNS = "NULL";
-						if (splitData.length > 3) {
-							decidedDNS = splitData[3];
-							if (!decidedDNS.equalsIgnoreCase("On-link")) {
-								System.out.println("Found DNS: " + decidedDNS);
-								break;
+				data = null;
+				
+				ProcessBuilder procBuilder = new ProcessBuilder("netstat", "-rn");
+				
+				Process proc = procBuilder.start();
+				
+				output = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+				
+//				result = Runtime.getRuntime().exec("netstat -rn");
+//				output = new BufferedReader(new InputStreamReader(
+//						result.getInputStream()));
+				// String tmp = output.readLine();
+
+				do {
+					data = output.readLine();
+					if (data != null) {
+						if (data.equalsIgnoreCase("IPv4 Route Table")) {
+							hasRouteTable = true;
+						} else if (data.contains("========")) {
+							hasRouteTable = false;
+						}
+						if (hasRouteTable) {
+							String splitData[] = data.split("\\s+");
+							decidedDNS = "192.168.0.0";
+							if (splitData.length > 3) {
+								decidedDNS = splitData[3];
+								if (!decidedDNS.equalsIgnoreCase("On-link")) {
+									System.out.println("Found DNS: "
+											+ decidedDNS);
+									break;
+								}
 							}
 						}
 					}
-				}
+
+				} while (data != null);
+
+				// while (output.readLine() != null) {
+				// String tmp = output.readLine();
+				// if (tmp.equalsIgnoreCase("IPv4 Route Table")) {
+				// hasRouteTable = true;
+				// } else if (tmp.contains("========")) {
+				// hasRouteTable = false;
+				// }
+				// if (hasRouteTable) {
+				// String splitData[] = tmp.split("\\s+");
+				// decidedDNS = "NULL";
+				// if (splitData.length > 3) {
+				// decidedDNS = splitData[3];
+				// if (!decidedDNS.equalsIgnoreCase("On-link")) {
+				// System.out.println("Found DNS: " + decidedDNS);
+				// break;
+				// }
+				// }
+				// }
+				// }
 				this.stringData = decidedDNS;
 			} catch (IOException e1) {
 				e1.printStackTrace();

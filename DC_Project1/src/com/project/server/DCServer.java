@@ -29,7 +29,7 @@ public class DCServer extends SimplePersistentTask implements IServletCallback, 
 
 	private static HashMap<SERVLET_TYPE, DCServlet> m_ServletMap;
 	
-	private static String DEFAULT_GATEWAY = "NULL";
+	private static String DEFAULT_GATEWAY = "192.168.0.0";
 	
 	private static String LOCAL_HOSTNAME = "NULL";
 	

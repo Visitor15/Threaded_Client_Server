@@ -8,6 +8,7 @@ import com.project.tasks.ServerFinderTask;
 import com.project.tasks.SimpleAbstractTask;
 import com.project.tasks.TaskManager;
 import com.project.tasks.ThreadHelper;
+import com.project.ui.MainWindow;
 
 /**
  * Created by Alex on 1/15/14.
@@ -24,39 +25,42 @@ import com.project.tasks.ThreadHelper;
 public class Main {
 
 	public static final void main(String[] args) {
-		TaskManager.DoPersistentTask(new DCServer(), new ITaskCallback() {
-
-			@Override
-			public void onTaskStart(Task task) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onAtomicTaskStart(Task task) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onTaskProgress(Task task) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onTaskFinished(Task task) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-		});
 		
-		ThreadHelper.sleepThread(2000);
+		MainWindow mainUI = new MainWindow();
 		
-		System.out.println("Beginning other tasks.");
+//		TaskManager.DoPersistentTask(new DCServer(), new ITaskCallback() {
+//
+//			@Override
+//			public void onTaskStart(Task task) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//
+//			@Override
+//			public void onAtomicTaskStart(Task task) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//
+//			@Override
+//			public void onTaskProgress(Task task) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//
+//			@Override
+//			public void onTaskFinished(Task task) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//			
+//		});
 		
-		TaskManager.DoTask(new ServerFinderTask());
+//		ThreadHelper.sleepThread(2000);
+		
+//		System.out.println("Beginning other tasks.");
+		
+//		TaskManager.DoTask(new ServerFinderTask());
 		
 //		doTests();
 	}

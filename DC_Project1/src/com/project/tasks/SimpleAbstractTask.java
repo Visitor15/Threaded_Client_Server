@@ -114,4 +114,8 @@ public abstract class SimpleAbstractTask implements Task {
 	public ITaskCallback getTaskCallback() {
 		return m_Callback;
 	}
+	
+	public void setTaskCallback(final ITaskCallback callback) {
+		this.m_Callback = callback;
+	}
 }
