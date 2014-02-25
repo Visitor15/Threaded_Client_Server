@@ -110,25 +110,25 @@ public class ServerReceiverServlet extends DCServlet {
 						break;
 					}
 					case SEND_STRING_MESSAGE: {
-						TaskManager.DoTask(new ReceiveRemoteMessagesTask());
+						TaskManager.DoTask(new ReceiveRemoteMessagesTask(node));
 						
-						Server selfServer = new Server();
-						selfServer.setCurrentIP(InetAddress.getLocalHost()
-								.getHostAddress());
-						selfServer.setHostname(InetAddress.getLocalHost()
-								.getHostName());
-						selfServer.setPort(ServerReceiverServlet.LISTENING_PORT);
-						selfServer.setUsername("Server "
-								+ DCServer.getLocalHostname());
-						
-						buffer = selfServer.toBytes();
-						
-						dataGram = new DatagramPacket(buffer, buffer.length);
-						dataGram.setPort(node.getCurrentPort());
-						dataGram.setAddress(InetAddress.getByName(node
-								.getCurrentIP()));
-						
-						receivingSocket.send(dataGram);
+//						Server selfServer = new Server();
+//						selfServer.setCurrentIP(InetAddress.getLocalHost()
+//								.getHostAddress());
+//						selfServer.setHostname(InetAddress.getLocalHost()
+//								.getHostName());
+//						selfServer.setPort(ServerReceiverServlet.LISTENING_PORT);
+//						selfServer.setUsername("Server "
+//								+ DCServer.getLocalHostname());
+//						
+//						buffer = selfServer.toBytes();
+//						
+//						dataGram = new DatagramPacket(buffer, buffer.length);
+//						dataGram.setPort(node.getCurrentPort());
+//						dataGram.setAddress(InetAddress.getByName(node
+//								.getCurrentIP()));
+//						
+//						receivingSocket.send(dataGram);
 						
 						break;
 					}

@@ -85,6 +85,8 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 			dataGram = new DatagramPacket(buffer, buffer.length);
 			dataGram.setPort(clientNode.getCurrentPort());
 			dataGram.setAddress(InetAddress.getByName(clientNode.getCurrentIP()));
+			
+			System.out.println("Datagram: PORT: " + clientNode.getCurrentPort() + " IP: " + clientNode.getCurrentIP());
 
 			datagramSocket.send(dataGram);
 			
@@ -136,6 +138,8 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 
 			try {
 				is.read(buf);
+				String mMessage = new String(buf);
+				System.out.println("Got message: " + mMessage);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -158,13 +162,13 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 				// bos.close();
 				// is.close();
 
-				buf = new byte[bufferSize];
+//				buf = new byte[bufferSize];
 
-				objIn.read(buf);
+//				objIn.read(buf);
 
-				task = (PostMessageTask) PostMessageTask.fromNewBytes(buf);
+//				task = (PostMessageTask) PostMessageTask.fromNewBytes(buf);
 
-				TaskManager.DoTask(task);
+//				TaskManager.DoTask(task);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

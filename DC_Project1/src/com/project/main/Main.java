@@ -226,6 +226,7 @@ public class Main {
     	}
     	else {
     		//RoutingTable
+    		TaskManager.DoTask(new ServerReceiverServlet());
     		TaskManager.DoTask(new RoutingTableServlet());
     	}
     }

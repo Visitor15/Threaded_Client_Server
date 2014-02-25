@@ -78,6 +78,8 @@ public class RoutingTableServlet extends DCServlet {
 
 				/* Blocking receive */
 				receivingSocket.receive(dataGram);
+				
+				System.out.println("Got data");
 
 				buffer = dataGram.getData();
 				if (buffer != null || buffer.length > 0) {
