@@ -23,7 +23,7 @@ import com.project.server.router.Node;
 public class SendStringMessageTask extends SimpleAbstractTask implements
 		ITaskCallback {
 	
-	public static final int SEND_PORT = 13135;
+	public static final int PORT = 13135;
 
 	private Node node = null;
 
@@ -187,14 +187,14 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 		node = Node.fromBytes(task.getStringData().getBytes());
 		
 		try {
-			datagramSocket = new DatagramSocket(SEND_PORT);
+			datagramSocket = new DatagramSocket(SendStringMessageTask.PORT);
 			
 			Client selfClient = new Client();
 			selfClient.setCurrentIP(InetAddress.getLocalHost()
 					.getHostAddress());
 			selfClient.setHostname(InetAddress.getLocalHost()
 					.getHostName());
-			selfClient.setPort(ServerReceiverServlet.LISTENING_PORT);
+			selfClient.setPort(SendStringMessageTask.PORT);
 			selfClient.setUsername("Client "
 					+ DCServer.getLocalHostname());
 			selfClient.SERVER_COMMAND = COMMAND_TYPE.SEND_STRING_MESSAGE;
