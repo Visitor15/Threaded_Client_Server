@@ -49,56 +49,79 @@ public class RoutingTable implements ITaskCallback {
 
 		return true;
 	}
-	
+
 	public Client getClientAtIndex(final int pos) {
 		Set<String> keys = m_ClientMap.keySet();
-		
+
 		int count = 0;
-		for(String s : keys) {
-			if(count == pos) {
+		for (String s : keys) {
+			if (count == pos) {
 				return m_ClientMap.get(s);
 			}
 			count++;
 		}
-		
+
 		return null;
 	}
-	
+
 	public Server getServerAtIndex(final int pos) {
 		Set<String> keys = m_ServerMap.keySet();
-		
+
 		int count = 0;
-		for(String s : keys) {
-			if(count == pos) {
+		for (String s : keys) {
+			if (count == pos) {
 				return m_ServerMap.get(s);
 			}
 			count++;
 		}
+
+		return null;
+	}
+
+	public Server getPrimaryServer() {
+		if (m_ServerMap.size() > 0) {
+			return m_ServerMap.get(0);
+		}
+
+		return null;
+	}
+	
+	public void setPrimaryServer(Server server) {
 		
+	}
+
+	public Client getClientByUsername(String username) {
+		Set<String> keys = m_ClientMap.keySet();
+
+		for (String s : keys) {
+			if (s.equals(username)) {
+				return m_ClientMap.get(s);
+			}
+		}
+
 		return null;
 	}
 
 	@Override
 	public void onTaskStart(Task task) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onAtomicTaskStart(Task task) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onTaskProgress(Task task) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onTaskFinished(Task task) {
-		
-	}
 
+	}
 }

@@ -66,7 +66,7 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 					selfClient.setPort(ServerReceiverServlet.LISTENING_PORT);
 					selfClient.setUsername("Client "
 							+ DCServer.getLocalHostname());
-					selfClient.COMMAND = COMMAND_TYPE.REGISTER_NODE;
+					selfClient.SERVER_COMMAND = COMMAND_TYPE.REGISTER_NODE;
 
 					buffer = selfClient.toBytes();
 
@@ -94,7 +94,7 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 					selfServer.setUsername("Server "
 							+ DCServer.getLocalHostname());
 
-					selfServer.COMMAND = COMMAND_TYPE.REGISTER_NODE;
+					selfServer.SERVER_COMMAND = COMMAND_TYPE.REGISTER_NODE;
 
 					buffer = selfServer.toBytes();
 

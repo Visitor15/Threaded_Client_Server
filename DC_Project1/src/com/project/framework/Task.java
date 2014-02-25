@@ -34,6 +34,8 @@ public interface Task extends Serializable {
 	
 	public void setTaskCallback(final ITaskCallback callback);
 	
+	public void logTask();
+	
 	public byte[] toBytes();
 	
 	public Task fromBytes(final byte[] byteArray);

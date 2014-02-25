@@ -32,8 +32,9 @@ public abstract class SimpleAbstractTask implements Task {
 		taskId = id;
 	}
 
+	@Override
 	public void logTask() {
-
+		
 	}
 
 	@Override

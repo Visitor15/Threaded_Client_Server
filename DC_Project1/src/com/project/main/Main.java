@@ -6,32 +6,34 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Random;
+import java.util.Scanner;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 
 import com.project.framework.Task;
 import com.project.server.DCServer;
-import com.project.tasks.ITaskCallback;
-import com.project.tasks.ServerFinderTask;
+import com.project.server.DCServer.COMMAND_TYPE;
+import com.project.server.RoutingTableServlet;
+import com.project.server.ServerReceiverServlet;
+import com.project.server.router.Client;
+import com.project.tasks.SendStringMessageTask;
 import com.project.tasks.SimpleAbstractTask;
 import com.project.tasks.TaskManager;
 import com.project.tasks.ThreadHelper;
-import com.project.ui.MainWindow;
 
 /**
  * Created by Alex on 1/15/14.
@@ -46,79 +48,84 @@ import com.project.ui.MainWindow;
 // with "working code" so they will compile
 
 public class Main {
+	
+	
+	
+	
+	
 
-	public class ClientTask extends SimpleAbstractTask {
-
-        @Override
-        public void executeTask() {
-            // TODO Auto-generated method stub
-            /*
-            the following code will connect to the server router and then open a file for sending the data
-         */
-
-            try {
-                Socket clientSocket = new Socket(IPaddress, 6666); //port needs to be serverrouters port
-                //network output stream
-                DataOutputStream send = new DataOutputStream(clientSocket.getOutputStream());
-                //network input stream
-                BufferedReader receive = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                //get a lowercase message from the user (no verification or anything)
-                String message = fileName.getText();
-                
-                InputStream file = new FileInputStream(fileName.getText());
-                BufferedReader reader = new BufferedReader(new InputStreamReader(file));
-                String line = null;
-                
-                
-                /*
-            in the while loop below we need to add the statistics for average length of each line we send
-            the average round trip time of each message.
-                 */
-                
-                while ((line = reader.readLine()) != null)      //loop to end of file sending every line
-                {
-                    outputWindow.append("Sending TCP: " + line + "\n"); //we may want to only output statistics if its a long file
-                    //convert to bytes and write to stream
-                    send.writeBytes(line + '\n');
-                    //receive the message back from the server
-                    String modifiedMsg = receive.readLine();
-                    outputWindow.append("Server TCP: " + modifiedMsg + "\n");
-                    //we are done here close the socket!
-                    
-                }
-                clientSocket.close(); //we are done here
-                
-                
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void onProgressUpdate() {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void onFinished() {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public byte[] toBytes() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public Task fromBytes(byte[] byteArray) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-    }
+//	public class ClientTask extends SimpleAbstractTask {
+//
+//        @Override
+//        public void executeTask() {
+//            // TODO Auto-generated method stub
+//            /*
+//            the following code will connect to the server router and then open a file for sending the data
+//         */
+//
+//            try {
+//                Socket clientSocket = new Socket(IPaddress, 6666); //port needs to be serverrouters port
+//                //network output stream
+//                DataOutputStream send = new DataOutputStream(clientSocket.getOutputStream());
+//                //network input stream
+//                BufferedReader receive = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+//                //get a lowercase message from the user (no verification or anything)
+//                String message = fileName.getText();
+//                
+//                InputStream file = new FileInputStream(fileName.getText());
+//                BufferedReader reader = new BufferedReader(new InputStreamReader(file));
+//                String line = null;
+//                
+//                
+//                /*
+//            in the while loop below we need to add the statistics for average length of each line we send
+//            the average round trip time of each message.
+//                 */
+//                
+//                while ((line = reader.readLine()) != null)      //loop to end of file sending every line
+//                {
+//                    outputWindow.append("Sending TCP: " + line + "\n"); //we may want to only output statistics if its a long file
+//                    //convert to bytes and write to stream
+//                    send.writeBytes(line + '\n');
+//                    //receive the message back from the server
+//                    String modifiedMsg = receive.readLine();
+//                    outputWindow.append("Server TCP: " + modifiedMsg + "\n");
+//                    //we are done here close the socket!
+//                    
+//                }
+//                clientSocket.close(); //we are done here
+//                
+//                
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        @Override
+//        public void onProgressUpdate() {
+//            // TODO Auto-generated method stub
+//
+//        }
+//
+//        @Override
+//        public void onFinished() {
+//            // TODO Auto-generated method stub
+//
+//        }
+//
+//        @Override
+//        public byte[] toBytes() {
+//            // TODO Auto-generated method stub
+//            return null;
+//        }
+//
+//        @Override
+//        public Task fromBytes(byte[] byteArray) {
+//            // TODO Auto-generated method stub
+//            return null;
+//        }
+//
+//    }
 
     public class ServerListeningTask extends SimpleAbstractTask {
 
@@ -182,13 +189,62 @@ public class Main {
         }
 
     }
+    
+    public static void doTempTest() throws UnknownHostException {
+    	Scanner input = new Scanner(System.in);
+    	System.out.print("Are you a SERVER or CLIENT? (C/S): " );
+    	String userInput = input.nextLine();
+		
+		Client selfClient = new Client();
+		selfClient.setCurrentIP(InetAddress.getLocalHost()
+				.getHostAddress());
+		selfClient.setHostname(InetAddress.getLocalHost()
+				.getHostName());
+		selfClient.setPort(ServerReceiverServlet.LISTENING_PORT);
+		selfClient.setUsername("Client "
+				+ DCServer.getLocalHostname());
+		selfClient.SERVER_COMMAND = COMMAND_TYPE.ROUTE_DATA_TO_SERVER;
+		String message = "this is a test message.";
+		selfClient.message = message;
+		
+		TaskManager.DoTask(new ServerReceiverServlet());
+    	
+    	if(userInput.equalsIgnoreCase("C")) {
+    		//Client
+    		System.out.print("Who to send this to? " );
+        	userInput = input.nextLine();
+    		
+        	selfClient.setDestinationIP(userInput);
+        	
+        	System.out.print("Message: " );
+        	userInput = input.nextLine();
+        	
+        	selfClient.message = userInput;
+    		
+    		TaskManager.DoTask(new SendStringMessageTask(selfClient, true));
+    	}
+    	else {
+    		//RoutingTable
+    		TaskManager.DoTask(new RoutingTableServlet());
+    	}
+    }
 
     public static final void main(String[] args) {
-        JFrame frame = new JFrame("baseClient");
-        frame.setContentPane(new Main().mains);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
+    	
+    	
+    	
+    	try {
+			doTempTest();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+//        JFrame frame = new JFrame("baseClient");
+//        frame.setContentPane(new Main().mains);
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        frame.pack();
+//        frame.setVisible(true);
 		
 //		MainWindow mainUI = new MainWindow();
 		
@@ -296,7 +352,7 @@ public class Main {
                 }
                 if (clientSelect.isSelected())
                 {
-                    TaskManager.DoTask(new ClientTask());
+//                    TaskManager.DoTask(new ClientTask());
                 }
             }
         });

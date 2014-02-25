@@ -5,59 +5,37 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 
 import com.project.framework.Task;
+import com.project.server.router.Client;
 import com.project.server.router.Node;
 import com.project.server.router.RoutingTable;
 import com.project.server.router.Server;
 import com.project.tasks.RegisterNodeTask;
+import com.project.tasks.SendStringMessageTask;
 import com.project.tasks.TaskManager;
 
-public class ServerReceiverServlet extends DCServlet {
+public class RoutingTableServlet extends DCServlet {
 
-	public static final int LISTENING_PORT = 11337;
+	public static final int LISTENING_PORT = 13145;
 
 	private DatagramSocket receivingSocket;
 
 	private DatagramPacket dataGram;
 
-	private Server selfServer;
-
 	private byte[] buffer;
 
-	/**
-	 * Serializable
-	 */
-	private static final long serialVersionUID = 1288745814717362014L;
-
-	public ServerReceiverServlet() {
+	public RoutingTableServlet() {
 		super();
 
-		try {
-			selfServer = new Server();
-
-			selfServer
-					.setCurrentIP(InetAddress.getLocalHost().getHostAddress());
-
-			selfServer.setHostname(InetAddress.getLocalHost().getHostName());
-			selfServer.setPort(ServerReceiverServlet.LISTENING_PORT);
-			selfServer.setUsername("Server " + DCServer.getLocalHostname());
-
-			RoutingTable.getInstance().registerServer(selfServer);
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		setTaskId("ServerReceiverServelet");
+		setTaskId("RoutingTableServlet");
 	}
 
-	public ServerReceiverServlet(final boolean autoStart,
+	public RoutingTableServlet(final boolean autoStart,
 			final IServletCallback callback) {
-		super(SERVLET_TYPE.REGISTRATION_SERVLET, autoStart, callback);
+		super(SERVLET_TYPE.CLIENT_RESPONDER_SERVLET, autoStart, callback);
 
-		setTaskId("ServerReceiverServelet");
+		setTaskId("RoutingTableServlet");
 	}
 
 	@Override
@@ -98,7 +76,7 @@ public class ServerReceiverServlet extends DCServlet {
 
 					// System.out.println("Got node: " + node.getHostname());
 
-					switch (node.SERVER_COMMAND) {
+					switch (node.ROUTERTABLE_COMMAND) {
 					case REGISTER_NODE: {
 						if (!node.getHostname().equalsIgnoreCase(
 								InetAddress.getLocalHost().getHostName())) {
@@ -106,24 +84,31 @@ public class ServerReceiverServlet extends DCServlet {
 						}
 						break;
 					}
-					case PING_NODE: {
-						Server selfServer = new Server();
-						selfServer.setCurrentIP(InetAddress.getLocalHost()
-								.getHostAddress());
-						selfServer.setHostname(InetAddress.getLocalHost()
-								.getHostName());
-						selfServer.setPort(ServerReceiverServlet.LISTENING_PORT);
-						selfServer.setUsername("Server "
-								+ DCServer.getLocalHostname());
-						
-						buffer = selfServer.toBytes();
-						
-						dataGram = new DatagramPacket(buffer, buffer.length);
-						dataGram.setPort(node.getCurrentPort());
-						dataGram.setAddress(InetAddress.getByName(node
-								.getCurrentIP()));
-						
-						receivingSocket.send(dataGram);
+					case ROUTE_DATA_TO_SERVER: {
+
+						Server server = RoutingTable.getInstance()
+								.getPrimaryServer();
+
+						if (server != null) {
+							node.setPort(server.getCurrentPort());
+							node.setDestinationIP(server.getCurrentIP());
+							node.setDestinationHostname(server.getHostname());
+							TaskManager
+									.DoTask(new SendStringMessageTask(node));
+						}
+						break;
+					}
+					case ROUTE_DATA_TO_CLIENT: {
+						Client client = RoutingTable.getInstance()
+								.getClientByUsername(node.getUsername());
+
+						if (client != null) {
+							node.setPort(client.getCurrentPort());
+							node.setDestinationIP(client.getCurrentIP());
+							node.setDestinationHostname(client.getHostname());
+							TaskManager
+									.DoTask(new SendStringMessageTask(node));
+						}
 						break;
 					}
 					default: {
@@ -142,15 +127,19 @@ public class ServerReceiverServlet extends DCServlet {
 
 	@Override
 	public void onProgressUpdate() {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public byte[] toBytes() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Task fromBytes(byte[] byteArray) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

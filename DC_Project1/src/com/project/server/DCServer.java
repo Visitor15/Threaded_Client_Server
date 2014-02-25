@@ -46,6 +46,9 @@ public class DCServer extends SimplePersistentTask implements IServletCallback, 
 	public static enum COMMAND_TYPE {
 		REGISTER_NODE,
 		EXECUTE_TASK,
+		ROUTE_DATA_TO_SERVER,
+		ROUTE_DATA_TO_CLIENT,
+		PING_NODE,
 		NULL
 	}
 

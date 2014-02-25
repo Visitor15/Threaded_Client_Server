@@ -13,7 +13,9 @@ public class Node {
 
 	public NODE_TYPE NODE;
 
-	public COMMAND_TYPE COMMAND;
+	public COMMAND_TYPE SERVER_COMMAND;
+	
+	public COMMAND_TYPE ROUTERTABLE_COMMAND;
 
 	public String username;
 
@@ -22,6 +24,14 @@ public class Node {
 	public String currentIP;
 
 	public String hostname;
+	
+	public String destIP;
+	
+	public String destUsername;
+	
+	public String destHostname;
+	
+	public int destinationPort;
 
 	public int currentPort;
 
@@ -30,10 +40,14 @@ public class Node {
 		hostname = "NULL";
 		currentIP = "NULL";
 		message = "NULL";
+		destIP = "NULL";
+		destHostname = "NULL";
+		destUsername = "NULL";
 		currentPort = -1;
 
 		NODE = NODE_TYPE.NODE;
-		COMMAND = COMMAND_TYPE.NULL;
+		SERVER_COMMAND = COMMAND_TYPE.NULL;
+		ROUTERTABLE_COMMAND = COMMAND_TYPE.NULL;
 	}
 
 	public String getUsername() {
@@ -79,6 +93,38 @@ public class Node {
 	public void setHostname(final String hostName) {
 		hostname = hostName;
 	}
+	
+	public void setDestinationIP(final String IP) {
+		destIP = IP;
+	}
+	
+	public void setDestinationUsername(final String destUser) {
+		destUsername = destUser;
+	}
+	
+	public String getDestinationUsername() {
+		return destUsername;
+	}
+	
+	public void setDestinationHostname(final String hostName) {
+		hostname = hostName;
+	}
+	
+	public String getDestinationHostname() {
+		return destHostname;
+	}
+
+	public String getDestinationIP() {
+		return destIP;
+	}
+	
+	public int getDestinationPort() {
+		return destinationPort;
+	}
+	
+	public void setDestinationPort(final int port) {
+		destinationPort = port;
+	}
 
 	public byte[] toBytes() {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -89,10 +135,14 @@ public class Node {
 			out.writeUTF(getUsername());
 			out.writeUTF(getHostname());
 			out.writeUTF(getCurrentIP());
+			out.writeInt(getDestinationPort());
+			out.writeUTF(getDestinationIP());
+			out.writeUTF(getDestinationHostname());
+			out.writeUTF(getDestinationUsername());
 			out.writeUTF(getStringMessage());
 			out.writeInt(getCurrentPort());
 			out.writeInt(NODE.ordinal());
-			out.writeInt(COMMAND.ordinal());
+			out.writeInt(SERVER_COMMAND.ordinal());
 			out.flush();
 		} catch (final IOException e) {
 			e.printStackTrace();
@@ -118,10 +168,14 @@ public class Node {
 			node.setUsername(in.readUTF());
 			node.setHostname(in.readUTF());
 			node.setCurrentIP(in.readUTF());
+			node.setDestinationPort(in.readInt());
+			node.setDestinationIP(in.readUTF());
+			node.setDestinationHostname(in.readUTF());
+			node.setDestinationUsername(in.readUTF());
 			node.addStringMessage(in.readUTF());
 			node.setPort(in.readInt());
 			node.NODE = NODE_TYPE.values()[in.readInt()];
-			node.COMMAND = COMMAND_TYPE.values()[in.readInt()];
+			node.SERVER_COMMAND = COMMAND_TYPE.values()[in.readInt()];
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -137,7 +191,7 @@ public class Node {
 			client.addStringMessage(node.getStringMessage());
 			client.setPort(node.getCurrentPort());
 			client.NODE = node.NODE;
-			client.COMMAND = node.COMMAND;
+			client.SERVER_COMMAND = node.SERVER_COMMAND;
 			
 			return client;
 		}
@@ -150,7 +204,7 @@ public class Node {
 			server.addStringMessage(node.getStringMessage());
 			server.setPort(node.getCurrentPort());
 			server.NODE = node.NODE;
-			server.COMMAND = node.COMMAND;
+			server.SERVER_COMMAND = node.SERVER_COMMAND;
 			
 			return server;
 		}

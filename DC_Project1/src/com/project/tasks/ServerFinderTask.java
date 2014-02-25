@@ -53,7 +53,7 @@ public class ServerFinderTask extends SimpleAbstractTask {
 			client.setPort(ServerReceiverServlet.LISTENING_PORT);
 			client.setUsername("Client " + client.getHostname());
 			
-			client.COMMAND = COMMAND_TYPE.REGISTER_NODE;
+			client.SERVER_COMMAND = COMMAND_TYPE.REGISTER_NODE;
 
 			buffer = client.toBytes();
 
