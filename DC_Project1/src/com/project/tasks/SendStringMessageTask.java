@@ -15,7 +15,7 @@ import com.project.server.router.RoutingTable;
 public class SendStringMessageTask extends SimpleAbstractTask implements
 		ITaskCallback {
 
-	private Node node;
+	private Node node = null;
 
 	private Node clientNode;
 
@@ -165,8 +165,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 
 	@Override
 	public void onTaskFinished(Task task) {
-		System.out.println("Hit callback HERE");
-		node = RoutingTable.getInstance().getClientByUsername(
-				task.getStringData());
+		System.out.println("Hit callback HERE - " + task.getTaskId());
+		node = Node.fromBytes(task.getStringData().getBytes());
 	}
 }

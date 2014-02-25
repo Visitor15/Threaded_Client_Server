@@ -194,6 +194,7 @@ public class Node {
 			client.setPort(node.getCurrentPort());
 			client.NODE = node.NODE;
 			client.SERVER_COMMAND = node.SERVER_COMMAND;
+			client.ROUTERTABLE_COMMAND = node.ROUTERTABLE_COMMAND;
 			
 			return client;
 		}
@@ -207,6 +208,7 @@ public class Node {
 			server.setPort(node.getCurrentPort());
 			server.NODE = node.NODE;
 			server.SERVER_COMMAND = node.SERVER_COMMAND;
+			server.ROUTERTABLE_COMMAND = node.ROUTERTABLE_COMMAND;
 			
 			return server;
 		}
