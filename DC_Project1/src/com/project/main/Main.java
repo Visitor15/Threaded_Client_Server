@@ -204,6 +204,7 @@ public class Main {
 		selfClient.setUsername("Client "
 				+ DCServer.getLocalHostname());
 		selfClient.SERVER_COMMAND = COMMAND_TYPE.ROUTE_DATA_TO_SERVER;
+		selfClient.ROUTERTABLE_COMMAND = COMMAND_TYPE.PING_NODE;
 		String message = "this is a test message.";
 		selfClient.message = message;
 		
@@ -219,7 +220,7 @@ public class Main {
         	System.out.print("Message: " );
         	userInput = input.nextLine();
         	
-        	selfClient.message = userInput;
+        	selfClient.message = "testTESTteset";
     		
     		TaskManager.DoTask(new SendStringMessageTask(selfClient, true));
     	}

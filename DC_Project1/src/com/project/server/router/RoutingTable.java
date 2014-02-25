@@ -42,7 +42,7 @@ public class RoutingTable implements ITaskCallback {
 	public boolean registerServer(final Server s) {
 		if (!m_ServerMap.containsKey(s.getHostname())) {
 
-			m_ServerMap.put(s.getHostname(), s);
+			m_ServerMap.put(s.getCurrentIP(), s);
 
 			return true;
 		}
@@ -85,9 +85,9 @@ public class RoutingTable implements ITaskCallback {
 
 		return null;
 	}
-	
+
 	public void setPrimaryServer(Server server) {
-		
+
 	}
 
 	public Client getClientByUsername(String username) {
@@ -101,7 +101,7 @@ public class RoutingTable implements ITaskCallback {
 
 		return null;
 	}
-	
+
 	public Server getServerByHostname(String hostname) {
 		Set<String> keys = m_ServerMap.keySet();
 

@@ -8,36 +8,35 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import com.project.framework.Task;
-import com.project.server.DCServer;
-import com.project.server.RoutingTableServlet;
-import com.project.server.ServerReceiverServlet;
 import com.project.server.DCServer.COMMAND_TYPE;
+import com.project.server.RoutingTableServlet;
 import com.project.server.router.Client;
 import com.project.server.router.Node;
 import com.project.server.router.RoutingTable;
+import com.project.server.router.Server;
 
 public class QueryRoutingTableTask extends SimpleAbstractTask {
-	
+
 	public static final int PORT = 57911;
-	
+
 	private DatagramSocket dataGramSocket;
-	
+
 	private DatagramPacket dataGram;
-	
+
 	private DatagramPacket receiveGram;
-	
+
 	private String queryUserName;
-	
+
 	private boolean byIP = false;
-	
+
 	private Client selfClient;
-	
+
 	private byte[] buffer;
-	
+
 	public QueryRoutingTableTask() {
-		
+
 	}
-	
+
 	public QueryRoutingTableTask(final String userName, final boolean byIP) {
 		queryUserName = userName;
 		this.byIP = byIP;
@@ -45,38 +44,47 @@ public class QueryRoutingTableTask extends SimpleAbstractTask {
 
 	@Override
 	public void executeTask() {
+		
+		setTaskId("QueryRoutingTableTask");
 		try {
 			dataGramSocket = new DatagramSocket(PORT);
-			dataGramSocket.setSoTimeout(5000);		// 3 seconds
-			
+			dataGramSocket.setSoTimeout(5000); // 3 seconds
+
 			selfClient = new Client();
-			selfClient.setCurrentIP(InetAddress.getLocalHost()
-					.getHostName());
-			selfClient.setHostname(InetAddress.getLocalHost()
-					.getHostName());
+			selfClient.setCurrentIP(InetAddress.getLocalHost().getHostName());
+			selfClient.setHostname(InetAddress.getLocalHost().getHostName());
 			selfClient.setPort(PORT);
 			selfClient.setUsername("Client "
-					+ DCServer.getLocalHostname());
+					+ InetAddress.getLocalHost().getHostName());
 			selfClient.SERVER_COMMAND = COMMAND_TYPE.PING_NODE;
 			selfClient.ROUTERTABLE_COMMAND = COMMAND_TYPE.PING_NODE;
-			
+
 			buffer = selfClient.toBytes();
-			
+
 			dataGram = new DatagramPacket(buffer, buffer.length);
 			dataGram.setPort(RoutingTableServlet.LISTENING_PORT);
 			dataGram.setAddress(InetAddress.getByName(queryUserName));
+
+			buffer = new byte[1024];
 			
 			receiveGram = new DatagramPacket(buffer, buffer.length);
-			
+
 			dataGramSocket.send(dataGram);
 			dataGramSocket.receive(receiveGram);
+
+			buffer = receiveGram.getData();
+
+			Node node = Node.fromBytes(buffer);
 			
-			Node node = Node.fromBytes(receiveGram.getData());
+			node.setCurrentIP(receiveGram.getAddress().getHostAddress());
+			node.setHostname(receiveGram.getAddress().getHostName());
 			
-			setStringData(node.getUsername());
-			
+			RoutingTable.getInstance().registerServer((Server) node);
+
+			setStringData(new String(node.toBytes()));
+
 			stopTask();
-			
+
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -92,13 +100,13 @@ public class QueryRoutingTableTask extends SimpleAbstractTask {
 	@Override
 	public void onProgressUpdate() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onFinished() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
