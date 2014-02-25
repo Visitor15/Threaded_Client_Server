@@ -25,7 +25,7 @@ public class QueryRoutingTableTask extends SimpleAbstractTask {
 
 	private DatagramPacket receiveGram;
 
-	private String queryUserName;
+	private String queryUserIP;
 
 	private boolean byIP = false;
 
@@ -38,7 +38,7 @@ public class QueryRoutingTableTask extends SimpleAbstractTask {
 	}
 
 	public QueryRoutingTableTask(final String userName, final boolean byIP) {
-		queryUserName = userName;
+		queryUserIP = userName;
 		this.byIP = byIP;
 	}
 
@@ -56,14 +56,14 @@ public class QueryRoutingTableTask extends SimpleAbstractTask {
 			selfClient.setPort(PORT);
 			selfClient.setUsername("Client "
 					+ InetAddress.getLocalHost().getHostName());
-			selfClient.SERVER_COMMAND = COMMAND_TYPE.PING_NODE;
+			selfClient.SERVER_COMMAND = COMMAND_TYPE.NULL;
 			selfClient.ROUTERTABLE_COMMAND = COMMAND_TYPE.PING_NODE;
 
 			buffer = selfClient.toBytes();
 
 			dataGram = new DatagramPacket(buffer, buffer.length);
 			dataGram.setPort(RoutingTableServlet.LISTENING_PORT);
-			dataGram.setAddress(InetAddress.getByName(queryUserName));
+			dataGram.setAddress(InetAddress.getByName(queryUserIP));
 
 			buffer = new byte[1024];
 			

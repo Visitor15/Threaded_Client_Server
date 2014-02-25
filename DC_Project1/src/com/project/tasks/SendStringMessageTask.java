@@ -6,14 +6,24 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
 import com.project.framework.Task;
+import com.project.server.DCServer;
+import com.project.server.DCServer.COMMAND_TYPE;
+import com.project.server.ServerReceiverServlet;
+import com.project.server.router.Client;
 import com.project.server.router.Node;
-import com.project.server.router.RoutingTable;
 
 public class SendStringMessageTask extends SimpleAbstractTask implements
 		ITaskCallback {
+	
+	public static final int SEND_PORT = 13135;
 
 	private Node node = null;
 
@@ -22,6 +32,12 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 	private boolean toServer;
 
 	private String message;
+	
+	private DatagramSocket datagramSocket;
+	
+	private DatagramPacket dataGram;
+	
+	private byte[] buffer;
 
 	public SendStringMessageTask(final Node client, boolean toServer) {
 		super();
@@ -55,13 +71,15 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 					
 					TaskManager.DoTaskOnCurrentThread(
 							new QueryRoutingTableTask(clientNode
-									.getDestinationIP(), false), this);
+									.getDestinationIP(), true), this);
 				} else {
 					TaskManager.DoTaskOnCurrentThread(
 							new QueryRoutingTableTask(clientNode
 									.getDestinationIP(), true), this);
 				}
 			}
+			
+			
 
 			
 			System.out.println("HIT HIT HIT");
@@ -167,5 +185,47 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 	public void onTaskFinished(Task task) {
 		System.out.println("Hit callback HERE - " + task.getTaskId());
 		node = Node.fromBytes(task.getStringData().getBytes());
+		
+		try {
+			datagramSocket = new DatagramSocket(SEND_PORT);
+			
+			Client selfClient = new Client();
+			selfClient.setCurrentIP(InetAddress.getLocalHost()
+					.getHostAddress());
+			selfClient.setHostname(InetAddress.getLocalHost()
+					.getHostName());
+			selfClient.setPort(ServerReceiverServlet.LISTENING_PORT);
+			selfClient.setUsername("Client "
+					+ DCServer.getLocalHostname());
+			selfClient.SERVER_COMMAND = COMMAND_TYPE.SEND_STRING_MESSAGE;
+
+			buffer = selfClient.toBytes();
+
+			dataGram = new DatagramPacket(buffer, buffer.length);
+			dataGram.setPort(node.getCurrentPort());
+			dataGram.setAddress(InetAddress.getByName(node
+					.getCurrentIP()));
+			
+			datagramSocket.send(dataGram);
+			
+			buffer = new byte[1024];
+			DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
+			
+			datagramSocket.receive(receivePacket);
+			
+			node = Node.fromBytes(receivePacket.getData());
+		} catch (NullPointerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

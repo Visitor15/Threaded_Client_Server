@@ -5,12 +5,21 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import com.project.framework.Task;
+import com.project.server.DCServer;
+import com.project.server.ServerReceiverServlet;
 import com.project.server.router.Client;
+import com.project.server.router.Node;
+import com.project.server.router.Server;
 
 public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 
@@ -25,10 +34,25 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 
 	private final ArrayList<Client> connectedPeers;
 
-	private static final int LISTEN_PORT = 9797;
-	private static final int SEND_PORT = 9797;
+	private static int LISTEN_PORT = 9797;
+	
+	private static int SEND_PORT = 15155;
+
+	private Node clientNode;
+
+	private byte[] buffer;
+	
+	private DatagramSocket datagramSocket;
+
+	private DatagramPacket dataGram;
 
 	public ReceiveRemoteMessagesTask() {
+		setTaskId("ReceiveRemoteMessagesTask");
+		connectedPeers = new ArrayList<Client>();
+	}
+
+	public ReceiveRemoteMessagesTask(final Node node) {
+		clientNode = node;
 		setTaskId("ReceiveRemoteMessagesTask");
 		connectedPeers = new ArrayList<Client>();
 	}
@@ -39,12 +63,44 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 		try {
 			m_SendingSocket = new ServerSocket(LISTEN_PORT);
 		} catch (IOException e2) {
+			LISTEN_PORT += 1;
+			executeTask();
+		}
+
+		/* Responding the client to tell them which port to connect to */
+		try {
+			Server selfServer = new Server();
+
+			selfServer
+					.setCurrentIP(InetAddress.getLocalHost().getHostAddress());
+
+			selfServer.setHostname(InetAddress.getLocalHost().getHostName());
+			selfServer.setPort(ReceiveRemoteMessagesTask.LISTEN_PORT);
+			selfServer.setUsername("Server " + DCServer.getLocalHostname());
+			
+			datagramSocket = new DatagramSocket(SEND_PORT);
+
+			buffer = selfServer.toBytes();
+
+			dataGram = new DatagramPacket(buffer, buffer.length);
+			dataGram.setPort(clientNode.getCurrentPort());
+			dataGram.setAddress(InetAddress.getByName(clientNode.getCurrentIP()));
+
+			datagramSocket.send(dataGram);
+			
+		} catch (UnknownHostException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		ObjectInputStream objIn = null;
-		
+
 		System.out.println("Listening for remote messages...");
 
 		String message = "NULL";
@@ -65,10 +121,8 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 
 			try {
 				is = m_RecievingSocket.getInputStream();
-				
+
 				objIn = new ObjectInputStream(is);
-				
-				
 
 				bufferSize = m_RecievingSocket.getReceiveBufferSize();
 				System.out.println("Buffer size: " + bufferSize);
@@ -79,36 +133,35 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 			byte[] buf = new byte[bufferSize];
 			// fos = new FileOutputStream("M:\\test2.xml");
 			dataOutStream = new ByteArrayOutputStream();
-			
-			
+
 			try {
 				is.read(buf);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			
-//			bos = new BufferedOutputStream(dataOutStream);
+
+			// bos = new BufferedOutputStream(dataOutStream);
 
 			byte[] bytes = new byte[bufferSize];
 
 			int count;
 
 			try {
-//				while ((count = is.read(bytes)) > 0) {
-//					bos.write(bytes, 0, count);
-//				}
+				// while ((count = is.read(bytes)) > 0) {
+				// bos.write(bytes, 0, count);
+				// }
 
 				dataOutStream.flush();
 				dataOutStream.close();
-//				bos.flush();
-//				bos.close();
-//				is.close();
-				
+				// bos.flush();
+				// bos.close();
+				// is.close();
+
 				buf = new byte[bufferSize];
-				
+
 				objIn.read(buf);
-				
+
 				task = (PostMessageTask) PostMessageTask.fromNewBytes(buf);
 
 				TaskManager.DoTask(task);

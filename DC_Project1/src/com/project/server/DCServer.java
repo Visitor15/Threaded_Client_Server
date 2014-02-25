@@ -49,6 +49,7 @@ public class DCServer extends SimplePersistentTask implements IServletCallback, 
 		ROUTE_DATA_TO_SERVER,
 		ROUTE_DATA_TO_CLIENT,
 		PING_NODE,
+		SEND_STRING_MESSAGE,
 		NULL
 	}
 

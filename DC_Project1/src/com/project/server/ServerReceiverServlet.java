@@ -11,6 +11,7 @@ import com.project.framework.Task;
 import com.project.server.router.Node;
 import com.project.server.router.RoutingTable;
 import com.project.server.router.Server;
+import com.project.tasks.ReceiveRemoteMessagesTask;
 import com.project.tasks.RegisterNodeTask;
 import com.project.tasks.TaskManager;
 
@@ -106,6 +107,29 @@ public class ServerReceiverServlet extends DCServlet {
 								InetAddress.getLocalHost().getHostName())) {
 							TaskManager.DoTask(new RegisterNodeTask(node));
 						}
+						break;
+					}
+					case SEND_STRING_MESSAGE: {
+						TaskManager.DoTask(new ReceiveRemoteMessagesTask());
+						
+						Server selfServer = new Server();
+						selfServer.setCurrentIP(InetAddress.getLocalHost()
+								.getHostAddress());
+						selfServer.setHostname(InetAddress.getLocalHost()
+								.getHostName());
+						selfServer.setPort(ServerReceiverServlet.LISTENING_PORT);
+						selfServer.setUsername("Server "
+								+ DCServer.getLocalHostname());
+						
+						buffer = selfServer.toBytes();
+						
+						dataGram = new DatagramPacket(buffer, buffer.length);
+						dataGram.setPort(node.getCurrentPort());
+						dataGram.setAddress(InetAddress.getByName(node
+								.getCurrentIP()));
+						
+						receivingSocket.send(dataGram);
+						
 						break;
 					}
 					case PING_NODE: {
