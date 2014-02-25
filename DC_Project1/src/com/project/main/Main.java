@@ -212,7 +212,7 @@ public class Main {
     	
     	if(userInput.equalsIgnoreCase("C")) {
     		//Client
-    		System.out.print("Who to send this to? " );
+    		System.out.print("Recipient IP: " );
         	userInput = input.nextLine();
     		
         	selfClient.setDestinationIP(userInput);
@@ -220,7 +220,7 @@ public class Main {
         	System.out.print("Message: " );
         	userInput = input.nextLine();
         	
-        	selfClient.message = "testTESTteset";
+        	selfClient.addStringMessage(userInput);
     		
     		TaskManager.DoTask(new SendStringMessageTask(selfClient, true));
     	}

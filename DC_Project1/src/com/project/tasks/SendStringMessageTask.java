@@ -98,15 +98,20 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 
 			// String message = "NULL";
 
-			if (node != null) {
-				message = node.getStringMessage();
+			if (clientNode != null) {
+				message = clientNode.getStringMessage();
 			}
+			
+			send.writeUTF(message);
+			send.flush();
+			
+			send.close();
 
 			// InputStream file = new FileInputStream(fileName.getText());
-			InputStream file = new FileInputStream(message);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					file));
-			String line = null;
+//			InputStream file = new FileInputStream(message);
+//			BufferedReader reader = new BufferedReader(new InputStreamReader(
+//					file));
+//			String line = null;
 
 //			send.writeBytes(clientNode.message);
 
@@ -116,20 +121,20 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 			 * message.
 			 */
 
-			while ((line = reader.readLine()) != null) // loop to end of file
-			// sending every line
-			{
-				// outputWindow.append("Sending TCP: " + line + "\n"); //we may
-				// want to only output statistics if its a long file
-				// convert to bytes and write to stream
-				send.writeBytes(line + '\n');
-				// receive the message back from the server
-				String modifiedMsg = receive.readLine();
-				System.out.println("Server TCP: " + modifiedMsg);
-				// outputWindow.append("Server TCP: " + modifiedMsg + "\n");
-				// we are done here close the socket!
-
-			}
+//			while ((line = reader.readLine()) != null) // loop to end of file
+//			// sending every line
+//			{
+//				// outputWindow.append("Sending TCP: " + line + "\n"); //we may
+//				// want to only output statistics if its a long file
+//				// convert to bytes and write to stream
+//				send.writeBytes(line + '\n');
+//				// receive the message back from the server
+//				String modifiedMsg = receive.readLine();
+//				System.out.println("Server TCP: " + modifiedMsg);
+//				// outputWindow.append("Server TCP: " + modifiedMsg + "\n");
+//				// we are done here close the socket!
+//
+//			}
 			clientSocket.close(); // we are done here
 
 		} catch (IOException e) {

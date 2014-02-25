@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 import com.project.framework.Task;
@@ -42,9 +43,10 @@ public class QueryRoutingTableTask extends SimpleAbstractTask {
 		this.byIP = byIP;
 	}
 
+	int count = 0;
 	@Override
 	public void executeTask() {
-		
+
 		setTaskId("QueryRoutingTableTask");
 		try {
 			dataGramSocket = new DatagramSocket(PORT);
@@ -66,7 +68,7 @@ public class QueryRoutingTableTask extends SimpleAbstractTask {
 			dataGram.setAddress(InetAddress.getByName(queryUserIP));
 
 			buffer = new byte[1024];
-			
+
 			receiveGram = new DatagramPacket(buffer, buffer.length);
 
 			dataGramSocket.send(dataGram);
@@ -75,16 +77,23 @@ public class QueryRoutingTableTask extends SimpleAbstractTask {
 			buffer = receiveGram.getData();
 
 			Node node = Node.fromBytes(buffer);
-			
+
 			node.setCurrentIP(receiveGram.getAddress().getHostAddress());
 			node.setHostname(receiveGram.getAddress().getHostName());
-			
+
 			RoutingTable.getInstance().registerServer((Server) node);
 
 			setStringData(new String(node.toBytes()));
 
 			stopTask();
 
+		} catch (SocketTimeoutException e) {
+			dataGramSocket.close();
+			if(count == 5) {
+				stopTask();
+			}
+			++count;
+			executeTask();
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -95,6 +104,8 @@ public class QueryRoutingTableTask extends SimpleAbstractTask {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		dataGramSocket.close();
 	}
 
 	@Override

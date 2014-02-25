@@ -73,7 +73,7 @@ public class RoutingTableServlet extends DCServlet {
 			
 			receivingSocket = new DatagramSocket(LISTENING_PORT);
 			do {
-				System.out.println(("Server listening..."));
+				System.out.println(("RoutingServer listening."));
 				dataGram = new DatagramPacket(new byte[1024], 1024);
 
 				/* Blocking receive */
