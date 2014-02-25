@@ -50,6 +50,10 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 
 	private DatagramPacket dataGram;
 
+	private DataOutputStream send;
+
+	private BufferedReader receive;
+
 	public ReceiveRemoteMessagesTask() {
 		setTaskId("ReceiveRemoteMessagesTask");
 		connectedPeers = new ArrayList<Client>();
@@ -127,77 +131,81 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 			}
 
 			try {
-				DataOutputStream send = new DataOutputStream(
-						m_RecievingSocket.getOutputStream());
+				send = new DataOutputStream(m_RecievingSocket.getOutputStream());
 				// network input stream
-				BufferedReader receive = new BufferedReader(
-						new InputStreamReader(
-								m_RecievingSocket.getInputStream()));
-				
+				receive = new BufferedReader(new InputStreamReader(
+						m_RecievingSocket.getInputStream()));
+
 				String receivedMessage = receive.readLine();
 				System.out.println("Received: " + receivedMessage);
-				
-				receivedMessage = receivedMessage.toUpperCase(Locale.getDefault());
-				
-				send.writeUTF(receivedMessage);
-				
-				send.flush();
-				send.close();
-				receive.close();
-				
 
-//				is = m_RecievingSocket.getInputStream();
-//
-//				objIn = new ObjectInputStream(is);
-//
-//				bufferSize = m_RecievingSocket.getReceiveBufferSize();
-//				System.out.println("Buffer size: " + bufferSize);
+				receivedMessage = receivedMessage.toUpperCase(Locale
+						.getDefault());
+
+				send.writeUTF(receivedMessage);
+
+				// is = m_RecievingSocket.getInputStream();
+				//
+				// objIn = new ObjectInputStream(is);
+				//
+				// bufferSize = m_RecievingSocket.getReceiveBufferSize();
+				// System.out.println("Buffer size: " + bufferSize);
 			} catch (IOException ex) {
 				System.out.println("Can't get socket input stream. ");
 			}
 
-//			byte[] buf = new byte[bufferSize];
-//			// fos = new FileOutputStream("M:\\test2.xml");
-//			dataOutStream = new ByteArrayOutputStream();
-//
-//			try {
-//				is.read(buf);
-//				String mMessage = new String(buf);
-//				System.out.println("Got message: " + mMessage);
-//			} catch (IOException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
-//
-//			// bos = new BufferedOutputStream(dataOutStream);
-//
-//			byte[] bytes = new byte[bufferSize];
-//
-//			int count;
-//
-//			try {
-//				// while ((count = is.read(bytes)) > 0) {
-//				// bos.write(bytes, 0, count);
-//				// }
-//
-//				dataOutStream.flush();
-//				dataOutStream.close();
-//				// bos.flush();
-//				// bos.close();
-//				// is.close();
-//
-//				// buf = new byte[bufferSize];
-//
-//				// objIn.read(buf);
-//
-//				// task = (PostMessageTask) PostMessageTask.fromNewBytes(buf);
-//
-//				// TaskManager.DoTask(task);
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
+			// byte[] buf = new byte[bufferSize];
+			// // fos = new FileOutputStream("M:\\test2.xml");
+			// dataOutStream = new ByteArrayOutputStream();
+			//
+			// try {
+			// is.read(buf);
+			// String mMessage = new String(buf);
+			// System.out.println("Got message: " + mMessage);
+			// } catch (IOException e1) {
+			// // TODO Auto-generated catch block
+			// e1.printStackTrace();
+			// }
+			//
+			// // bos = new BufferedOutputStream(dataOutStream);
+			//
+			// byte[] bytes = new byte[bufferSize];
+			//
+			// int count;
+			//
+			// try {
+			// // while ((count = is.read(bytes)) > 0) {
+			// // bos.write(bytes, 0, count);
+			// // }
+			//
+			// dataOutStream.flush();
+			// dataOutStream.close();
+			// // bos.flush();
+			// // bos.close();
+			// // is.close();
+			//
+			// // buf = new byte[bufferSize];
+			//
+			// // objIn.read(buf);
+			//
+			// // task = (PostMessageTask) PostMessageTask.fromNewBytes(buf);
+			//
+			// // TaskManager.DoTask(task);
+			// } catch (IOException e) {
+			// // TODO Auto-generated catch block
+			// e.printStackTrace();
+			// }
 		} while (!message.equalsIgnoreCase("/q"));
+
+		try {
+			send.flush();
+
+			send.close();
+			receive.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		stopTask();
 	}

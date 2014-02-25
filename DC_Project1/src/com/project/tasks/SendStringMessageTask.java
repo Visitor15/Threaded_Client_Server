@@ -103,6 +103,11 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 			}
 			
 			send.writeUTF(message);
+			
+			String receivedMessage = receive.readLine();
+			
+			System.out.println("Received: " + receivedMessage);
+			
 			send.flush();
 			
 			send.close();
