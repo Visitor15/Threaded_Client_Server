@@ -207,7 +207,7 @@ public class Main {
 		String message = "this is a test message.";
 		selfClient.message = message;
 		
-		TaskManager.DoTask(new ServerReceiverServlet());
+//		TaskManager.DoTask(new ServerReceiverServlet());
     	
     	if(userInput.equalsIgnoreCase("C")) {
     		//Client

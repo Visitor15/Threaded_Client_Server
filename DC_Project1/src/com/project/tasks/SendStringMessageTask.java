@@ -50,9 +50,12 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 			if (toServer || node == null) {
 				if (clientNode.getDestinationUsername()
 						.equalsIgnoreCase("NULL")) {
+					
+					
+					
 					TaskManager.DoTaskOnCurrentThread(
 							new QueryRoutingTableTask(clientNode
-									.getDestinationUsername(), false), this);
+									.getDestinationIP(), false), this);
 				} else {
 					TaskManager.DoTaskOnCurrentThread(
 							new QueryRoutingTableTask(clientNode
@@ -60,6 +63,8 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 				}
 			}
 
+			
+			System.out.println("HIT HIT HIT");
 			Socket clientSocket = new Socket(node.getCurrentIP(),
 					node.getCurrentPort()); // port needs to be
 											// serverrouters port
@@ -160,6 +165,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 
 	@Override
 	public void onTaskFinished(Task task) {
+		System.out.println("Hit callback HERE");
 		node = RoutingTable.getInstance().getClientByUsername(
 				task.getStringData());
 	}

@@ -34,7 +34,7 @@ public abstract class SimpleAbstractTask implements Task {
 
 	@Override
 	public void logTask() {
-		
+
 	}
 
 	@Override
@@ -42,11 +42,13 @@ public abstract class SimpleAbstractTask implements Task {
 		// synchronized (this) {
 		m_ThreadCallback = threadCallback;
 
-//		if (m_Callback != null) {
-//			m_Callback.onTaskStart(this);
-//		}
+		// if (m_Callback != null) {
+		// m_Callback.onTaskStart(this);
+		// }
 
-		m_ThreadCallback.onTaskStart(this);
+		if (m_ThreadCallback != null) {
+			m_ThreadCallback.onTaskStart(this);
+		}
 		if (!isExecuting()) {
 			isRunning = true;
 			executeTask();
@@ -78,10 +80,12 @@ public abstract class SimpleAbstractTask implements Task {
 		isRunning = false;
 		onFinished();
 
-		m_ThreadCallback.onTaskFinished(this);
-//		if (m_Callback != null) {
-//			m_Callback.onTaskFinished(this);
-//		}
+		if (m_ThreadCallback != null) {
+			m_ThreadCallback.onTaskFinished(this);
+		}
+		// if (m_ThreadCallback == null && m_Callback != null) {
+		// m_Callback.onTaskFinished(this);
+		// }
 
 		// onFinished();
 	}
@@ -115,7 +119,7 @@ public abstract class SimpleAbstractTask implements Task {
 	public ITaskCallback getTaskCallback() {
 		return m_Callback;
 	}
-	
+
 	public void setTaskCallback(final ITaskCallback callback) {
 		this.m_Callback = callback;
 	}

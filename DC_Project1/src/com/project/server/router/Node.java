@@ -143,6 +143,7 @@ public class Node {
 			out.writeInt(getCurrentPort());
 			out.writeInt(NODE.ordinal());
 			out.writeInt(SERVER_COMMAND.ordinal());
+			out.writeInt(ROUTERTABLE_COMMAND.ordinal());
 			out.flush();
 		} catch (final IOException e) {
 			e.printStackTrace();
@@ -176,6 +177,7 @@ public class Node {
 			node.setPort(in.readInt());
 			node.NODE = NODE_TYPE.values()[in.readInt()];
 			node.SERVER_COMMAND = COMMAND_TYPE.values()[in.readInt()];
+			node.ROUTERTABLE_COMMAND = COMMAND_TYPE.values()[in.readInt()];
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

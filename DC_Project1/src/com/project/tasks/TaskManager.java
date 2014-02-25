@@ -73,7 +73,9 @@ public class TaskManager {
 
 	private <T extends Task> void initTaskOnCurrentThread(final T task,
 			final ITaskCallback callback) {
-		task.beginTask(callback);
+		task.beginTask(null);
+		
+		callback.onTaskFinished(task);
 	}
 	
 	private <T extends Task> void initTask(

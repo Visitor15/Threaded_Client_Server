@@ -47,23 +47,26 @@ public class QueryRoutingTableTask extends SimpleAbstractTask {
 	public void executeTask() {
 		try {
 			dataGramSocket = new DatagramSocket(PORT);
-			dataGramSocket.setSoTimeout(3000);		// 3 seconds
+			dataGramSocket.setSoTimeout(5000);		// 3 seconds
 			
 			selfClient = new Client();
 			selfClient.setCurrentIP(InetAddress.getLocalHost()
-					.getHostAddress());
+					.getHostName());
 			selfClient.setHostname(InetAddress.getLocalHost()
 					.getHostName());
-			selfClient.setPort(ServerReceiverServlet.LISTENING_PORT);
+			selfClient.setPort(PORT);
 			selfClient.setUsername("Client "
 					+ DCServer.getLocalHostname());
-			selfClient.SERVER_COMMAND = COMMAND_TYPE.REGISTER_NODE;
+			selfClient.SERVER_COMMAND = COMMAND_TYPE.PING_NODE;
+			selfClient.ROUTERTABLE_COMMAND = COMMAND_TYPE.PING_NODE;
 			
 			buffer = selfClient.toBytes();
 			
 			dataGram = new DatagramPacket(buffer, buffer.length);
 			dataGram.setPort(RoutingTableServlet.LISTENING_PORT);
 			dataGram.setAddress(InetAddress.getByName(queryUserName));
+			
+			receiveGram = new DatagramPacket(buffer, buffer.length);
 			
 			dataGramSocket.send(dataGram);
 			dataGramSocket.receive(receiveGram);
