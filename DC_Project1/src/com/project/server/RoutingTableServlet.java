@@ -59,11 +59,22 @@ public class RoutingTableServlet extends DCServlet {
 	@Override
 	public void executeTask() {
 		System.out.println("Server is listening");
+
+		
+
 		try {
+			/* Registering self as server in routing table. */
+			Server selfServer = new Server();
+			selfServer.setHostname(InetAddress.getLocalHost().getHostName());
+			selfServer.setPort(ServerReceiverServlet.LISTENING_PORT);
+			selfServer.setUsername("Server " + DCServer.getLocalHostname());
+
+			RoutingTable.getInstance().registerServer(selfServer);
+			
 			receivingSocket = new DatagramSocket(LISTENING_PORT);
 			do {
-				// System.out.println(("Server listening..."));
-				dataGram = new DatagramPacket(new byte[512], 512);
+				System.out.println(("Server listening..."));
+				dataGram = new DatagramPacket(new byte[1024], 1024);
 
 				/* Blocking receive */
 				receivingSocket.receive(dataGram);
@@ -73,8 +84,9 @@ public class RoutingTableServlet extends DCServlet {
 					Node node = Node.fromBytes(dataGram.getData());
 
 					node.setCurrentIP(dataGram.getAddress().getHostAddress());
+					node.setHostname(dataGram.getAddress().getHostName());
 
-					// System.out.println("Got node: " + node.getHostname());
+					System.out.println("Got node: " + node.getUsername());
 
 					switch (node.ROUTERTABLE_COMMAND) {
 					case REGISTER_NODE: {
@@ -93,8 +105,7 @@ public class RoutingTableServlet extends DCServlet {
 							node.setPort(server.getCurrentPort());
 							node.setDestinationIP(server.getCurrentIP());
 							node.setDestinationHostname(server.getHostname());
-							TaskManager
-									.DoTask(new SendStringMessageTask(node));
+							TaskManager.DoTask(new SendStringMessageTask(node));
 						}
 						break;
 					}
@@ -106,10 +117,30 @@ public class RoutingTableServlet extends DCServlet {
 							node.setPort(client.getCurrentPort());
 							node.setDestinationIP(client.getCurrentIP());
 							node.setDestinationHostname(client.getHostname());
-							TaskManager
-									.DoTask(new SendStringMessageTask(node));
+							TaskManager.DoTask(new SendStringMessageTask(node));
 						}
 						break;
+					}
+					case PING_NODE: {
+						System.out.println("Pinging node: " + node.getDestinationHostname());
+
+						selfServer = RoutingTable.getInstance()
+								.getServerByHostname(
+										node.getDestinationHostname());
+
+						if (selfServer != null) {
+
+							buffer = selfServer.toBytes();
+
+							dataGram = new DatagramPacket(buffer, buffer.length);
+							dataGram.setPort(node.getCurrentPort());
+							dataGram.setAddress(InetAddress.getByName(node
+									.getCurrentIP()));
+
+							receivingSocket.send(dataGram);
+						}
+						break;
+
 					}
 					default: {
 						break;

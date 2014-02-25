@@ -89,6 +89,8 @@ public class ServerReceiverServlet extends DCServlet {
 
 				/* Blocking receive */
 				receivingSocket.receive(dataGram);
+				
+				System.out.println("Received datagram");
 
 				buffer = dataGram.getData();
 				if (buffer != null || buffer.length > 0) {

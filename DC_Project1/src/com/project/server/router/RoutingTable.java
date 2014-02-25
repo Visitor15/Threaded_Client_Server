@@ -40,7 +40,7 @@ public class RoutingTable implements ITaskCallback {
 	}
 
 	public boolean registerServer(final Server s) {
-		if (!m_ServerMap.containsKey(s.getCurrentIP())) {
+		if (!m_ServerMap.containsKey(s.getHostname())) {
 
 			m_ServerMap.put(s.getHostname(), s);
 
@@ -96,6 +96,18 @@ public class RoutingTable implements ITaskCallback {
 		for (String s : keys) {
 			if (s.equals(username)) {
 				return m_ClientMap.get(s);
+			}
+		}
+
+		return null;
+	}
+	
+	public Server getServerByHostname(String hostname) {
+		Set<String> keys = m_ServerMap.keySet();
+
+		for (String s : keys) {
+			if (s.equals(hostname)) {
+				return m_ServerMap.get(s);
 			}
 		}
 
