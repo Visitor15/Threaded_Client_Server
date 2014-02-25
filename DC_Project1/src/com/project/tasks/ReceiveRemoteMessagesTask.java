@@ -1,9 +1,12 @@
 package com.project.tasks;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -13,6 +16,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import com.project.framework.Task;
 import com.project.server.DCServer;
@@ -35,13 +39,13 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 	private final ArrayList<Client> connectedPeers;
 
 	private static int LISTEN_PORT = 9797;
-	
+
 	private static int SEND_PORT = 15155;
 
 	private Node clientNode;
 
 	private byte[] buffer;
-	
+
 	private DatagramSocket datagramSocket;
 
 	private DatagramPacket dataGram;
@@ -77,7 +81,7 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 			selfServer.setHostname(InetAddress.getLocalHost().getHostName());
 			selfServer.setPort(ReceiveRemoteMessagesTask.LISTEN_PORT);
 			selfServer.setUsername("Server " + DCServer.getLocalHostname());
-			
+
 			datagramSocket = new DatagramSocket(SEND_PORT);
 
 			buffer = selfServer.toBytes();
@@ -85,11 +89,12 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 			dataGram = new DatagramPacket(buffer, buffer.length);
 			dataGram.setPort(clientNode.getCurrentPort());
 			dataGram.setAddress(InetAddress.getByName(clientNode.getCurrentIP()));
-			
-			System.out.println("Datagram: PORT: " + clientNode.getCurrentPort() + " IP: " + clientNode.getCurrentIP());
+
+			System.out.println("Datagram: PORT: " + clientNode.getCurrentPort()
+					+ " IP: " + clientNode.getCurrentIP());
 
 			datagramSocket.send(dataGram);
-			
+
 		} catch (UnknownHostException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
@@ -109,7 +114,7 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 
 		do {
 
-			PostMessageTask task;
+			// PostMessageTask task;
 			InputStream is = null;
 			ByteArrayOutputStream dataOutStream = null;
 			BufferedOutputStream bos = null;
@@ -122,57 +127,76 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 			}
 
 			try {
-				is = m_RecievingSocket.getInputStream();
+				DataOutputStream send = new DataOutputStream(
+						m_RecievingSocket.getOutputStream());
+				// network input stream
+				BufferedReader receive = new BufferedReader(
+						new InputStreamReader(
+								m_RecievingSocket.getInputStream()));
+				
+				String receivedMessage = receive.readLine();
+				System.out.println("Received: " + receivedMessage);
+				
+				receivedMessage = receivedMessage.toUpperCase(Locale.getDefault());
+				
+				send.writeUTF(receivedMessage);
+				
+				send.flush();
+				send.close();
+				receive.close();
+				
 
-				objIn = new ObjectInputStream(is);
-
-				bufferSize = m_RecievingSocket.getReceiveBufferSize();
-				System.out.println("Buffer size: " + bufferSize);
+//				is = m_RecievingSocket.getInputStream();
+//
+//				objIn = new ObjectInputStream(is);
+//
+//				bufferSize = m_RecievingSocket.getReceiveBufferSize();
+//				System.out.println("Buffer size: " + bufferSize);
 			} catch (IOException ex) {
 				System.out.println("Can't get socket input stream. ");
 			}
 
-			byte[] buf = new byte[bufferSize];
-			// fos = new FileOutputStream("M:\\test2.xml");
-			dataOutStream = new ByteArrayOutputStream();
-
-			try {
-				is.read(buf);
-				String mMessage = new String(buf);
-				System.out.println("Got message: " + mMessage);
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-
-			// bos = new BufferedOutputStream(dataOutStream);
-
-			byte[] bytes = new byte[bufferSize];
-
-			int count;
-
-			try {
-				// while ((count = is.read(bytes)) > 0) {
-				// bos.write(bytes, 0, count);
-				// }
-
-				dataOutStream.flush();
-				dataOutStream.close();
-				// bos.flush();
-				// bos.close();
-				// is.close();
-
-//				buf = new byte[bufferSize];
-
-//				objIn.read(buf);
-
-//				task = (PostMessageTask) PostMessageTask.fromNewBytes(buf);
-
-//				TaskManager.DoTask(task);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			byte[] buf = new byte[bufferSize];
+//			// fos = new FileOutputStream("M:\\test2.xml");
+//			dataOutStream = new ByteArrayOutputStream();
+//
+//			try {
+//				is.read(buf);
+//				String mMessage = new String(buf);
+//				System.out.println("Got message: " + mMessage);
+//			} catch (IOException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}
+//
+//			// bos = new BufferedOutputStream(dataOutStream);
+//
+//			byte[] bytes = new byte[bufferSize];
+//
+//			int count;
+//
+//			try {
+//				// while ((count = is.read(bytes)) > 0) {
+//				// bos.write(bytes, 0, count);
+//				// }
+//
+//				dataOutStream.flush();
+//				dataOutStream.close();
+//				// bos.flush();
+//				// bos.close();
+//				// is.close();
+//
+//				// buf = new byte[bufferSize];
+//
+//				// objIn.read(buf);
+//
+//				// task = (PostMessageTask) PostMessageTask.fromNewBytes(buf);
+//
+//				// TaskManager.DoTask(task);
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 		} while (!message.equalsIgnoreCase("/q"));
 
 		stopTask();
