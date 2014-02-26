@@ -73,6 +73,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 		clientNode = client;
 	}
 
+	long endLookupTime = 0;
 	@Override
 	public void executeTask() {
 		/*
@@ -91,8 +92,9 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 
 		try {
 			userInput = new Scanner(System.in);
-
+			long startLookupTime = 0;
 			if (toServer || node == null) {
+				startLookupTime = System.currentTimeMillis();
 				TaskManager.DoTaskOnCurrentThread(new QueryRoutingTableTask(
 						clientNode.getDestinationIP(), true), this);
 			}
@@ -108,14 +110,26 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 			// System.out.println("Sending message: " + message);
 			// send.writeUTF(message + "\n");
 			// }
+			
+			long avgLookupTime = endLookupTime - startLookupTime;
+			
+			
+			
+			long totalMsgSize = 0;
+			long time = System.currentTimeMillis();
 
 			if (textLines.size() > 0) {
 				for (int i = 0; i < textLines.size(); i++) {
 					if (textLines.get(i) != null) {
+						
+						totalMsgSize += textLines.get(i).getBytes().length;
+						
 						send.writeUTF(textLines.get(i));
 						receivedMessage = inDataStream.readUTF();
 						
 						setStringData(receivedMessage);
+						
+						
 						
 						m_Callback.onTaskProgress(this);
 						
@@ -124,6 +138,19 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 					}
 				}
 			}
+			
+			long finishedTime = System.currentTimeMillis();
+			
+			long diff = finishedTime - time;
+			
+			double avgMsgRoundTime = textLines.size() / (double) diff;
+			
+			long avgMsgSize = totalMsgSize / textLines.size();
+			
+			System.out.println("Total msgs sent: " + textLines.size());
+			System.out.println("Lookup time: " + avgLookupTime);
+			System.out.println("Avg msg size: " + avgMsgSize);
+			System.out.println("Avg round trip time: " + avgMsgRoundTime);
 
 			send.writeUTF("Q");
 
@@ -189,6 +216,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 
 	@Override
 	public void onTaskFinished(Task task) {
+		endLookupTime = System.currentTimeMillis();
 		node = Node.fromBytes(task.getStringData().getBytes());
 
 		recipientHostname = node.getHostname();
