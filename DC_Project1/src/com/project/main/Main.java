@@ -205,22 +205,12 @@ public class Main {
 				+ DCServer.getLocalHostname());
 		selfClient.SERVER_COMMAND = COMMAND_TYPE.ROUTE_DATA_TO_SERVER;
 		selfClient.ROUTERTABLE_COMMAND = COMMAND_TYPE.PING_NODE;
-		String message = "this is a test message.";
-		selfClient.message = message;
-		
-//		TaskManager.DoTask(new ServerReceiverServlet());
     	
     	if(userInput.equalsIgnoreCase("C")) {
-    		//Client
     		System.out.print("Recipient IP: " );
         	userInput = input.nextLine();
-//    		
-        	selfClient.setDestinationIP(userInput);
-//        	
-//        	System.out.print("Message: " );
-//        	userInput = input.nextLine();
         	
-//        	selfClient.addStringMessage(userInput);
+        	selfClient.setDestinationIP(userInput);
     		
     		TaskManager.DoTask(new SendStringMessageTask(selfClient, true));
     	}

@@ -1,10 +1,8 @@
 package com.project.tasks;
 
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -21,6 +19,11 @@ import com.project.server.router.Node;
 
 public class SendStringMessageTask extends SimpleAbstractTask implements
 		ITaskCallback {
+
+	/**
+	 *		Serializable stuff.
+	 */
+	private static final long serialVersionUID = -3296275676738733533L;
 
 	public static final int PORT = 13135;
 
@@ -104,7 +107,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 					break;
 				}
 
-				System.out.println("Received: " + receivedMessage);
+				System.out.println(node.getHostname() + ": " + receivedMessage);
 			} while (!receivedMessage.equalsIgnoreCase("q")
 					|| !message.equalsIgnoreCase("q"));
 
