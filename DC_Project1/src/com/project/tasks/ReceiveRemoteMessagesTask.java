@@ -140,8 +140,13 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 
 				System.out.println("Sending message: " + returnMessage);
 				send.writeUTF(returnMessage + "\n");
+				
+				if(receivedMessage.equalsIgnoreCase("q")) {
+					System.out.println("Recieved QUIT command. Closing.");
+					break;
+				}
 
-			} while (!receivedMessage.equalsIgnoreCase("#q"));
+			} while (!receivedMessage.equalsIgnoreCase("q"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

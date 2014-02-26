@@ -97,12 +97,18 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 						+ ": ");
 				message = userInput.nextLine();
 
-				send.writeBytes(message);
+//				send.writeBytes(message);
+				send.writeUTF(message);
 				receivedMessage = inDataStream.readUTF();
+				
+				if(receivedMessage.equalsIgnoreCase("q")) {
+					System.out.println("Recieved QUIT command. Closing.");
+					break;
+				}
 
 				System.out.println("Received: " + receivedMessage);
-			} while (!receivedMessage.equalsIgnoreCase("#q")
-					|| !message.equalsIgnoreCase("#q"));
+			} while (!receivedMessage.equalsIgnoreCase("q")
+					|| !message.equalsIgnoreCase("q"));
 
 		} catch (IOException e) {
 			e.printStackTrace();
