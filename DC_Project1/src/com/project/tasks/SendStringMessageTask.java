@@ -2,9 +2,7 @@ package com.project.tasks;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -16,7 +14,6 @@ import java.net.UnknownHostException;
 import com.project.framework.Task;
 import com.project.server.DCServer;
 import com.project.server.DCServer.COMMAND_TYPE;
-import com.project.server.ServerReceiverServlet;
 import com.project.server.router.Client;
 import com.project.server.router.Node;
 
@@ -42,6 +39,8 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 	private DataOutputStream send;
 
 	private BufferedReader receive;
+	
+	private Socket clientSocket;
 
 	public SendStringMessageTask(final Node client, boolean toServer) {
 		super();
@@ -71,21 +70,13 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 				TaskManager.DoTaskOnCurrentThread(new QueryRoutingTableTask(
 						clientNode.getDestinationIP(), true), this);
 			}
-
-			System.out.println("HIT HIT HIT");
-			Socket clientSocket = new Socket(node.getCurrentIP(),
-					node.getCurrentPort()); // port needs to be
-											// serverrouters port
+			clientSocket = new Socket(node.getCurrentIP(),
+					node.getCurrentPort());
 			// network output stream
 			send = new DataOutputStream(clientSocket.getOutputStream());
 			// network input stream
 			receive = new BufferedReader(new InputStreamReader(
 					clientSocket.getInputStream()));
-			// get a lowercase message from the user (no verification or
-			// anything)
-			// String message = fileName.getText();
-
-			// String message = "NULL";
 
 			if (clientNode != null) {
 				message = clientNode.getStringMessage();
@@ -97,36 +88,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 			String receivedMessage = receive.readLine();
 
 			System.out.println("Received: " + receivedMessage);
-
-			// InputStream file = new FileInputStream(fileName.getText());
-			// InputStream file = new FileInputStream(message);
-			// BufferedReader reader = new BufferedReader(new InputStreamReader(
-			// file));
-			// String line = null;
-
-			// send.writeBytes(clientNode.message);
-
-			/*
-			 * in the while loop below we need to add the statistics for average
-			 * length of each line we send the average round trip time of each
-			 * message.
-			 */
-
-			// while ((line = reader.readLine()) != null) // loop to end of file
-			// // sending every line
-			// {
-			// // outputWindow.append("Sending TCP: " + line + "\n"); //we may
-			// // want to only output statistics if its a long file
-			// // convert to bytes and write to stream
-			// send.writeBytes(line + '\n');
-			// // receive the message back from the server
-			// String modifiedMsg = receive.readLine();
-			// System.out.println("Server TCP: " + modifiedMsg);
-			// // outputWindow.append("Server TCP: " + modifiedMsg + "\n");
-			// // we are done here close the socket!
-			//
-			// }
-			clientSocket.close(); // we are done here
+			
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -136,6 +98,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 			send.flush();
 			send.close();
 			receive.close();
+			clientSocket.close(); // we are done here
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -188,7 +151,6 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 
 	@Override
 	public void onTaskFinished(Task task) {
-		System.out.println("Hit callback HERE - " + task.getTaskId());
 		node = Node.fromBytes(task.getStringData().getBytes());
 
 		try {
