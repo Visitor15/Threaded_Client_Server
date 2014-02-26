@@ -53,7 +53,7 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 	private DataOutputStream send;
 
 	private BufferedReader receive;
-	
+
 	private String receivedMessage;
 
 	public ReceiveRemoteMessagesTask() {
@@ -120,15 +120,13 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 		try {
 			m_RecievingSocket = m_SendingSocket.accept();
 			System.out.println("Received socket");
-		} catch (IOException ex) {
-			System.out.println("Can't accept client connection. ");
-		}
-		do {
-			try {
-				send = new DataOutputStream(m_RecievingSocket.getOutputStream());
-				// network input stream
-				receive = new BufferedReader(new InputStreamReader(
-						m_RecievingSocket.getInputStream()));
+
+			send = new DataOutputStream(m_RecievingSocket.getOutputStream());
+			// network input stream
+			receive = new BufferedReader(new InputStreamReader(
+					m_RecievingSocket.getInputStream()));
+
+			do {
 
 				receivedMessage = receive.readLine();
 				System.out.println("Received: " + receivedMessage);
@@ -138,10 +136,12 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 
 				System.out.println("Sending message: " + returnMessage);
 				send.writeUTF(returnMessage + "\n");
-			} catch (IOException ex) {
-				System.out.println("Can't get socket input stream. ");
-			}
-		} while (!receivedMessage.equalsIgnoreCase("/q"));
+
+			} while (!receivedMessage.equalsIgnoreCase("/q"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		try {
 			send.flush();
