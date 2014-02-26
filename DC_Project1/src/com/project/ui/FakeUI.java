@@ -45,7 +45,7 @@ public class FakeUI implements ITaskCallback {
 		selfClient.setPort(ServerReceiverServlet.LISTENING_PORT);
 		selfClient.setUsername("Client " + DCServer.getLocalHostname());
 		selfClient.SERVER_COMMAND = COMMAND_TYPE.ROUTE_DATA_TO_SERVER;
-		selfClient.ROUTERTABLE_COMMAND = COMMAND_TYPE.PING_NODE;
+		selfClient.ROUTERTABLE_COMMAND = COMMAND_TYPE.PING_PRIMARY_SERVER_NODE;
 
 		if (userInput.equalsIgnoreCase("C")) {
 			System.out.print("Router IP: ");

@@ -233,12 +233,12 @@ public class Main {
 
 	public static final void main(String[] args) {
 
-		try {
-			doTempTest();
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			doTempTest();
+//		} catch (UnknownHostException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
         JFrame frame = new JFrame("baseClient");
         frame.setContentPane(new Main().mains);
@@ -305,6 +305,8 @@ public class Main {
     private JTextField txtMyHostname;
 
 	String IPaddress = "10.22.8.248"; // this needs to be the ip of the server
+	
+	public static String ROUTING_TABLE_IP = "NULL";
 										// router
 
     public Main() {

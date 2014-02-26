@@ -42,4 +42,10 @@ public class SocketManager {
 
 		return true;
 	}
+	
+	public synchronized void closeDatagramSocket() {
+		if(!datagramSendSocket.isClosed()) {
+			datagramSendSocket.close();
+		}
+	}
 }

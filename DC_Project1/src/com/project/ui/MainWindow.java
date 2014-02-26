@@ -46,7 +46,7 @@ public class MainWindow extends JFrame implements ITaskCallback {
 		textField = new JTextField();
 		textField.setColumns(20);
 
-		TaskManager.DoPersistentTask(new DCServer(), this);
+//		TaskManager.DoPersistentTask(new DCServer(), this);
 
 		initMainComponents();
 

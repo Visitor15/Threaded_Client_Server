@@ -5,13 +5,11 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 
 import com.project.framework.Task;
-import com.project.server.DCServer;
-import com.project.server.DCServer.COMMAND_TYPE;
-import com.project.server.ServerReceiverServlet;
+import com.project.main.Main;
+import com.project.server.RoutingTableServlet;
 import com.project.server.SocketManager;
 import com.project.server.router.Client;
 import com.project.server.router.Node;
-import com.project.server.router.RoutingTable;
 import com.project.server.router.Server;
 
 public class RegisterNodeTask extends SimpleAbstractTask {
@@ -29,14 +27,6 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 
 	private byte[] buffer;
 
-	private Server selfServer;
-
-	private Client selfClient;
-
-	private Server server;
-
-	private Client client;
-
 	private Node node;
 
 	public RegisterNodeTask(final Node n) {
@@ -49,73 +39,15 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 
 		/* Redundant code here in the event Server and Client start diverting. */
 		try {
-			/* Casting to appropriate object. */
-			switch (node.NODE) {
-			case SERVER: {
-				server = (Server) node;
-
-				if (RoutingTable.getInstance().registerServer(server)) {
-					System.out.println("Registered server: "
-							+ node.getHostname());
-
-					selfClient = new Client();
-					selfClient.setCurrentIP(InetAddress.getLocalHost()
-							.getHostAddress());
-					selfClient.setHostname(InetAddress.getLocalHost()
-							.getHostName());
-					selfClient.setPort(ServerReceiverServlet.LISTENING_PORT);
-					selfClient.setUsername("Client "
-							+ DCServer.getLocalHostname());
-					selfClient.SERVER_COMMAND = COMMAND_TYPE.REGISTER_NODE;
-
-					buffer = selfClient.toBytes();
-
-					dataGram = new DatagramPacket(buffer, buffer.length);
-					dataGram.setPort(server.getCurrentPort());
-					dataGram.setAddress(InetAddress.getByName(server
-							.getCurrentIP()));
-				}
-
-				break;
-			}
-			case CLIENT: {
-				client = (Client) node;
-
-				if (RoutingTable.getInstance().registerClient(client)) {
-					System.out.println("Registered client: "
-							+ node.getHostname());
-
-					selfServer = new Server();
-					selfServer.setCurrentIP(InetAddress.getLocalHost()
-							.getHostAddress());
-					selfServer.setHostname(InetAddress.getLocalHost()
-							.getHostName());
-					selfServer.setPort(ServerReceiverServlet.LISTENING_PORT);
-					selfServer.setUsername("Server "
-							+ DCServer.getLocalHostname());
-
-					selfServer.SERVER_COMMAND = COMMAND_TYPE.REGISTER_NODE;
-
-					buffer = selfServer.toBytes();
-
-					dataGram = new DatagramPacket(buffer, buffer.length);
-					dataGram.setPort(client.getCurrentPort());
-					dataGram.setAddress(InetAddress.getByName(client
-							.getCurrentIP()));
-				}
-
-				break;
-			}
-			case NODE: {
-				break;
-			}
-			default: {
-				break;
-			}
-			}
 
 			/* NULL indicates no node was registered. */
-			if (dataGram != null) {
+			if (node != null) {
+				buffer = node.toBytes();
+
+				dataGram = new DatagramPacket(buffer, buffer.length);
+				dataGram.setPort(RoutingTableServlet.LISTENING_PORT);
+				dataGram.setAddress(InetAddress
+						.getByName(Main.ROUTING_TABLE_IP));
 				SocketManager.getInstance().sendDatagram(dataGram);
 			}
 		} catch (IOException e) {

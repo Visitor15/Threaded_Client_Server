@@ -9,6 +9,7 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 import com.project.framework.Task;
+import com.project.main.Main;
 import com.project.server.DCServer.COMMAND_TYPE;
 import com.project.server.RoutingTableServlet;
 import com.project.server.router.Client;
@@ -62,13 +63,14 @@ public class QueryRoutingTableTask extends SimpleAbstractTask {
 			selfClient.setUsername("Client "
 					+ InetAddress.getLocalHost().getHostName());
 			selfClient.SERVER_COMMAND = COMMAND_TYPE.NULL;
-			selfClient.ROUTERTABLE_COMMAND = COMMAND_TYPE.PING_NODE;
+			selfClient.ROUTERTABLE_COMMAND = COMMAND_TYPE.PING_PRIMARY_SERVER_NODE;
+			selfClient.addStringMessage(queryUserIP);
 
 			buffer = selfClient.toBytes();
 
 			dataGram = new DatagramPacket(buffer, buffer.length);
 			dataGram.setPort(RoutingTableServlet.LISTENING_PORT);
-			dataGram.setAddress(InetAddress.getByName(queryUserIP));
+			dataGram.setAddress(InetAddress.getByName(Main.ROUTING_TABLE_IP));
 
 			buffer = new byte[1024];
 

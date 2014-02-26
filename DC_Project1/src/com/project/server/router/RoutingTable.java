@@ -18,6 +18,8 @@ public class RoutingTable implements ITaskCallback {
 	private static HashMap<String, Client> m_ClientMap;
 	private static HashMap<String, Server> m_ServerMap;
 
+	private static Server primaryServer;
+
 	public static synchronized RoutingTable getInstance() {
 		if (m_Instance == null) {
 			new RoutingTable();
@@ -46,11 +48,11 @@ public class RoutingTable implements ITaskCallback {
 		return null;
 	}
 
-	public Client getClientByUsername(String username) {
+	public Client getClientByIP(String ip) {
 		Set<String> keys = m_ClientMap.keySet();
 
 		for (String s : keys) {
-			if (s.equals(username)) {
+			if (s.equals(ip)) {
 				return m_ClientMap.get(s);
 			}
 		}
@@ -117,11 +119,25 @@ public class RoutingTable implements ITaskCallback {
 
 	public boolean registerClient(final Client c) {
 
-		if (!m_ClientMap.containsKey(c.getUsername())) {
+		if (!m_ClientMap.containsKey(c.getCurrentIP())) {
 
-			m_ClientMap.put(c.getUsername(), c);
+			m_ClientMap.put(c.getCurrentIP(), c);
 
 			return true;
+		}
+
+		return false;
+	}
+
+	public boolean unRegisterClient(final Client c) {
+
+		if (m_ClientMap.size() > 0) {
+
+			Client client = m_ClientMap.remove(c);
+
+			if (client != null) {
+				return true;
+			}
 		}
 
 		return false;
@@ -130,6 +146,7 @@ public class RoutingTable implements ITaskCallback {
 	public boolean registerServer(final Server s) {
 		if (!m_ServerMap.containsKey(s.getCurrentIP())) {
 
+			primaryServer = s;
 			m_ServerMap.put(s.getCurrentIP(), s);
 
 			return true;

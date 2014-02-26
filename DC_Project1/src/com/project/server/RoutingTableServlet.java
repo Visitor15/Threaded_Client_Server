@@ -50,11 +50,12 @@ public class RoutingTableServlet extends DCServlet {
 		try {
 			/* Registering self as server in routing table. */
 			Server selfServer = new Server();
-			selfServer.setHostname(InetAddress.getLocalHost().getHostName());
-			selfServer.setPort(ServerReceiverServlet.LISTENING_PORT);
-			selfServer.setUsername("Server " + DCServer.getLocalHostname());
+			Client client;
+//			selfServer.setHostname(InetAddress.getLocalHost().getHostName());
+//			selfServer.setPort(ServerReceiverServlet.LISTENING_PORT);
+//			selfServer.setUsername("Server " + DCServer.getLocalHostname());
 
-			RoutingTable.getInstance().registerServer(selfServer);
+//			RoutingTable.getInstance().registerServer(selfServer);
 
 			receivingSocket = new DatagramSocket(LISTENING_PORT);
 			do {
@@ -97,8 +98,8 @@ public class RoutingTableServlet extends DCServlet {
 						break;
 					}
 					case ROUTE_DATA_TO_CLIENT: {
-						Client client = RoutingTable.getInstance()
-								.getClientByUsername(node.getUsername());
+						client = RoutingTable.getInstance()
+								.getClientByIP(node.getDestinationIP());
 
 						if (client != null) {
 							node.setPort(client.getCurrentPort());
@@ -108,30 +109,50 @@ public class RoutingTableServlet extends DCServlet {
 						}
 						break;
 					}
-					case PING_NODE: {
+					case PING_PRIMARY_SERVER_NODE: {
+						System.out.println("Pinging primary server");
+
+						selfServer = RoutingTable.getInstance().getPrimaryServer();
+
+						if (selfServer != null) {
+							buffer = selfServer.toBytes();
+							dataGram = new DatagramPacket(buffer, buffer.length);
+						} else {
+							buffer = new Server().toBytes();
+							dataGram = new DatagramPacket(buffer, buffer.length);
+						}
+
+						dataGram.setPort(node.getCurrentPort());
+						dataGram.setAddress(InetAddress.getByName(node
+								.getCurrentIP()));
+						receivingSocket.send(dataGram);
+
+						break;
+
+					}
+					case PING_CLIENT_NODE: {
 						System.out.println("Pinging node: "
 								+ node.getDestinationHostname());
 
-						selfServer = RoutingTable.getInstance()
-								.getServerByHostname(
-										node.getDestinationHostname());
+						client = RoutingTable.getInstance().getClientByIP(node.getDestinationIP());
 
-						selfServer.setHostname(InetAddress.getLocalHost()
-								.getHostName());
-
-						if (selfServer != null) {
-
-							buffer = selfServer.toBytes();
+						if (client != null) {
+							buffer = client.toBytes();
 
 							dataGram = new DatagramPacket(buffer, buffer.length);
 							dataGram.setPort(node.getCurrentPort());
 							dataGram.setAddress(InetAddress.getByName(node
 									.getCurrentIP()));
+						} else {
+							buffer = new Server().toBytes();
 
-							receivingSocket.send(dataGram);
+							dataGram = new DatagramPacket(buffer, buffer.length);
+							dataGram.setPort(node.getCurrentPort());
+							dataGram.setAddress(InetAddress.getByName(node
+									.getCurrentIP()));
 						}
-						break;
 
+						receivingSocket.send(dataGram);
 					}
 					default: {
 						break;
