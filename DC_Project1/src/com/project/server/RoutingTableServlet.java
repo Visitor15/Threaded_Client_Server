@@ -118,6 +118,9 @@ public class RoutingTableServlet extends DCServlet {
 
 						selfServer.setHostname(InetAddress.getLocalHost()
 								.getHostName());
+						
+						selfServer.setRouterName(node.getRouterName());
+						selfServer.setRouterPort(node.getRouterPort());
 
 						if (selfServer != null) {
 

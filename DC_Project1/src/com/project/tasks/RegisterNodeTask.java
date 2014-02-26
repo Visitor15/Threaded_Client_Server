@@ -48,7 +48,7 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 	public void executeTask() {
 
 		/* Redundant code here in the event Server and Client start diverting. */
-		try {
+//		try {
 			/* Casting to appropriate object. */
 			switch (node.NODE) {
 			case SERVER: {
@@ -58,22 +58,22 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 					System.out.println("Registered server: "
 							+ node.getHostname());
 
-					selfClient = new Client();
-					selfClient.setCurrentIP(InetAddress.getLocalHost()
-							.getHostAddress());
-					selfClient.setHostname(InetAddress.getLocalHost()
-							.getHostName());
-					selfClient.setPort(ServerReceiverServlet.LISTENING_PORT);
-					selfClient.setUsername("Client "
-							+ DCServer.getLocalHostname());
-					selfClient.SERVER_COMMAND = COMMAND_TYPE.REGISTER_NODE;
-
-					buffer = selfClient.toBytes();
-
-					dataGram = new DatagramPacket(buffer, buffer.length);
-					dataGram.setPort(server.getCurrentPort());
-					dataGram.setAddress(InetAddress.getByName(server
-							.getCurrentIP()));
+//					selfClient = new Client();
+//					selfClient.setCurrentIP(InetAddress.getLocalHost()
+//							.getHostAddress());
+//					selfClient.setHostname(InetAddress.getLocalHost()
+//							.getHostName());
+//					selfClient.setPort(ServerReceiverServlet.LISTENING_PORT);
+//					selfClient.setUsername("Client "
+//							+ DCServer.getLocalHostname());
+//					selfClient.SERVER_COMMAND = COMMAND_TYPE.REGISTER_NODE;
+//
+//					buffer = selfClient.toBytes();
+//
+//					dataGram = new DatagramPacket(buffer, buffer.length);
+//					dataGram.setPort(server.getCurrentPort());
+//					dataGram.setAddress(InetAddress.getByName(server
+//							.getCurrentIP()));
 				}
 
 				break;
@@ -85,23 +85,23 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 					System.out.println("Registered client: "
 							+ node.getHostname());
 
-					selfServer = new Server();
-					selfServer.setCurrentIP(InetAddress.getLocalHost()
-							.getHostAddress());
-					selfServer.setHostname(InetAddress.getLocalHost()
-							.getHostName());
-					selfServer.setPort(ServerReceiverServlet.LISTENING_PORT);
-					selfServer.setUsername("Server "
-							+ DCServer.getLocalHostname());
-
-					selfServer.SERVER_COMMAND = COMMAND_TYPE.REGISTER_NODE;
-
-					buffer = selfServer.toBytes();
-
-					dataGram = new DatagramPacket(buffer, buffer.length);
-					dataGram.setPort(client.getCurrentPort());
-					dataGram.setAddress(InetAddress.getByName(client
-							.getCurrentIP()));
+//					selfServer = new Server();
+//					selfServer.setCurrentIP(InetAddress.getLocalHost()
+//							.getHostAddress());
+//					selfServer.setHostname(InetAddress.getLocalHost()
+//							.getHostName());
+//					selfServer.setPort(ServerReceiverServlet.LISTENING_PORT);
+//					selfServer.setUsername("Server "
+//							+ DCServer.getLocalHostname());
+//
+//					selfServer.SERVER_COMMAND = COMMAND_TYPE.REGISTER_NODE;
+//
+//					buffer = selfServer.toBytes();
+//
+//					dataGram = new DatagramPacket(buffer, buffer.length);
+//					dataGram.setPort(client.getCurrentPort());
+//					dataGram.setAddress(InetAddress.getByName(client
+//							.getCurrentIP()));
 				}
 
 				break;
@@ -118,9 +118,9 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 			if (dataGram != null) {
 				SocketManager.getInstance().sendDatagram(dataGram);
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 
 		stopTask();
 	}

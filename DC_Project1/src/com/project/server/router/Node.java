@@ -30,8 +30,10 @@ public class Node {
 			node.setDestinationIP(in.readUTF());
 			node.setDestinationHostname(in.readUTF());
 			node.setDestinationUsername(in.readUTF());
+			node.setRouterName(in.readUTF());
 			node.addStringMessage(in.readUTF());
 			node.setPort(in.readInt());
+			node.setRouterPort(in.readInt());
 			node.NODE = NODE_TYPE.values()[in.readInt()];
 			node.SERVER_COMMAND = COMMAND_TYPE.values()[in.readInt()];
 			node.ROUTERTABLE_COMMAND = COMMAND_TYPE.values()[in.readInt()];
@@ -47,8 +49,10 @@ public class Node {
 			client.setUsername(node.getUsername());
 			client.setHostname(node.getHostname());
 			client.setCurrentIP(node.getCurrentIP());
+			client.setRouterName(node.getRouterName());
 			client.addStringMessage(node.getStringMessage());
 			client.setPort(node.getCurrentPort());
+			client.setRouterPort(node.getRouterPort());
 			client.NODE = node.NODE;
 			client.SERVER_COMMAND = node.SERVER_COMMAND;
 			client.ROUTERTABLE_COMMAND = node.ROUTERTABLE_COMMAND;
@@ -61,8 +65,10 @@ public class Node {
 			server.setUsername(node.getUsername());
 			server.setHostname(node.getHostname());
 			server.setCurrentIP(node.getCurrentIP());
+			server.setRouterName(node.getRouterName());
 			server.addStringMessage(node.getStringMessage());
 			server.setPort(node.getCurrentPort());
+			server.setRouterPort(node.getRouterPort());
 			server.NODE = node.NODE;
 			server.SERVER_COMMAND = node.SERVER_COMMAND;
 			server.ROUTERTABLE_COMMAND = node.ROUTERTABLE_COMMAND;
@@ -98,7 +104,7 @@ public class Node {
 
 	public String destHostname;
 	
-	public String routerIP;
+	public String routerName;
 	
 	public int destinationPort;
 
@@ -161,8 +167,8 @@ public class Node {
 		return username;
 	}
 
-	public String getRouterIP() {
-		return routerIP;
+	public String getRouterName() {
+		return routerName;
 	}
 	
 	public int getRouterPort() {
@@ -205,8 +211,8 @@ public class Node {
 		username = userName;
 	}
 	
-	public void setRouterIP(final String IP) {
-		routerIP = IP;
+	public void setRouterName(final String routerName) {
+		this.routerName = routerName;
 	}
 	
 	public void setRouterPort(final int port) {
@@ -226,8 +232,10 @@ public class Node {
 			out.writeUTF(getDestinationIP());
 			out.writeUTF(getDestinationHostname());
 			out.writeUTF(getDestinationUsername());
+			out.writeUTF(getRouterName());
 			out.writeUTF(getStringMessage());
 			out.writeInt(getCurrentPort());
+			out.writeInt(getRouterPort());
 			out.writeInt(NODE.ordinal());
 			out.writeInt(SERVER_COMMAND.ordinal());
 			out.writeInt(ROUTERTABLE_COMMAND.ordinal());

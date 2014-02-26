@@ -6,8 +6,10 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Scanner;
 
 import com.project.framework.Task;
+import com.project.server.DCServer.COMMAND_TYPE;
 import com.project.server.router.Client;
 import com.project.server.router.Node;
 import com.project.server.router.RoutingTable;
@@ -35,7 +37,7 @@ public class ServerReceiverServlet extends DCServlet {
 
 	public ServerReceiverServlet() {
 		super();
-
+		
 		try {
 			selfServer = new Server();
 
@@ -45,13 +47,41 @@ public class ServerReceiverServlet extends DCServlet {
 			selfServer.setHostname(InetAddress.getLocalHost().getHostName());
 			selfServer.setPort(ServerReceiverServlet.LISTENING_PORT);
 			selfServer.setUsername("Server " + DCServer.getLocalHostname());
-
+			selfServer.SERVER_COMMAND = COMMAND_TYPE.NULL;
+			selfServer.ROUTERTABLE_COMMAND = COMMAND_TYPE.REGISTER_NODE;
+			
+			Scanner input = new Scanner(System.in);
+			
+			System.out.print("Router Name: ");
+			String userInput = input.nextLine();
+			
+			selfServer.setRouterName(userInput);
+			
+			System.out.print("Router Port: ");
+			userInput = input.nextLine();
+			
+			selfServer.setRouterPort(Integer.parseInt(userInput));
+			
+			
+			buffer = selfServer.toBytes();
+			
+			DatagramPacket dataGram = new DatagramPacket(buffer, buffer.length);
+			dataGram.setPort(selfServer.getRouterPort());
+			dataGram.setAddress(InetAddress.getByName(selfServer.getRouterName()));
+			
+			SocketManager.getInstance().sendDatagram(dataGram);
+			
 			RoutingTable.getInstance().registerServer(selfServer);
+
+			input.close();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
+		
 		setTaskId("ServerReceiverServelet");
 	}
 

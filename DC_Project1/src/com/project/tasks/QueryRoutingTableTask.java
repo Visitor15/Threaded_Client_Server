@@ -57,8 +57,10 @@ public class QueryRoutingTableTask extends SimpleAbstractTask {
 
 			selfClient = new Client();
 			selfClient.setCurrentIP(InetAddress.getLocalHost().getHostName());
+			selfClient.setRouterName(queryUserIP);
 			selfClient.setHostname(InetAddress.getLocalHost().getHostName());
 			selfClient.setPort(PORT);
+			selfClient.setRouterPort(RoutingTableServlet.LISTENING_PORT);
 			selfClient.setUsername("Client "
 					+ InetAddress.getLocalHost().getHostName());
 			selfClient.SERVER_COMMAND = COMMAND_TYPE.NULL;
