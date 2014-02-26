@@ -22,7 +22,7 @@ import com.project.server.router.Node;
 
 public class SendStringMessageTask extends SimpleAbstractTask implements
 		ITaskCallback {
-	
+
 	public static final int PORT = 13135;
 
 	private Node node = null;
@@ -32,12 +32,16 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 	private boolean toServer;
 
 	private String message;
-	
+
 	private DatagramSocket datagramSocket;
-	
+
 	private DatagramPacket dataGram;
-	
+
 	private byte[] buffer;
+
+	private DataOutputStream send;
+
+	private BufferedReader receive;
 
 	public SendStringMessageTask(final Node client, boolean toServer) {
 		super();
@@ -64,33 +68,18 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 		try {
 
 			if (toServer || node == null) {
-				if (clientNode.getDestinationUsername()
-						.equalsIgnoreCase("NULL")) {
-					
-					
-					
-					TaskManager.DoTaskOnCurrentThread(
-							new QueryRoutingTableTask(clientNode
-									.getDestinationIP(), true), this);
-				} else {
-					TaskManager.DoTaskOnCurrentThread(
-							new QueryRoutingTableTask(clientNode
-									.getDestinationIP(), true), this);
-				}
+				TaskManager.DoTaskOnCurrentThread(new QueryRoutingTableTask(
+						clientNode.getDestinationIP(), true), this);
 			}
-			
-			
 
-			
 			System.out.println("HIT HIT HIT");
 			Socket clientSocket = new Socket(node.getCurrentIP(),
 					node.getCurrentPort()); // port needs to be
 											// serverrouters port
 			// network output stream
-			DataOutputStream send = new DataOutputStream(
-					clientSocket.getOutputStream());
+			send = new DataOutputStream(clientSocket.getOutputStream());
 			// network input stream
-			BufferedReader receive = new BufferedReader(new InputStreamReader(
+			receive = new BufferedReader(new InputStreamReader(
 					clientSocket.getInputStream()));
 			// get a lowercase message from the user (no verification or
 			// anything)
@@ -100,25 +89,22 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 
 			if (clientNode != null) {
 				message = clientNode.getStringMessage();
+				System.out.println("Sending message: " + message);
 			}
-			
-			send.writeUTF(message);
-			
+
+			send.writeUTF(message + "\n");
+
 			String receivedMessage = receive.readLine();
-			
+
 			System.out.println("Received: " + receivedMessage);
-			
-			send.flush();
-			
-			send.close();
 
 			// InputStream file = new FileInputStream(fileName.getText());
-//			InputStream file = new FileInputStream(message);
-//			BufferedReader reader = new BufferedReader(new InputStreamReader(
-//					file));
-//			String line = null;
+			// InputStream file = new FileInputStream(message);
+			// BufferedReader reader = new BufferedReader(new InputStreamReader(
+			// file));
+			// String line = null;
 
-//			send.writeBytes(clientNode.message);
+			// send.writeBytes(clientNode.message);
 
 			/*
 			 * in the while loop below we need to add the statistics for average
@@ -126,23 +112,32 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 			 * message.
 			 */
 
-//			while ((line = reader.readLine()) != null) // loop to end of file
-//			// sending every line
-//			{
-//				// outputWindow.append("Sending TCP: " + line + "\n"); //we may
-//				// want to only output statistics if its a long file
-//				// convert to bytes and write to stream
-//				send.writeBytes(line + '\n');
-//				// receive the message back from the server
-//				String modifiedMsg = receive.readLine();
-//				System.out.println("Server TCP: " + modifiedMsg);
-//				// outputWindow.append("Server TCP: " + modifiedMsg + "\n");
-//				// we are done here close the socket!
-//
-//			}
+			// while ((line = reader.readLine()) != null) // loop to end of file
+			// // sending every line
+			// {
+			// // outputWindow.append("Sending TCP: " + line + "\n"); //we may
+			// // want to only output statistics if its a long file
+			// // convert to bytes and write to stream
+			// send.writeBytes(line + '\n');
+			// // receive the message back from the server
+			// String modifiedMsg = receive.readLine();
+			// System.out.println("Server TCP: " + modifiedMsg);
+			// // outputWindow.append("Server TCP: " + modifiedMsg + "\n");
+			// // we are done here close the socket!
+			//
+			// }
 			clientSocket.close(); // we are done here
 
 		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			send.flush();
+			send.close();
+			receive.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -195,34 +190,32 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 	public void onTaskFinished(Task task) {
 		System.out.println("Hit callback HERE - " + task.getTaskId());
 		node = Node.fromBytes(task.getStringData().getBytes());
-		
+
 		try {
 			datagramSocket = new DatagramSocket(SendStringMessageTask.PORT);
-			
+
 			Client selfClient = new Client();
-			selfClient.setCurrentIP(InetAddress.getLocalHost()
-					.getHostAddress());
-			selfClient.setHostname(InetAddress.getLocalHost()
-					.getHostName());
+			selfClient
+					.setCurrentIP(InetAddress.getLocalHost().getHostAddress());
+			selfClient.setHostname(InetAddress.getLocalHost().getHostName());
 			selfClient.setPort(SendStringMessageTask.PORT);
-			selfClient.setUsername("Client "
-					+ DCServer.getLocalHostname());
+			selfClient.setUsername("Client " + DCServer.getLocalHostname());
 			selfClient.SERVER_COMMAND = COMMAND_TYPE.SEND_STRING_MESSAGE;
 
 			buffer = selfClient.toBytes();
 
 			dataGram = new DatagramPacket(buffer, buffer.length);
 			dataGram.setPort(node.getCurrentPort());
-			dataGram.setAddress(InetAddress.getByName(node
-					.getCurrentIP()));
-			
+			dataGram.setAddress(InetAddress.getByName(node.getCurrentIP()));
+
 			datagramSocket.send(dataGram);
-			
+
 			buffer = new byte[1024];
-			DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
-			
+			DatagramPacket receivePacket = new DatagramPacket(buffer,
+					buffer.length);
+
 			datagramSocket.receive(receivePacket);
-			
+
 			node = Node.fromBytes(receivePacket.getData());
 		} catch (NullPointerException e) {
 			// TODO Auto-generated catch block
