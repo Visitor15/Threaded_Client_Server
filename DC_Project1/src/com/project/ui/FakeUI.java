@@ -36,7 +36,7 @@ public class FakeUI implements ITaskCallback {
 	
 	public void doTempTest() throws UnknownHostException {
 		Scanner input = new Scanner(System.in);
-		System.out.print("Are you a SERVER or CLIENT? (C/S): ");
+		System.out.print("Are you a ROUTER, SERVER, or CLIENT? (R/C/S): ");
 		String userInput = input.nextLine();
 
 		Client selfClient = new Client();
@@ -48,6 +48,16 @@ public class FakeUI implements ITaskCallback {
 		selfClient.ROUTERTABLE_COMMAND = COMMAND_TYPE.PING_NODE;
 
 		if (userInput.equalsIgnoreCase("C")) {
+			System.out.print("Router IP: ");
+			userInput = input.nextLine();
+			
+			selfClient.setRouterIP(userInput);
+			
+			System.out.print("Router Port: ");
+			userInput = input.nextLine();
+			
+			selfClient.setRouterPort(Integer.parseInt(userInput));
+			
 			System.out.print("Recipient IP: ");
 			userInput = input.nextLine();
 
@@ -55,10 +65,21 @@ public class FakeUI implements ITaskCallback {
 
 			/* *this* is the ITaskCallback interface for task callback in onTaskProgress, onTaskStart, onTaskFinished */
 			TaskManager.DoTask(new SendStringMessageTask(selfClient, true, this));
+		} else if (userInput.equalsIgnoreCase("R")) {
+			TaskManager.DoTask(new RoutingTableServlet());
 		} else {
+			System.out.print("Router IP: ");
+			userInput = input.nextLine();
+			
+			selfClient.setRouterIP(userInput);
+			
+			System.out.print("Router Port: ");
+			userInput = input.nextLine();
+			
+			selfClient.setRouterPort(Integer.parseInt(userInput));
+			
 			// RoutingTable
 			TaskManager.DoTask(new ServerReceiverServlet());
-			TaskManager.DoTask(new RoutingTableServlet());
 		}
 		
 		input.close();

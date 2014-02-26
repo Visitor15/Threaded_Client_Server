@@ -96,7 +96,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 			if (toServer || node == null) {
 				startLookupTime = System.currentTimeMillis();
 				TaskManager.DoTaskOnCurrentThread(new QueryRoutingTableTask(
-						clientNode.getDestinationIP(), true), this);
+						clientNode.getRouterIP(), true), this);
 			}
 			clientSocket = new Socket(node.getCurrentIP(),
 					node.getCurrentPort());

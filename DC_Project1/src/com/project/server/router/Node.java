@@ -97,10 +97,14 @@ public class Node {
 	public String destUsername;
 
 	public String destHostname;
-
+	
+	public String routerIP;
+	
 	public int destinationPort;
 
 	public int currentPort;
+	
+	public int routerPort;
 
 	Node() {
 		username = "NULL";
@@ -140,7 +144,7 @@ public class Node {
 	public int getDestinationPort() {
 		return destinationPort;
 	}
-
+	
 	public String getDestinationUsername() {
 		return destUsername;
 	}
@@ -155,6 +159,14 @@ public class Node {
 
 	public String getUsername() {
 		return username;
+	}
+
+	public String getRouterIP() {
+		return routerIP;
+	}
+	
+	public int getRouterPort() {
+		return routerPort;
 	}
 
 	public boolean hasMessage() {
@@ -191,6 +203,14 @@ public class Node {
 
 	public void setUsername(final String userName) {
 		username = userName;
+	}
+	
+	public void setRouterIP(final String IP) {
+		routerIP = IP;
+	}
+	
+	public void setRouterPort(final int port) {
+		routerPort = port;
 	}
 
 	public byte[] toBytes() {
