@@ -82,9 +82,9 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 			// network output stream
 			send = new DataOutputStream(clientSocket.getOutputStream());
 			// network input stream
-//			receive = new BufferedReader(new InputStreamReader(
-//					clientSocket.getInputStream()));
-			
+			// receive = new BufferedReader(new InputStreamReader(
+			// clientSocket.getInputStream()));
+
 			inDataStream = new DataInputStream(clientSocket.getInputStream());
 
 			// if (clientNode != null) {
@@ -97,11 +97,12 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 						+ ": ");
 				message = userInput.nextLine();
 
-//				send.writeBytes(message);
+				// send.writeBytes(message);
 				send.writeUTF(message);
 				receivedMessage = inDataStream.readUTF();
-				
-				if(receivedMessage.equalsIgnoreCase("q")) {
+
+				if (message.equalsIgnoreCase("q")
+						|| receivedMessage.equalsIgnoreCase("q")) {
 					System.out.println("Recieved QUIT command. Closing.");
 					break;
 				}
