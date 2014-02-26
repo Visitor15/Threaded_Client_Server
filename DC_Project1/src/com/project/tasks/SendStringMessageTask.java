@@ -81,9 +81,6 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 					node.getCurrentPort());
 			// network output stream
 			send = new DataOutputStream(clientSocket.getOutputStream());
-			// network input stream
-			// receive = new BufferedReader(new InputStreamReader(
-			// clientSocket.getInputStream()));
 
 			inDataStream = new DataInputStream(clientSocket.getInputStream());
 

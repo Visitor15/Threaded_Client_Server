@@ -139,7 +139,7 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 						.getDefault());
 
 				System.out.println("Sending message: " + returnMessage);
-				send.writeUTF(returnMessage + "\n");
+				send.writeUTF(returnMessage);
 				
 				if(receivedMessage.equalsIgnoreCase("q")) {
 					System.out.println("Recieved QUIT command. Closing.");
