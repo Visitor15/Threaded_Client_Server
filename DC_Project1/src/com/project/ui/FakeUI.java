@@ -53,6 +53,7 @@ public class FakeUI implements ITaskCallback {
 
 			selfClient.setDestinationIP(userInput);
 
+			/* *this* is the ITaskCallback interface for task callback in onTaskProgress, onTaskStart, onTaskFinished */
 			TaskManager.DoTask(new SendStringMessageTask(selfClient, true, this));
 		} else {
 			// RoutingTable
