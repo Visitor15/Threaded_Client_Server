@@ -8,6 +8,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import com.project.framework.Task;
+import com.project.server.router.Client;
 import com.project.server.router.Node;
 import com.project.server.router.RoutingTable;
 import com.project.server.router.Server;
@@ -115,6 +116,22 @@ public class ServerReceiverServlet extends DCServlet {
 						break;
 					}
 					case PING_NODE: {
+
+						switch (node.NODE) {
+						case CLIENT:
+							RoutingTable.getInstance().registerClient(
+									(Client) node);
+							break;
+						case NODE:
+							break;
+						case SERVER:
+							RoutingTable.getInstance().registerServer(
+									(Server) node);
+							break;
+						default:
+							break;
+						}
+
 						Server selfServer = new Server();
 						selfServer.setCurrentIP(InetAddress.getLocalHost()
 								.getHostAddress());
