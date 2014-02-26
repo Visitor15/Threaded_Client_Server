@@ -1,6 +1,7 @@
 package com.project.tasks;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -39,7 +40,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 
 	private DataOutputStream send;
 
-	private BufferedReader receive;
+	private DataInputStream inDataStream;
 
 	private Socket clientSocket;
 
@@ -81,8 +82,10 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 			// network output stream
 			send = new DataOutputStream(clientSocket.getOutputStream());
 			// network input stream
-			receive = new BufferedReader(new InputStreamReader(
-					clientSocket.getInputStream()));
+//			receive = new BufferedReader(new InputStreamReader(
+//					clientSocket.getInputStream()));
+			
+			inDataStream = new DataInputStream(clientSocket.getInputStream());
 
 			// if (clientNode != null) {
 			// message = clientNode.getStringMessage();
@@ -94,8 +97,8 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 						+ ": ");
 				message = userInput.nextLine();
 
-				send.writeUTF(message + "\n");
-				receivedMessage = receive.readLine();
+				send.writeBytes(message);
+				receivedMessage = inDataStream.readUTF();
 
 				System.out.println("Received: " + receivedMessage);
 			} while (!receivedMessage.equalsIgnoreCase("#q")
@@ -108,7 +111,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 		try {
 			send.flush();
 			send.close();
-			receive.close();
+			inDataStream.close();
 			clientSocket.close(); // we are done here
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

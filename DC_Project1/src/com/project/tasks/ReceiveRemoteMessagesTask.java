@@ -3,6 +3,7 @@ package com.project.tasks;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,7 +36,7 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 	private ServerSocket m_SendingSocket;
 
 	private Socket m_RecievingSocket;
-
+	
 	private final ArrayList<Client> connectedPeers;
 
 	private static int LISTEN_PORT = 9797;
@@ -52,7 +53,7 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 
 	private DataOutputStream send;
 
-	private BufferedReader receive;
+	private DataInputStream inDataStream;
 
 	private String receivedMessage;
 
@@ -123,12 +124,15 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 
 			send = new DataOutputStream(m_RecievingSocket.getOutputStream());
 			// network input stream
-			receive = new BufferedReader(new InputStreamReader(
-					m_RecievingSocket.getInputStream()));
+//			receive = new BufferedReader(new InputStreamReader(
+//					m_RecievingSocket.getInputStream()));
+			
+			inDataStream = new DataInputStream(m_RecievingSocket.getInputStream());
 
 			do {
 
-				receivedMessage = receive.readLine();
+//				receivedMessage = receive.readLine();
+				receivedMessage = inDataStream.readUTF();
 				System.out.println("Received: " + receivedMessage);
 
 				String returnMessage = receivedMessage.toUpperCase(Locale
@@ -145,9 +149,8 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 
 		try {
 			send.flush();
-
 			send.close();
-			receive.close();
+			inDataStream.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
