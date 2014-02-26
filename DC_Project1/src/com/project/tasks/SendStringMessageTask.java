@@ -24,7 +24,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 		ITaskCallback {
 
 	/**
-	 *		Serializable stuff.
+	 * Serializable stuff.
 	 */
 	private static final long serialVersionUID = -3296275676738733533L;
 
@@ -53,11 +53,11 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 	private String receivedMessage;
 
 	private Scanner userInput;
-	
+
 	private String fileText;
-	
+
 	String recipientHostname = "NULL";
-	
+
 	private ArrayList<String> textLines;
 
 	public SendStringMessageTask(final Node client, boolean toServer) {
@@ -83,14 +83,14 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 		 */
 
 		textLines = new ArrayList<String>();
-		
+
 		try {
 			readFile();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 		try {
 			userInput = new Scanner(System.in);
 
@@ -110,35 +110,38 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 			// System.out.println("Sending message: " + message);
 			// send.writeUTF(message + "\n");
 			// }
-			
-			
-			if(textLines.size() > 0) {
-				for(int i = 0; i < textLines.size(); i++) {
-					send.writeUTF(textLines.get(i));
-					receivedMessage = inDataStream.readUTF();
-					System.out.println(recipientHostname + ": " + receivedMessage);
+
+			if (textLines.size() > 0) {
+				for (int i = 0; i < textLines.size(); i++) {
+					if (textLines.get(i) != null) {
+						send.writeUTF(textLines.get(i));
+						receivedMessage = inDataStream.readUTF();
+						System.out.println(recipientHostname + ": "
+								+ receivedMessage);
+					}
 				}
 			}
 			
-			
-//			do {
-//				System.out.print(InetAddress.getLocalHost().getHostName()
-//						+ ": ");
-//				message = userInput.nextLine();
-//
-//				// send.writeBytes(message);
-//				send.writeUTF(message);
-//				receivedMessage = inDataStream.readUTF();
-//
-//				if (message.equalsIgnoreCase("q")
-//						|| receivedMessage.equalsIgnoreCase("q")) {
-//					System.out.println("Recieved QUIT command. Closing.");
-//					break;
-//				}
-//
-//				System.out.println(node.getHostname() + ": " + receivedMessage);
-//			} while (!receivedMessage.equalsIgnoreCase("q")
-//					|| !message.equalsIgnoreCase("q"));
+			send.writeUTF("Q");
+
+			// do {
+			// System.out.print(InetAddress.getLocalHost().getHostName()
+			// + ": ");
+			// message = userInput.nextLine();
+			//
+			// // send.writeBytes(message);
+			// send.writeUTF(message);
+			// receivedMessage = inDataStream.readUTF();
+			//
+			// if (message.equalsIgnoreCase("q")
+			// || receivedMessage.equalsIgnoreCase("q")) {
+			// System.out.println("Recieved QUIT command. Closing.");
+			// break;
+			// }
+			//
+			// System.out.println(node.getHostname() + ": " + receivedMessage);
+			// } while (!receivedMessage.equalsIgnoreCase("q")
+			// || !message.equalsIgnoreCase("q"));
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -156,23 +159,23 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 
 		stopTask();
 	}
-	
+
 	public void readFile() throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader("moby10b.txt"));
-	    try {
-	        StringBuilder sb = new StringBuilder();
-	        String line = br.readLine();
+		try {
+			StringBuilder sb = new StringBuilder();
+			String line = br.readLine();
 
-	        while (line != null) {
-	            sb.append(line);
-	            sb.append(System.lineSeparator());
-	            line = br.readLine();
-	            textLines.add(line);
-	        }
-	        fileText = sb.toString();
-	    } finally {
-	        br.close();
-	    }
+			while (line != null) {
+				sb.append(line);
+				sb.append(System.lineSeparator());
+				line = br.readLine();
+				textLines.add(line);
+			}
+			fileText = sb.toString();
+		} finally {
+			br.close();
+		}
 	}
 
 	@Override
@@ -220,7 +223,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 	@Override
 	public void onTaskFinished(Task task) {
 		node = Node.fromBytes(task.getStringData().getBytes());
-		
+
 		recipientHostname = node.getHostname();
 
 		try {
