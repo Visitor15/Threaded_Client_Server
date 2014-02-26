@@ -214,13 +214,13 @@ public class Main {
     		//Client
     		System.out.print("Recipient IP: " );
         	userInput = input.nextLine();
-    		
+//    		
         	selfClient.setDestinationIP(userInput);
+//        	
+//        	System.out.print("Message: " );
+//        	userInput = input.nextLine();
         	
-        	System.out.print("Message: " );
-        	userInput = input.nextLine();
-        	
-        	selfClient.addStringMessage(userInput);
+//        	selfClient.addStringMessage(userInput);
     		
     		TaskManager.DoTask(new SendStringMessageTask(selfClient, true));
     	}

@@ -10,6 +10,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Scanner;
 
 import com.project.framework.Task;
 import com.project.server.DCServer;
@@ -39,8 +40,12 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 	private DataOutputStream send;
 
 	private BufferedReader receive;
-	
+
 	private Socket clientSocket;
+
+	private String receivedMessage;
+
+	private Scanner userInput;
 
 	public SendStringMessageTask(final Node client, boolean toServer) {
 		super();
@@ -65,6 +70,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 		 */
 
 		try {
+			userInput = new Scanner(System.in);
 
 			if (toServer || node == null) {
 				TaskManager.DoTaskOnCurrentThread(new QueryRoutingTableTask(
@@ -78,17 +84,22 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 			receive = new BufferedReader(new InputStreamReader(
 					clientSocket.getInputStream()));
 
-			if (clientNode != null) {
-				message = clientNode.getStringMessage();
-				System.out.println("Sending message: " + message);
-			}
+			// if (clientNode != null) {
+			// message = clientNode.getStringMessage();
+			// System.out.println("Sending message: " + message);
+			// send.writeUTF(message + "\n");
+			// }
+			do {
+				System.out.print(InetAddress.getLocalHost().getHostName()
+						+ ": ");
+				message = userInput.nextLine();
 
-			send.writeUTF(message + "\n");
+				send.writeUTF(message + "\n");
+				receivedMessage = receive.readLine();
 
-			String receivedMessage = receive.readLine();
-
-			System.out.println("Received: " + receivedMessage);
-			
+				System.out.println("Received: " + receivedMessage);
+			} while (!receivedMessage.equalsIgnoreCase("\\q")
+					|| !message.equalsIgnoreCase("\\q"));
 
 		} catch (IOException e) {
 			e.printStackTrace();

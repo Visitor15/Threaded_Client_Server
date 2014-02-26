@@ -99,7 +99,7 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 					+ " IP: " + clientNode.getCurrentIP());
 
 			System.out.println("Sending datagram");
-			
+
 			datagramSocket.send(dataGram);
 
 		} catch (UnknownHostException e2) {
@@ -119,21 +119,19 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 
 		String message = "NULL";
 
+		// PostMessageTask task;
+		InputStream is = null;
+		ByteArrayOutputStream dataOutStream = null;
+		BufferedOutputStream bos = null;
+		int bufferSize = 0;
+
+		try {
+			m_RecievingSocket = m_SendingSocket.accept();
+			System.out.println("Received socket");
+		} catch (IOException ex) {
+			System.out.println("Can't accept client connection. ");
+		}
 		do {
-
-			// PostMessageTask task;
-			InputStream is = null;
-			ByteArrayOutputStream dataOutStream = null;
-			BufferedOutputStream bos = null;
-			int bufferSize = 0;
-
-			try {
-				m_RecievingSocket = m_SendingSocket.accept();
-				System.out.println("Received socket");
-			} catch (IOException ex) {
-				System.out.println("Can't accept client connection. ");
-			}
-
 			try {
 				send = new DataOutputStream(m_RecievingSocket.getOutputStream());
 				// network input stream
