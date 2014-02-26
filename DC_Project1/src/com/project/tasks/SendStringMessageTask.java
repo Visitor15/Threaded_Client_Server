@@ -98,8 +98,8 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 				receivedMessage = receive.readLine();
 
 				System.out.println("Received: " + receivedMessage);
-			} while (!receivedMessage.equalsIgnoreCase("/q")
-					|| !message.equalsIgnoreCase("/q"));
+			} while (!receivedMessage.equalsIgnoreCase("//q")
+					|| !message.equalsIgnoreCase("//q"));
 
 		} catch (IOException e) {
 			e.printStackTrace();
