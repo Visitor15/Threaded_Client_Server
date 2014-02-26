@@ -1,7 +1,9 @@
 package com.project.tasks;
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -9,6 +11,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.project.framework.Task;
@@ -50,6 +53,12 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 	private String receivedMessage;
 
 	private Scanner userInput;
+	
+	private String fileText;
+	
+	String recipientHostname = "NULL";
+	
+	private ArrayList<String> textLines;
 
 	public SendStringMessageTask(final Node client, boolean toServer) {
 		super();
@@ -73,6 +82,15 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 		 * file for sending the data
 		 */
 
+		textLines = new ArrayList<String>();
+		
+		try {
+			readFile();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		try {
 			userInput = new Scanner(System.in);
 
@@ -92,24 +110,35 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 			// System.out.println("Sending message: " + message);
 			// send.writeUTF(message + "\n");
 			// }
-			do {
-				System.out.print(InetAddress.getLocalHost().getHostName()
-						+ ": ");
-				message = userInput.nextLine();
-
-				// send.writeBytes(message);
-				send.writeUTF(message);
-				receivedMessage = inDataStream.readUTF();
-
-				if (message.equalsIgnoreCase("q")
-						|| receivedMessage.equalsIgnoreCase("q")) {
-					System.out.println("Recieved QUIT command. Closing.");
-					break;
+			
+			
+			if(textLines.size() > 0) {
+				for(int i = 0; i < textLines.size(); i++) {
+					send.writeUTF(textLines.get(i));
+					receivedMessage = inDataStream.readUTF();
+					System.out.println(recipientHostname + ": " + receivedMessage);
 				}
-
-				System.out.println(node.getHostname() + ": " + receivedMessage);
-			} while (!receivedMessage.equalsIgnoreCase("q")
-					|| !message.equalsIgnoreCase("q"));
+			}
+			
+			
+//			do {
+//				System.out.print(InetAddress.getLocalHost().getHostName()
+//						+ ": ");
+//				message = userInput.nextLine();
+//
+//				// send.writeBytes(message);
+//				send.writeUTF(message);
+//				receivedMessage = inDataStream.readUTF();
+//
+//				if (message.equalsIgnoreCase("q")
+//						|| receivedMessage.equalsIgnoreCase("q")) {
+//					System.out.println("Recieved QUIT command. Closing.");
+//					break;
+//				}
+//
+//				System.out.println(node.getHostname() + ": " + receivedMessage);
+//			} while (!receivedMessage.equalsIgnoreCase("q")
+//					|| !message.equalsIgnoreCase("q"));
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -126,6 +155,24 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 		}
 
 		stopTask();
+	}
+	
+	public void readFile() throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader("moby10b.txt"));
+	    try {
+	        StringBuilder sb = new StringBuilder();
+	        String line = br.readLine();
+
+	        while (line != null) {
+	            sb.append(line);
+	            sb.append(System.lineSeparator());
+	            line = br.readLine();
+	            textLines.add(line);
+	        }
+	        fileText = sb.toString();
+	    } finally {
+	        br.close();
+	    }
 	}
 
 	@Override
@@ -173,6 +220,8 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 	@Override
 	public void onTaskFinished(Task task) {
 		node = Node.fromBytes(task.getStringData().getBytes());
+		
+		recipientHostname = node.getHostname();
 
 		try {
 			datagramSocket = new DatagramSocket(SendStringMessageTask.PORT);

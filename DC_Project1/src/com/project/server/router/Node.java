@@ -107,7 +107,7 @@ public class Node {
 	}
 	
 	public void setDestinationHostname(final String hostName) {
-		hostname = hostName;
+		destHostname = hostName;
 	}
 	
 	public String getDestinationHostname() {

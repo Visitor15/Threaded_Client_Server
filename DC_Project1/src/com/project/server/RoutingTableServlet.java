@@ -129,6 +129,8 @@ public class RoutingTableServlet extends DCServlet {
 						selfServer = RoutingTable.getInstance()
 								.getServerByHostname(
 										node.getDestinationHostname());
+						
+						selfServer.setHostname(InetAddress.getLocalHost().getHostName());
 
 						if (selfServer != null) {
 

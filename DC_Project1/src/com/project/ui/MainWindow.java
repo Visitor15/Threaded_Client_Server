@@ -1,19 +1,19 @@
 package com.project.ui;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import com.project.framework.Task;
 import com.project.server.DCServer;
 import com.project.server.router.RoutingTable;
 import com.project.tasks.ITaskCallback;
-import com.project.tasks.ServerFinderTask;
 import com.project.tasks.TaskManager;
 
 public class MainWindow extends JFrame implements ITaskCallback {
@@ -23,6 +23,10 @@ public class MainWindow extends JFrame implements ITaskCallback {
 	
 	JButton pingServerBtn;
 	JButton pingClientBtn;
+	
+	JTextField textField;
+	
+	JLabel receivedTextField;
 
 	public MainWindow() {
 		this.setTitle("Synchronizer");
@@ -33,8 +37,12 @@ public class MainWindow extends JFrame implements ITaskCallback {
 		
 		serverPanel = new JPanel();
 		clientPanel = new JPanel();
+		
+		
 		pingServerBtn = new JButton("Ping Server");
 		pingClientBtn = new JButton("Ping Client");
+		textField = new JTextField();
+		textField.setColumns(20);
 		
 		TaskManager.DoPersistentTask(new DCServer(), this);
 		
@@ -46,10 +54,11 @@ public class MainWindow extends JFrame implements ITaskCallback {
 	}
 	
 	private void initMainComponents() {
-		serverPanel.setSize(this.getWidth() / 2, this.getHeight());
-		clientPanel.setSize(this.getWidth() / 2, this.getHeight());
+		serverPanel.setSize(this.getSize().width / 2, this.getSize().height);
+		clientPanel.setSize(this.getSize().width  / 2, this.getSize().height);
 		serverPanel.add(pingClientBtn, BorderLayout.WEST);
-		clientPanel.add(pingServerBtn, BorderLayout.EAST);
+		clientPanel.add(pingServerBtn);
+		clientPanel.add(textField);
 		this.add(serverPanel);
 		this.add(clientPanel);
 		serverPanel.setVisible(true);
@@ -83,7 +92,7 @@ public class MainWindow extends JFrame implements ITaskCallback {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				TaskManager.DoTask(new ServerFinderTask(MainWindow.this));
+//				TaskManager.DoTask(new ServerFinderTask(MainWindow.this));
 			}
 			
 		});

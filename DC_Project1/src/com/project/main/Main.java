@@ -8,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -34,6 +33,7 @@ import com.project.tasks.SendStringMessageTask;
 import com.project.tasks.SimpleAbstractTask;
 import com.project.tasks.TaskManager;
 import com.project.tasks.ThreadHelper;
+import com.project.ui.MainWindow;
 
 /**
  * Created by Alex on 1/15/14.
