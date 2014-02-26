@@ -87,6 +87,7 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 			selfServer.setUsername("Server " + DCServer.getLocalHostname());
 
 			datagramSocket = new DatagramSocket(SEND_PORT);
+			datagramSocket.setReuseAddress(true);
 
 			buffer = selfServer.toBytes();
 
@@ -97,6 +98,8 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 			System.out.println("Datagram: PORT: " + clientNode.getCurrentPort()
 					+ " IP: " + clientNode.getCurrentIP());
 
+			System.out.println("Sending datagram");
+			
 			datagramSocket.send(dataGram);
 
 		} catch (UnknownHostException e2) {
@@ -126,6 +129,7 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 
 			try {
 				m_RecievingSocket = m_SendingSocket.accept();
+				System.out.println("Received socket");
 			} catch (IOException ex) {
 				System.out.println("Can't accept client connection. ");
 			}
@@ -139,10 +143,11 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 				String receivedMessage = receive.readLine();
 				System.out.println("Received: " + receivedMessage);
 
-				receivedMessage = receivedMessage.toUpperCase(Locale
+				String returnMessage = receivedMessage.toUpperCase(Locale
 						.getDefault());
 
-				send.writeUTF(receivedMessage);
+				System.out.println("Sending message: " + returnMessage);
+				send.writeUTF(returnMessage + "\n");
 
 				// is = m_RecievingSocket.getInputStream();
 				//
