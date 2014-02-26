@@ -10,13 +10,17 @@ import java.net.UnknownHostException;
 
 import com.project.framework.Task;
 import com.project.io.SynchedInOut;
-import com.project.server.router.RoutingTable;
-import com.project.server.router.Server;
 import com.project.tasks.ThreadHelper;
 
 public class ServerDiscoveryServlet extends DCServlet {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5126568395810503147L;
 	private DatagramSocket dataGramSocket;
+
+	int MY_PORT = 5555;
 
 	public ServerDiscoveryServlet(final boolean autoStart,
 			final IServletCallback callback) {
@@ -29,26 +33,6 @@ public class ServerDiscoveryServlet extends DCServlet {
 
 		// init();
 	}
-
-	@Override
-	public void respondToRequest() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void receiveRequest() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void sendResponse() {
-		// TODO Auto-generated method stub
-
-	}
-
-	int MY_PORT = 5555;
 
 	@Override
 	public void executeTask() {
@@ -121,20 +105,15 @@ public class ServerDiscoveryServlet extends DCServlet {
 						InetAddress address = receivedPacket.getAddress();
 						String serverData = new String(receivedPacket.getData());
 
-						String serverPort = "NULL";
-						String serverAddress = "NULL";
 						String hostName = address.getHostName();
 
-						/* Extracting server data */
-						serverAddress = serverData.substring(0,
-								serverData.indexOf("|"));
-						serverPort = serverData.substring(
-								serverData.indexOf("|") + 1,
+						serverData.substring(0, serverData.indexOf("|"));
+						serverData.substring(serverData.indexOf("|") + 1,
 								serverData.indexOf("|") + 5);
 
 						System.out.println("Discovered server: " + hostName);
-//						registerServer(new Server(serverAddress, hostName,
-//								Integer.parseInt(serverPort)));
+						// registerServer(new Server(serverAddress, hostName,
+						// Integer.parseInt(serverPort)));
 
 					} catch (SocketTimeoutException e) {
 
@@ -152,7 +131,7 @@ public class ServerDiscoveryServlet extends DCServlet {
 				// System.out.println("%" + ((i / 254.0) * 100));
 				// }
 			}
-			
+
 			dataGramSocket.close();
 
 			String userOpt = SynchedInOut.getInstance()
@@ -166,8 +145,7 @@ public class ServerDiscoveryServlet extends DCServlet {
 				stopTask();
 			}
 
-//			pauseServerDiscoveryTask();
-			
+			// pauseServerDiscoveryTask();
 
 		} while (isExecuting());
 
@@ -175,9 +153,9 @@ public class ServerDiscoveryServlet extends DCServlet {
 	}
 
 	@Override
-	public void onProgressUpdate() {
+	public Task fromBytes(byte[] byteArray) {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	@Override
@@ -187,13 +165,31 @@ public class ServerDiscoveryServlet extends DCServlet {
 	}
 
 	@Override
-	public byte[] toBytes() {
+	public void onProgressUpdate() {
 		// TODO Auto-generated method stub
-		return null;
+
 	}
 
 	@Override
-	public Task fromBytes(byte[] byteArray) {
+	public void receiveRequest() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void respondToRequest() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void sendResponse() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public byte[] toBytes() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -203,32 +199,5 @@ public class ServerDiscoveryServlet extends DCServlet {
 		do {
 			ThreadHelper.sleepThread(1000);
 		} while (DCServer.GetDefaultGateway().equalsIgnoreCase("NULL"));
-	}
-
-	private boolean registerServer(final Server server) {
-		try {
-			if (server.getHostname().equalsIgnoreCase(
-					InetAddress.getLocalHost().getHostName())) {
-				return false;
-			}
-		} catch (UnknownHostException e) {
-			return false;
-		}
-
-		if (RoutingTable.getInstance().registerServer(server)) {
-			System.out.println("Server already registered.");
-			return false;
-		}
-
-//		System.out.println("Found server: " + server.getHostname() + ":"
-//				+ server.getPort());
-
-		return true;
-	}
-
-	private void pauseServerDiscoveryTask() {
-		System.out.println("10 PAUSE - DISCOVERY TASK");
-
-		ThreadHelper.sleepThread(10000);
 	}
 }

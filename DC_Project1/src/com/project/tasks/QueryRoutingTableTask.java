@@ -18,6 +18,11 @@ import com.project.server.router.Server;
 
 public class QueryRoutingTableTask extends SimpleAbstractTask {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 503971943938835559L;
+
 	public static final int PORT = 57911;
 
 	private DatagramSocket dataGramSocket;
@@ -28,11 +33,11 @@ public class QueryRoutingTableTask extends SimpleAbstractTask {
 
 	private String queryUserIP;
 
-	private boolean byIP = false;
-
 	private Client selfClient;
 
 	private byte[] buffer;
+
+	int count = 0;
 
 	public QueryRoutingTableTask() {
 
@@ -40,10 +45,8 @@ public class QueryRoutingTableTask extends SimpleAbstractTask {
 
 	public QueryRoutingTableTask(final String userName, final boolean byIP) {
 		queryUserIP = userName;
-		this.byIP = byIP;
 	}
 
-	int count = 0;
 	@Override
 	public void executeTask() {
 
@@ -89,7 +92,7 @@ public class QueryRoutingTableTask extends SimpleAbstractTask {
 
 		} catch (SocketTimeoutException e) {
 			dataGramSocket.close();
-			if(count == 5) {
+			if (count == 5) {
 				stopTask();
 			}
 			++count;
@@ -104,14 +107,14 @@ public class QueryRoutingTableTask extends SimpleAbstractTask {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		dataGramSocket.close();
 	}
 
 	@Override
-	public void onProgressUpdate() {
+	public Task fromBytes(byte[] byteArray) {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	@Override
@@ -121,13 +124,13 @@ public class QueryRoutingTableTask extends SimpleAbstractTask {
 	}
 
 	@Override
-	public byte[] toBytes() {
+	public void onProgressUpdate() {
 		// TODO Auto-generated method stub
-		return null;
+
 	}
 
 	@Override
-	public Task fromBytes(byte[] byteArray) {
+	public byte[] toBytes() {
 		// TODO Auto-generated method stub
 		return null;
 	}

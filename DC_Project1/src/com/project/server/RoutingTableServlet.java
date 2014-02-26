@@ -17,6 +17,11 @@ import com.project.tasks.TaskManager;
 
 public class RoutingTableServlet extends DCServlet {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 940351058304132103L;
+
 	public static final int LISTENING_PORT = 13145;
 
 	private DatagramSocket receivingSocket;
@@ -39,28 +44,8 @@ public class RoutingTableServlet extends DCServlet {
 	}
 
 	@Override
-	public void respondToRequest() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void receiveRequest() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void sendResponse() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void executeTask() {
 		System.out.println("Server is listening");
-
-		
 
 		try {
 			/* Registering self as server in routing table. */
@@ -70,7 +55,7 @@ public class RoutingTableServlet extends DCServlet {
 			selfServer.setUsername("Server " + DCServer.getLocalHostname());
 
 			RoutingTable.getInstance().registerServer(selfServer);
-			
+
 			receivingSocket = new DatagramSocket(LISTENING_PORT);
 			do {
 				System.out.println(("RoutingServer listening."));
@@ -78,7 +63,7 @@ public class RoutingTableServlet extends DCServlet {
 
 				/* Blocking receive */
 				receivingSocket.receive(dataGram);
-				
+
 				System.out.println("Got data");
 
 				buffer = dataGram.getData();
@@ -124,13 +109,15 @@ public class RoutingTableServlet extends DCServlet {
 						break;
 					}
 					case PING_NODE: {
-						System.out.println("Pinging node: " + node.getDestinationHostname());
+						System.out.println("Pinging node: "
+								+ node.getDestinationHostname());
 
 						selfServer = RoutingTable.getInstance()
 								.getServerByHostname(
 										node.getDestinationHostname());
-						
-						selfServer.setHostname(InetAddress.getLocalHost().getHostName());
+
+						selfServer.setHostname(InetAddress.getLocalHost()
+								.getHostName());
 
 						if (selfServer != null) {
 
@@ -161,19 +148,37 @@ public class RoutingTableServlet extends DCServlet {
 	}
 
 	@Override
+	public Task fromBytes(byte[] byteArray) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public void onProgressUpdate() {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public byte[] toBytes() {
+	public void receiveRequest() {
 		// TODO Auto-generated method stub
-		return null;
+
 	}
 
 	@Override
-	public Task fromBytes(byte[] byteArray) {
+	public void respondToRequest() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void sendResponse() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public byte[] toBytes() {
 		// TODO Auto-generated method stub
 		return null;
 	}

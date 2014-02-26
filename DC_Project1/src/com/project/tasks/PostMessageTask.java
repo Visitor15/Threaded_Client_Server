@@ -10,34 +10,74 @@ import com.project.framework.Task;
 import com.project.io.SynchedInOut;
 
 public class PostMessageTask extends SimpleAbstractTask {
-	
+
 	/*
-	 *	Generated ID for Serializable. 
+	 * Generated ID for Serializable.
 	 */
 	private static final long serialVersionUID = -85253068768354643L;
+
+	public static Task fromNewBytes(byte[] byteArray) {
+		PostMessageTask task = new PostMessageTask();
+		ByteArrayInputStream is;
+		ObjectInputStream in;
+
+		String tmpTaskId;
+		String tmpStringData;
+
+		try {
+			is = new ByteArrayInputStream(byteArray);
+			in = new ObjectInputStream(is);
+
+			tmpTaskId = in.readUTF();
+			tmpStringData = in.readUTF();
+
+			task.setTaskId(tmpTaskId);
+			task.setStringData(tmpStringData);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return task;
+	}
 
 	public PostMessageTask() {
 		setTaskId("PostMessageTask");
 	}
-	
-	public void setMessage(final String message) {
-		setStringData(message);
-	}
-	
-	public String getMessage() {
-		return getStringData();
-	}
 
 	@Override
 	public void executeTask() {
-		SynchedInOut.getInstance().postMessageNewLine("Message received: " + getStringData());
+		SynchedInOut.getInstance().postMessageNewLine(
+				"Message received: " + getStringData());
 		stopTask();
 	}
 
 	@Override
-	public void onProgressUpdate() {
-		// TODO Auto-generated method stub
-		
+	public Task fromBytes(byte[] byteArray) {
+		PostMessageTask task = new PostMessageTask();
+		ByteArrayInputStream is;
+		ObjectInputStream in;
+
+		String tmpTaskId;
+		String tmpStringData;
+
+		try {
+			is = new ByteArrayInputStream(byteArray);
+			in = new ObjectInputStream(is);
+
+			tmpTaskId = in.readUTF();
+			tmpStringData = in.readUTF();
+
+			task.setTaskId(tmpTaskId);
+			task.setStringData(tmpStringData);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return task;
+	}
+
+	public String getMessage() {
+		return getStringData();
 	}
 
 	@Override
@@ -47,15 +87,26 @@ public class PostMessageTask extends SimpleAbstractTask {
 	}
 
 	@Override
+	public void onProgressUpdate() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void setMessage(final String message) {
+		setStringData(message);
+	}
+
+	@Override
 	public byte[] toBytes() {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		ObjectOutputStream out;
-		
+
 		try {
 			out = new ObjectOutputStream(os);
-			
-//			int length = (getTaskId().getBytes().length + getStringData().getBytes().length);
-			
+
+			// int length = (getTaskId().getBytes().length +
+			// getStringData().getBytes().length);
+
 			out.writeUTF(getTaskId());
 			out.writeUTF(getStringData());
 			out.flush();
@@ -66,55 +117,5 @@ public class PostMessageTask extends SimpleAbstractTask {
 		final byte[] res = os.toByteArray();
 
 		return res;
-	}
-
-	@Override
-	public Task fromBytes(byte[] byteArray) {
-		PostMessageTask task = new PostMessageTask();
-		ByteArrayInputStream is;
-		ObjectInputStream in;
-		
-		String tmpTaskId;
-		String tmpStringData;
-		
-		try {
-			is = new ByteArrayInputStream(byteArray);
-			in = new ObjectInputStream(is);
-
-			tmpTaskId = in.readUTF();
-			tmpStringData = in.readUTF();
-			
-			task.setTaskId(tmpTaskId);
-			task.setStringData(tmpStringData);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		return task;
-	}
-
-
-	public static Task fromNewBytes(byte[] byteArray) {
-		PostMessageTask task = new PostMessageTask();
-		ByteArrayInputStream is;
-		ObjectInputStream in;
-		
-		String tmpTaskId;
-		String tmpStringData;
-		
-		try {
-			is = new ByteArrayInputStream(byteArray);
-			in = new ObjectInputStream(is);
-
-			tmpTaskId = in.readUTF();
-			tmpStringData = in.readUTF();
-			
-			task.setTaskId(tmpTaskId);
-			task.setStringData(tmpStringData);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		return task;
 	}
 }

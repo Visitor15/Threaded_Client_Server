@@ -36,8 +36,6 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 
 	private boolean toServer;
 
-	private String message;
-
 	private DatagramSocket datagramSocket;
 
 	private DatagramPacket dataGram;
@@ -60,19 +58,19 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 
 	private ArrayList<String> textLines;
 
+	public SendStringMessageTask(final Node node) {
+		super();
+		setTaskId("SendStringMessagesTask");
+
+		this.node = node;
+	}
+
 	public SendStringMessageTask(final Node client, boolean toServer) {
 		super();
 		setTaskId("SendStringMessagesTask");
 
 		this.toServer = toServer;
 		clientNode = client;
-	}
-
-	public SendStringMessageTask(final Node node) {
-		super();
-		setTaskId("SendStringMessagesTask");
-
-		this.node = node;
 	}
 
 	@Override
@@ -121,7 +119,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 					}
 				}
 			}
-			
+
 			send.writeUTF("Q");
 
 			// do {
@@ -160,26 +158,14 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 		stopTask();
 	}
 
-	public void readFile() throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader("moby10b.txt"));
-		try {
-			StringBuilder sb = new StringBuilder();
-			String line = br.readLine();
-
-			while (line != null) {
-				sb.append(line);
-				sb.append(System.lineSeparator());
-				line = br.readLine();
-				textLines.add(line);
-			}
-			fileText = sb.toString();
-		} finally {
-			br.close();
-		}
+	@Override
+	public Task fromBytes(byte[] byteArray) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public void onProgressUpdate() {
+	public void onAtomicTaskStart(Task task) {
 		// TODO Auto-generated method stub
 
 	}
@@ -191,31 +177,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 	}
 
 	@Override
-	public byte[] toBytes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Task fromBytes(byte[] byteArray) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void onTaskStart(Task task) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onAtomicTaskStart(Task task) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onTaskProgress(Task task) {
+	public void onProgressUpdate() {
 		// TODO Auto-generated method stub
 
 	}
@@ -265,5 +227,41 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void onTaskProgress(Task task) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onTaskStart(Task task) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void readFile() throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader("moby10b.txt"));
+		try {
+			StringBuilder sb = new StringBuilder();
+			String line = br.readLine();
+
+			while (line != null) {
+				sb.append(line);
+				sb.append(System.lineSeparator());
+				line = br.readLine();
+				textLines.add(line);
+			}
+			fileText = sb.toString();
+		} finally {
+			br.close();
+		}
+	}
+
+	@Override
+	public byte[] toBytes() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

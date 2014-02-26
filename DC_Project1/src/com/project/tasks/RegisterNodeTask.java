@@ -126,24 +126,24 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 	}
 
 	@Override
+	public Task fromBytes(byte[] byteArray) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void onFinished() {
+		// System.out.println("Node registered*");
+	}
+
+	@Override
 	public void onProgressUpdate() {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onFinished() {
-//		System.out.println("Node registered*");
-	}
-
-	@Override
 	public byte[] toBytes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Task fromBytes(byte[] byteArray) {
 		// TODO Auto-generated method stub
 		return null;
 	}

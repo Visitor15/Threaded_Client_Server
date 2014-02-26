@@ -8,10 +8,9 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import com.project.framework.Task;
-import com.project.io.SynchedInOut;
 import com.project.server.DCServer;
-import com.project.server.ServerReceiverServlet;
 import com.project.server.DCServer.COMMAND_TYPE;
+import com.project.server.ServerReceiverServlet;
 import com.project.server.router.Client;
 
 public class ServerFinderTask extends SimpleAbstractTask {
@@ -34,10 +33,10 @@ public class ServerFinderTask extends SimpleAbstractTask {
 	public ServerFinderTask() {
 
 	}
-	
+
 	public ServerFinderTask(final ITaskCallback callback) {
 		super(callback);
-		
+
 		setTaskId("ServerFinderTask");
 	}
 
@@ -52,7 +51,7 @@ public class ServerFinderTask extends SimpleAbstractTask {
 			client.setHostname(InetAddress.getLocalHost().getHostName());
 			client.setPort(ServerReceiverServlet.LISTENING_PORT);
 			client.setUsername("Client " + client.getHostname());
-			
+
 			client.SERVER_COMMAND = COMMAND_TYPE.REGISTER_NODE;
 
 			buffer = client.toBytes();
@@ -77,7 +76,7 @@ public class ServerFinderTask extends SimpleAbstractTask {
 					sendingSocket.send(dataGram);
 				}
 			}
-			
+
 			sendingSocket.close();
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
@@ -89,14 +88,26 @@ public class ServerFinderTask extends SimpleAbstractTask {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-//		String userInput = SynchedInOut.getInstance().postMessageForUserInput("Network scan finished. Scan again? (y/n): ");
-//		
-//		if(userInput.equalsIgnoreCase("y")) {
-//			executeTask();
-//		}
-		
+
+		// String userInput =
+		// SynchedInOut.getInstance().postMessageForUserInput("Network scan finished. Scan again? (y/n): ");
+		//
+		// if(userInput.equalsIgnoreCase("y")) {
+		// executeTask();
+		// }
+
 		stopTask();
+	}
+
+	@Override
+	public Task fromBytes(byte[] byteArray) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void onFinished() {
+		System.out.println("Server scan finished");
 	}
 
 	@Override
@@ -106,18 +117,7 @@ public class ServerFinderTask extends SimpleAbstractTask {
 	}
 
 	@Override
-	public void onFinished() {
-		System.out.println("Server scan finished");
-	}
-
-	@Override
 	public byte[] toBytes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Task fromBytes(byte[] byteArray) {
 		// TODO Auto-generated method stub
 		return null;
 	}

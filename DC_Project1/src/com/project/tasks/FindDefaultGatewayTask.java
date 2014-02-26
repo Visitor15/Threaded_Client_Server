@@ -48,14 +48,28 @@ public class FindDefaultGatewayTask extends SimpleAbstractTask {
 	}
 
 	@Override
-	public void onProgressUpdate() {
-		// TODO Auto-generated method stub
+	public Task fromBytes(final byte[] byteArray) {
+		FindDefaultGatewayTask task = new FindDefaultGatewayTask();
+		ByteArrayInputStream is;
+		ObjectInputStream in;
 
-	}
+		String tmpTaskId;
+		String tmpStringData;
 
-	@Override
-	public void onFinished() {
-		System.out.println(this.getClass().getSimpleName() + " finished");
+		try {
+			is = new ByteArrayInputStream(byteArray);
+			in = new ObjectInputStream(is);
+
+			tmpTaskId = in.readUTF();
+			tmpStringData = in.readUTF();
+
+			task.setTaskId(tmpTaskId);
+			task.setStringData(tmpStringData);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return task;
 	}
 
 	public String getDefaultGateway() {
@@ -113,16 +127,18 @@ public class FindDefaultGatewayTask extends SimpleAbstractTask {
 		} catch (IOException e) {
 			try {
 				data = null;
-				
-				ProcessBuilder procBuilder = new ProcessBuilder("netstat", "-rn");
-				
+
+				ProcessBuilder procBuilder = new ProcessBuilder("netstat",
+						"-rn");
+
 				Process proc = procBuilder.start();
-				
-				output = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-				
-//				result = Runtime.getRuntime().exec("netstat -rn");
-//				output = new BufferedReader(new InputStreamReader(
-//						result.getInputStream()));
+
+				output = new BufferedReader(new InputStreamReader(
+						proc.getInputStream()));
+
+				// result = Runtime.getRuntime().exec("netstat -rn");
+				// output = new BufferedReader(new InputStreamReader(
+				// result.getInputStream()));
 				// String tmp = output.readLine();
 
 				do {
@@ -178,6 +194,17 @@ public class FindDefaultGatewayTask extends SimpleAbstractTask {
 	}
 
 	@Override
+	public void onFinished() {
+		System.out.println(this.getClass().getSimpleName() + " finished");
+	}
+
+	@Override
+	public void onProgressUpdate() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
 	public byte[] toBytes() {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		ObjectOutputStream out;
@@ -194,30 +221,5 @@ public class FindDefaultGatewayTask extends SimpleAbstractTask {
 		final byte[] res = os.toByteArray();
 
 		return res;
-	}
-
-	@Override
-	public Task fromBytes(final byte[] byteArray) {
-		FindDefaultGatewayTask task = new FindDefaultGatewayTask();
-		ByteArrayInputStream is;
-		ObjectInputStream in;
-
-		String tmpTaskId;
-		String tmpStringData;
-
-		try {
-			is = new ByteArrayInputStream(byteArray);
-			in = new ObjectInputStream(is);
-
-			tmpTaskId = in.readUTF();
-			tmpStringData = in.readUTF();
-
-			task.setTaskId(tmpTaskId);
-			task.setStringData(tmpStringData);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return task;
 	}
 }

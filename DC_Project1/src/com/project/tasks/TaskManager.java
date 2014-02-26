@@ -15,23 +15,13 @@ public class TaskManager {
 
 	private static DCThreadPool<Task> ThreadPool;
 
-	private TaskManager() {
-
-		initPools();
-		m_Instance = this;
-	}
-	
-	private void initPools() {
-		ThreadPool = new DCThreadPool<Task>();
-	}
-
-	public synchronized static <T extends Task> boolean DoTask(final T task) {
-
+	public synchronized static <T extends Task> boolean DoPersistentTask(
+			final T task, final ITaskCallback callback) {
 		if (m_Instance == null) {
 			new TaskManager();
 		}
 
-		return m_Instance.initTask(task);
+		return m_Instance.initPersistentTask(task, callback);
 	}
 
 	public synchronized static <T extends Task> void DoTask(
@@ -44,6 +34,15 @@ public class TaskManager {
 		m_Instance.initTask(taskList);
 	}
 
+	public synchronized static <T extends Task> boolean DoTask(final T task) {
+
+		if (m_Instance == null) {
+			new TaskManager();
+		}
+
+		return m_Instance.initTask(task);
+	}
+
 	public synchronized static <T extends Task> void DoTaskOnCurrentThread(
 			final T task, final ITaskCallback callback) {
 		if (m_Instance == null) {
@@ -53,17 +52,10 @@ public class TaskManager {
 		m_Instance.initTaskOnCurrentThread(task, callback);
 	}
 
-	public synchronized static <T extends Task> boolean DoPersistentTask(
-			final T task, final ITaskCallback callback) {
-		if (m_Instance == null) {
-			new TaskManager();
-		}
+	private TaskManager() {
 
-		return m_Instance.initPersistentTask(task, callback);
-	}
-	
-	private <T extends Task> boolean initTask(final T task) {
-		return ThreadPool.doTask(task);
+		initPools();
+		m_Instance = this;
 	}
 
 	private boolean initPersistentTask(final Task task,
@@ -71,15 +63,22 @@ public class TaskManager {
 		return ThreadPool.doTaskPersistent(task);
 	}
 
+	private void initPools() {
+		ThreadPool = new DCThreadPool<Task>();
+	}
+
+	private <T extends Task> void initTask(final List<T> taskList) {
+
+	}
+
+	private <T extends Task> boolean initTask(final T task) {
+		return ThreadPool.doTask(task);
+	}
+
 	private <T extends Task> void initTaskOnCurrentThread(final T task,
 			final ITaskCallback callback) {
 		task.beginTask(null);
-		
+
 		callback.onTaskFinished(task);
-	}
-	
-	private <T extends Task> void initTask(
-			final List<T> taskList) {
-		
 	}
 }

@@ -1,14 +1,8 @@
 package com.project.tasks;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -21,7 +15,6 @@ import java.util.Locale;
 
 import com.project.framework.Task;
 import com.project.server.DCServer;
-import com.project.server.ServerReceiverServlet;
 import com.project.server.router.Client;
 import com.project.server.router.Node;
 import com.project.server.router.Server;
@@ -36,7 +29,7 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 	private ServerSocket m_SendingSocket;
 
 	private Socket m_RecievingSocket;
-	
+
 	private final ArrayList<Client> connectedPeers;
 
 	private static int LISTEN_PORT = 9797;
@@ -124,14 +117,15 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 
 			send = new DataOutputStream(m_RecievingSocket.getOutputStream());
 			// network input stream
-//			receive = new BufferedReader(new InputStreamReader(
-//					m_RecievingSocket.getInputStream()));
-			
-			inDataStream = new DataInputStream(m_RecievingSocket.getInputStream());
+			// receive = new BufferedReader(new InputStreamReader(
+			// m_RecievingSocket.getInputStream()));
+
+			inDataStream = new DataInputStream(
+					m_RecievingSocket.getInputStream());
 
 			do {
 
-//				receivedMessage = receive.readLine();
+				// receivedMessage = receive.readLine();
 				receivedMessage = inDataStream.readUTF();
 				System.out.println("Received: " + receivedMessage);
 
@@ -140,8 +134,8 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 
 				System.out.println("Sending message: " + returnMessage);
 				send.writeUTF(returnMessage);
-				
-				if(receivedMessage.equalsIgnoreCase("q")) {
+
+				if (receivedMessage.equalsIgnoreCase("q")) {
 					System.out.println("Recieved QUIT command. Closing.");
 					break;
 				}
@@ -165,9 +159,9 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 	}
 
 	@Override
-	public void onProgressUpdate() {
+	public Task fromBytes(byte[] byteArray) {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	@Override
@@ -177,13 +171,13 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 	}
 
 	@Override
-	public byte[] toBytes() {
+	public void onProgressUpdate() {
 		// TODO Auto-generated method stub
-		return null;
+
 	}
 
 	@Override
-	public Task fromBytes(byte[] byteArray) {
+	public byte[] toBytes() {
 		// TODO Auto-generated method stub
 		return null;
 	}

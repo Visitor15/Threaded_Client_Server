@@ -20,7 +20,16 @@ import com.project.tasks.SimplePersistentTask;
 import com.project.tasks.TaskManager;
 import com.project.tasks.ThreadHelper;
 
-public class DCServer extends SimplePersistentTask implements IServletCallback, ITaskCallback {
+public class DCServer extends SimplePersistentTask implements IServletCallback,
+		ITaskCallback {
+
+	public static enum COMMAND_TYPE {
+		REGISTER_NODE, EXECUTE_TASK, ROUTE_DATA_TO_SERVER, ROUTE_DATA_TO_CLIENT, PING_NODE, SEND_STRING_MESSAGE, NULL
+	}
+
+	public static enum NODE_TYPE {
+		SERVER, CLIENT, NODE
+	}
 
 	/**
 	 * 
@@ -28,56 +37,35 @@ public class DCServer extends SimplePersistentTask implements IServletCallback, 
 	private static final long serialVersionUID = 9080202556294508589L;
 
 	private static HashMap<SERVLET_TYPE, DCServlet> m_ServletMap;
-	
+
 	private static String DEFAULT_GATEWAY = "192.168.0.0";
-	
+
 	private static String LOCAL_HOSTNAME = "NULL";
-	
-	private static String CURRENT_IP = "NULL";
-	
+
 	private static int DEFAULT_LISTENING_PORT = 6666;
-	
-	public static enum NODE_TYPE {
-		SERVER,
-		CLIENT,
-		NODE
+
+	public static String GetDefaultGateway() {
+		return DCServer.DEFAULT_GATEWAY;
 	}
-	
-	public static enum COMMAND_TYPE {
-		REGISTER_NODE,
-		EXECUTE_TASK,
-		ROUTE_DATA_TO_SERVER,
-		ROUTE_DATA_TO_CLIENT,
-		PING_NODE,
-		SEND_STRING_MESSAGE,
-		NULL
+
+	public static String getLocalHostname() {
+		return DCServer.LOCAL_HOSTNAME;
+	}
+
+	public static synchronized int getServerListenerPort() {
+		return DCServer.DEFAULT_LISTENING_PORT;
+	}
+
+	public static synchronized void setCurrentIP(final String IP) {
+	}
+
+	public static synchronized void setLocalHostname(final String hostName) {
+		DCServer.LOCAL_HOSTNAME = hostName;
 	}
 
 	public DCServer() {
 		setTaskId("DCServer Task");
 		m_ServletMap = new HashMap<SERVLET_TYPE, DCServlet>();
-	}
-
-	public void start() {
-		/* This is blocking until it succeeds or fails */
-		tryFindDefaultGateway();
-		registerDefaultServlets();
-
-//		testCode();
-
-		beginServing();
-	}
-
-	public void idle() {
-
-	}
-
-	public void stop() {
-
-	}
-
-	public void registerDefaultServlets() {
-		m_ServletMap.put(SERVLET_TYPE.CLIENT_RESPONDER_SERVLET, new ServerReceiverServlet(true, this));
 	}
 
 	private void beginServing() {
@@ -111,7 +99,7 @@ public class DCServer extends SimplePersistentTask implements IServletCallback, 
 						// System.out.println("=========================");
 
 						/* Servlet call */
-//						m_ServletMap.get(servletType).checkResponses();
+						// m_ServletMap.get(servletType).checkResponses();
 
 						// if (!m_ServletMap.get(servletType).isExecuting()) {
 						//
@@ -131,7 +119,7 @@ public class DCServer extends SimplePersistentTask implements IServletCallback, 
 				// // TODO Auto-generated catch block
 				// e.printStackTrace();
 				// }
-				
+
 				ThreadHelper.sleepThread(3000);
 
 			} while (isExecuting());
@@ -155,27 +143,56 @@ public class DCServer extends SimplePersistentTask implements IServletCallback, 
 			m_ServletMap.get(servlet.TYPE).respondToRequest();
 		}
 	}
-	
-	public void setDefaultGateway(final String gateway) {
-		DEFAULT_GATEWAY = gateway;
-	}
-	
-	public String getDefaultGateway() {
-		return DCServer.DEFAULT_GATEWAY;
-	}
-	
-	private void tryFindDefaultGateway() {
-		TaskManager.DoTaskOnCurrentThread(new FindDefaultGatewayTask(), this);
+
+	@Override
+	public void executeTask() {
+		System.out.println("Starting Server");
+		start();
 	}
 
 	@Override
-	public <T extends IDCServlet> void onRegisterServlet(T servlet) {
+	public Task fromBytes(byte[] byteArray) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getDefaultGateway() {
+		return DCServer.DEFAULT_GATEWAY;
+	}
+
+	public void idle() {
+
+	}
+
+	@Override
+	public void onAtomicTaskStart(Task task) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public <T extends IDCServlet> void onStartServlet(T servlet) {
+	public void onFinished() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public <T extends IDCServlet> void onFinishServlet(T servlet) {
+		m_ServletMap.remove(servlet);
+	}
+
+	// public static int GET_DEF_PORT() {
+	// return DEF_PORT;
+	// }
+
+	@Override
+	public void onProgressUpdate() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public <T extends IDCServlet> void onRegisterServlet(T servlet) {
 		// TODO Auto-generated method stub
 
 	}
@@ -187,40 +204,56 @@ public class DCServer extends SimplePersistentTask implements IServletCallback, 
 	}
 
 	@Override
-	public <T extends IDCServlet> void onFinishServlet(T servlet) {
-		m_ServletMap.remove(servlet);
+	public <T extends IDCServlet> void onStartServlet(T servlet) {
+		// TODO Auto-generated method stub
+
 	}
 
-	public static String getLocalHostname() {
-		return DCServer.LOCAL_HOSTNAME;
+	@Override
+	public void onTaskFinished(Task task) {
+		setDefaultGateway(task.getStringData());
 	}
 
-//	public static int GET_DEF_PORT() {
-//		return DEF_PORT;
-//	}
-	
-	public static String GetDefaultGateway() {
-		return DCServer.DEFAULT_GATEWAY;
+	@Override
+	public void onTaskProgress(Task task) {
+		// TODO Auto-generated method stub
+
 	}
-	
-	public static synchronized void setLocalHostname(final String hostName) {
-		DCServer.LOCAL_HOSTNAME = hostName;
+
+	@Override
+	public void onTaskStart(Task task) {
+		// TODO Auto-generated method stub
+
 	}
-	
-	public static synchronized void setCurrentIP(final String IP) {
-		DCServer.CURRENT_IP = IP;
+
+	public void registerDefaultServlets() {
+		m_ServletMap.put(SERVLET_TYPE.CLIENT_RESPONDER_SERVLET,
+				new ServerReceiverServlet(true, this));
 	}
-	
-	public static synchronized int getServerListenerPort() {
-		return DCServer.DEFAULT_LISTENING_PORT;
+
+	public void setDefaultGateway(final String gateway) {
+		DEFAULT_GATEWAY = gateway;
+	}
+
+	public void start() {
+		/* This is blocking until it succeeds or fails */
+		tryFindDefaultGateway();
+		registerDefaultServlets();
+
+		// testCode();
+
+		beginServing();
+	}
+
+	public void stop() {
+
 	}
 
 	public void testCode() {
 		int count = 0;
-		boolean success;
 		do {
 			count++;
-			success = TaskManager.DoTask(new SimpleAbstractTask("MESSAGE TASK") {
+			TaskManager.DoTask(new SimpleAbstractTask("MESSAGE TASK") {
 
 				/**
 				 * 
@@ -236,21 +269,24 @@ public class DCServer extends SimplePersistentTask implements IServletCallback, 
 							// Thread.sleep(5000);
 
 							System.out.println("BEGIN EXECUTION");
-							
-							String mMessage = "";
-							
-							
-							mMessage = SynchedInOut.getInstance().postMessageForUserInput("Message " + i + ": ");
 
-							Socket sock = new Socket(InetAddress.getLocalHost().getHostName(), 1337);
-							
+							String mMessage = "";
+
+							mMessage = SynchedInOut.getInstance()
+									.postMessageForUserInput(
+											"Message " + i + ": ");
+
+							Socket sock = new Socket(InetAddress.getLocalHost()
+									.getHostName(), 1337);
+
 							System.out.println("NEXT STEP");
-							
+
 							System.out.println("Message " + i + ": ");
 
 							Client client = new Client();
-							
-							client.setCurrentIP(sock.getInetAddress().getHostAddress());
+
+							client.setCurrentIP(sock.getInetAddress()
+									.getHostAddress());
 							client.setPort(sock.getLocalPort());
 
 							client.addStringMessage(mMessage);
@@ -301,25 +337,26 @@ public class DCServer extends SimplePersistentTask implements IServletCallback, 
 				}
 
 				@Override
+				public Task fromBytes(byte[] byteArray) {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public void onFinished() {
+					// TODO Auto-generated method stub
+					System.out.println(this.getClass().getSimpleName()
+							+ " finished");
+				}
+
+				@Override
 				public void onProgressUpdate() {
 					// TODO Auto-generated method stub
 
 				}
 
 				@Override
-				public void onFinished() {
-					// TODO Auto-generated method stub
-					System.out.println(this.getClass().getSimpleName() + " finished");
-				}
-
-				@Override
 				public byte[] toBytes() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				@Override
-				public Task fromBytes(byte[] byteArray) {
 					// TODO Auto-generated method stub
 					return null;
 				}
@@ -330,55 +367,12 @@ public class DCServer extends SimplePersistentTask implements IServletCallback, 
 	}
 
 	@Override
-	public void onTaskStart(Task task) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onAtomicTaskStart(Task task) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onTaskProgress(Task task) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onTaskFinished(Task task) {
-		setDefaultGateway(task.getStringData());
-	}
-
-	@Override
-	public void executeTask() {
-		System.out.println("Starting Server");
-		start();
-	}
-
-	@Override
-	public void onProgressUpdate() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onFinished() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public byte[] toBytes() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
-	public Task fromBytes(byte[] byteArray) {
-		// TODO Auto-generated method stub
-		return null;
+	private void tryFindDefaultGateway() {
+		TaskManager.DoTaskOnCurrentThread(new FindDefaultGatewayTask(), this);
 	}
 }

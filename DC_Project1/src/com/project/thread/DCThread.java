@@ -5,19 +5,18 @@ import java.util.List;
 
 import com.project.framework.Task;
 import com.project.tasks.ITaskCallback;
-import com.project.tasks.ThreadHelper;
 
 public class DCThread<T extends Task> extends Thread implements IDCThread,
 		ITaskCallback {
+
+	public enum THREAD_STATE {
+		STOPPED, IDLE, PAUSED, RUNNING, FINISHED, FREE, READY_FOR_NEXT_TASK
+	}
 
 	/*
 	 * Generated ID for Serializa
 	 */
 	private static final long serialVersionUID = -7555148602849298330L;
-
-	public enum THREAD_STATE {
-		STOPPED, IDLE, PAUSED, RUNNING, FINISHED, FREE, READY_FOR_NEXT_TASK
-	}
 
 	public static final int THREAD_IDLE_LENGTH = 500;
 
@@ -37,16 +36,17 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 		this.init();
 	}
 
+	public DCThread(List<T> taskList, IThreadPoolCallback callback) {
+		this.init();
+		this.callback = callback;
+		this.taskList.addAll(taskList);
+	}
+
 	public DCThread(String id, IThreadPoolCallback callback) {
 		// System.out.println("Created thread: " + id);
 		this.callback = callback;
 		this.threadId = id;
 		this.init();
-	}
-
-	public DCThread(T task) {
-		this.init();
-		this.taskList.add(task);
 	}
 
 	public DCThread(String id, T task) {
@@ -55,19 +55,9 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 		this.taskList.add(task);
 	}
 
-	public DCThread(List<T> taskList, IThreadPoolCallback callback) {
+	public DCThread(T task) {
 		this.init();
-		this.callback = callback;
-		this.taskList.addAll(taskList);
-	}
-
-	private void init() {
-		taskList = new ArrayList<Task>();
-		this.setThreadState(THREAD_STATE.FREE);
-	}
-
-	public String getThreadId() {
-		return threadId;
+		this.taskList.add(task);
 	}
 
 	@Override
@@ -85,31 +75,6 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 
 		this.taskList.add(task);
 
-	}
-
-	@Override
-	public void startThread(boolean isAtomicOperation) {
-		setThreadState(THREAD_STATE.READY_FOR_NEXT_TASK);
-		this.atomicOperationInProgress = isAtomicOperation;
-
-		if (atomicOperationInProgress) {
-			// System.out.println("Starting ATOMIC task(s)");
-		} else {
-			// System.out.println("Starting task(s)");
-		}
-
-		this.start();
-	}
-
-	@Override
-	public void run() {
-		setThreadState(THREAD_STATE.RUNNING);
-
-		if (taskList.size() > 0) {
-			executeCurrentTasks();
-		}
-
-		// idleThread();
 	}
 
 	@Override
@@ -141,10 +106,34 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 
 	}
 
-	@Override
-	public void onProgressUpdate() {
-		// TODO Auto-generated method stub
+	public String getThreadId() {
+		return threadId;
+	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.project.thread.IDCThread#getThreadState() This can be called
+	 * from a different thread.
+	 */
+	@Override
+	public synchronized THREAD_STATE getThreadState() {
+		return this.m_ThreadState;
+	}
+
+	private void init() {
+		taskList = new ArrayList<Task>();
+		this.setThreadState(THREAD_STATE.FREE);
+	}
+
+	@Override
+	public synchronized boolean isBusy() {
+		return (this.getThreadState() == THREAD_STATE.RUNNING);
+	}
+
+	@Override
+	public void onAtomicTaskStart(Task task) {
+		this.atomicOperationInProgress = true;
 	}
 
 	@Override
@@ -154,18 +143,33 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 	}
 
 	@Override
-	public synchronized boolean isBusy() {
-		return (this.getThreadState() == THREAD_STATE.RUNNING);
+	public void onProgressUpdate() {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
-	public void setCallback(IThreadPoolCallback callback) {
-		this.callback = callback;
+	public void onTaskFinished(Task task) {
+
+		System.out.println(task.getTaskId() + " on Task Finished HIT");
+		task.setTaskCallback(taskCallback);
+		if (taskCallback != null) {
+			taskCallback.onTaskFinished(task);
+		}
+
+		setThreadState(THREAD_STATE.FINISHED);
+		if (taskList.size() == 0) {
+			onFinished();
+		} else {
+			setThreadState(THREAD_STATE.READY_FOR_NEXT_TASK);
+			// this.executeTasks();
+		}
 	}
 
 	@Override
-	public void stopThread() {
-		this.onFinished();
+	public void onTaskProgress(Task task) {
+		// TODO Auto-generated method stub
+
 	}
 
 	// @Override
@@ -191,54 +195,49 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 	// }
 
 	@Override
-	public void setThreadState(THREAD_STATE state) {
-		this.m_ThreadState = state;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.project.thread.IDCThread#getThreadState() This can be called
-	 * from a different thread.
-	 */
-	@Override
-	public synchronized THREAD_STATE getThreadState() {
-		return this.m_ThreadState;
-	}
-
-	@Override
 	public void onTaskStart(Task task) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onAtomicTaskStart(Task task) {
-		this.atomicOperationInProgress = true;
+	public void run() {
+		setThreadState(THREAD_STATE.RUNNING);
+
+		if (taskList.size() > 0) {
+			executeCurrentTasks();
+		}
+
+		// idleThread();
 	}
 
 	@Override
-	public void onTaskFinished(Task task) {
+	public void setCallback(IThreadPoolCallback callback) {
+		this.callback = callback;
+	}
 
-		System.out.println(task.getTaskId() + " on Task Finished HIT");
-		task.setTaskCallback(taskCallback);
-		if (taskCallback != null) {
-			taskCallback.onTaskFinished(task);
-		}
+	@Override
+	public void setThreadState(THREAD_STATE state) {
+		this.m_ThreadState = state;
+	}
 
-		setThreadState(THREAD_STATE.FINISHED);
-		if (taskList.size() == 0) {
-			onFinished();
+	@Override
+	public void startThread(boolean isAtomicOperation) {
+		setThreadState(THREAD_STATE.READY_FOR_NEXT_TASK);
+		this.atomicOperationInProgress = isAtomicOperation;
+
+		if (atomicOperationInProgress) {
+			// System.out.println("Starting ATOMIC task(s)");
 		} else {
-			setThreadState(THREAD_STATE.READY_FOR_NEXT_TASK);
-			// this.executeTasks();
+			// System.out.println("Starting task(s)");
 		}
+
+		this.start();
 	}
 
 	@Override
-	public void onTaskProgress(Task task) {
-		// TODO Auto-generated method stub
-
+	public void stopThread() {
+		this.onFinished();
 	}
 
 }

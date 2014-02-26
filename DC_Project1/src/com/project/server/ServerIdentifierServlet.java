@@ -2,7 +2,6 @@ package com.project.server;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.SocketException;
@@ -11,21 +10,21 @@ import java.net.SocketTimeoutException;
 import com.project.framework.Task;
 import com.project.server.router.Client;
 import com.project.server.router.RoutingTable;
-import com.project.tasks.FindDefaultGatewayTask;
 import com.project.tasks.ITaskCallback;
-import com.project.tasks.TaskManager;
 
 public class ServerIdentifierServlet extends DCServlet implements ITaskCallback {
 
-	private DatagramSocket dataGramSocket;
-
-	private boolean isLocatingDNS = false;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8971805041674862619L;
 
 	public ServerIdentifierServlet(final boolean autoStart,
 			final IServletCallback callback) {
-		super("ServerIdentifierServlet", SERVLET_TYPE.SERVER_IDENTIFIER_SERVLET, autoStart, callback);
+		super("ServerIdentifierServlet",
+				SERVLET_TYPE.SERVER_IDENTIFIER_SERVLET, autoStart, callback);
 
-//		setTaskId("ServerIdentifierServlet");
+		// setTaskId("ServerIdentifierServlet");
 		// if (autoStart) {
 		// startServlet();
 		// }
@@ -34,46 +33,27 @@ public class ServerIdentifierServlet extends DCServlet implements ITaskCallback 
 	}
 
 	@Override
-	public void respondToRequest() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void receiveRequest() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void sendResponse() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void executeTask() {
 
-//		executeFindDNSTask();
+		// executeFindDNSTask();
 		System.out.print("Locating DNS...");
-//		do {
-//			try {
-//				Thread.sleep(1000);
-//				System.out.print("...");
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		} while (isLocatingDNS);
+		// do {
+		// try {
+		// Thread.sleep(1000);
+		// System.out.print("...");
+		// } catch (InterruptedException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// } while (isLocatingDNS);
 
 		MulticastSocket socket = null;
-		DatagramSocket returnSocket = null;
 		try {
 			System.out.println("HIT");
 
 			socket = new MulticastSocket(1337);
-//			socket.setBroadcast(true);
-//			socket.joinGroup(InetAddress.getByName("228.5.6.7"));
+			// socket.setBroadcast(true);
+			// socket.joinGroup(InetAddress.getByName("228.5.6.7"));
 
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
@@ -97,8 +77,7 @@ public class ServerIdentifierServlet extends DCServlet implements ITaskCallback 
 					socket.receive(receivedPacket);
 				}
 
-				String localHost = InetAddress.getLocalHost().getHostAddress();
-				// buf = localHost.getBytes();
+				InetAddress.getLocalHost().getHostAddress();
 
 				/* If I equal myself */
 				if (receivedPacket.getAddress().getHostName()
@@ -132,7 +111,7 @@ public class ServerIdentifierServlet extends DCServlet implements ITaskCallback 
 				System.out.println("Got client: " + clientData);
 
 				Client client = new Client();
-				
+
 				client.setHostname(clientAddress);
 				client.setPort(Integer.parseInt(clientPort));
 
@@ -147,8 +126,8 @@ public class ServerIdentifierServlet extends DCServlet implements ITaskCallback 
 							+ " AND port: " + clientPort);
 				}
 
-				InetAddress address = receivedPacket.getAddress();
-				int port = receivedPacket.getPort();
+				receivedPacket.getAddress();
+				receivedPacket.getPort();
 
 				String localServerHostAddress = InetAddress.getLocalHost()
 						.getHostName();
@@ -200,7 +179,13 @@ public class ServerIdentifierServlet extends DCServlet implements ITaskCallback 
 	}
 
 	@Override
-	public void onProgressUpdate() {
+	public Task fromBytes(byte[] byteArray) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void onAtomicTaskStart(Task task) {
 		// TODO Auto-generated method stub
 
 	}
@@ -212,25 +197,8 @@ public class ServerIdentifierServlet extends DCServlet implements ITaskCallback 
 		System.out.println(this.getClass().getSimpleName() + " finished");
 	}
 
-//	private void executeFindDNSTask() {
-//		isLocatingDNS = true;
-//		TaskManager.DO_TASK(new FindDefaultGatewayTask(this));
-//	}
-
 	@Override
-	public void onTaskStart(Task task) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onAtomicTaskStart(Task task) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onTaskProgress(Task task) {
+	public void onProgressUpdate() {
 		// TODO Auto-generated method stub
 
 	}
@@ -240,18 +208,45 @@ public class ServerIdentifierServlet extends DCServlet implements ITaskCallback 
 		System.out.println("GOT DNS: " + task.getStringData());
 
 		this.stringData = task.getStringData();
+	}
 
-		isLocatingDNS = false;
+	// private void executeFindDNSTask() {
+	// isLocatingDNS = true;
+	// TaskManager.DO_TASK(new FindDefaultGatewayTask(this));
+	// }
+
+	@Override
+	public void onTaskProgress(Task task) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onTaskStart(Task task) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void receiveRequest() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void respondToRequest() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void sendResponse() {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public byte[] toBytes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Task fromBytes(byte[] byteArray) {
 		// TODO Auto-generated method stub
 		return null;
 	}

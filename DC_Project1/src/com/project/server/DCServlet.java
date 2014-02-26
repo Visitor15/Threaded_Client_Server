@@ -12,7 +12,12 @@ public abstract class DCServlet extends SimplePersistentTask implements
 
 	protected enum SERVLET_TYPE {
 		REGISTRATION_SERVLET, CLIENT_RESPONDER_SERVLET, SERVER_DISCOVERY_SERVLET, SERVER_IDENTIFIER_SERVLET, UNKOWN
-	};
+	}
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5648352445012133175L;;
 
 	protected SERVLET_TYPE TYPE;
 
@@ -50,17 +55,13 @@ public abstract class DCServlet extends SimplePersistentTask implements
 		}
 	}
 
-	private void initBaseServlet() {
-		registerUnknownServlet(false);
+	@Override
+	public void checkResponses() {
+		respondToRequest();
 	}
 
-	private void initAndStartBaseServlet() {
-		registerUnknownServlet(true);
-	}
-
-	private void registerUnknownServlet(final boolean autoStart) {
-		TYPE = SERVLET_TYPE.UNKOWN;
-		registerServlet(autoStart);
+	public synchronized IServletCallback getCallback() {
+		return m_Callback;
 	}
 
 	// @Override
@@ -76,30 +77,29 @@ public abstract class DCServlet extends SimplePersistentTask implements
 	// }
 	// }
 
+	public synchronized ServerSocket getServerSocket() {
+		if (m_ServerSocket == null) {
+			try {
+				m_ServerSocket = new ServerSocket();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return m_ServerSocket;
+	}
+
+	private void initBaseServlet() {
+		registerUnknownServlet(false);
+	}
+
 	@Override
 	public boolean isExecuting() {
 		return isRunning;
 	}
 
 	@Override
-	public boolean startServlet() {
-		return ServletManager.REGISTER_SERVLET(this, ((ITaskCallback) this.m_Callback));
-	}
-
-	@Override
-	public boolean stopServlet() {
-		if (getServerSocket() != null) {
-			try {
-				getServerSocket().close();
-			} catch (IOException e) {
-				e.printStackTrace();
-
-				return false;
-			}
-		}
-		stopTask();
-
-		return true;
+	public void onFinished() {
+		System.out.println(this.getClass().getSimpleName() + " finished");
 	}
 
 	@Override
@@ -118,29 +118,31 @@ public abstract class DCServlet extends SimplePersistentTask implements
 		return true;
 	}
 
-	@Override
-	public void checkResponses() {
-		respondToRequest();
+	private void registerUnknownServlet(final boolean autoStart) {
+		TYPE = SERVLET_TYPE.UNKOWN;
+		registerServlet(autoStart);
 	}
 
 	@Override
-	public void onFinished() {
-		System.out.println(this.getClass().getSimpleName() + " finished");
+	public boolean startServlet() {
+		return ServletManager.REGISTER_SERVLET(this,
+				((ITaskCallback) this.m_Callback));
 	}
 
-	public synchronized ServerSocket getServerSocket() {
-		if (m_ServerSocket == null) {
+	@Override
+	public boolean stopServlet() {
+		if (getServerSocket() != null) {
 			try {
-				m_ServerSocket = new ServerSocket();
+				getServerSocket().close();
 			} catch (IOException e) {
 				e.printStackTrace();
+
+				return false;
 			}
 		}
-		return m_ServerSocket;
-	}
+		stopTask();
 
-	public synchronized IServletCallback getCallback() {
-		return m_Callback;
+		return true;
 	}
 
 }

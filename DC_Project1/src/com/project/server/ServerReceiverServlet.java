@@ -62,24 +62,6 @@ public class ServerReceiverServlet extends DCServlet {
 	}
 
 	@Override
-	public void respondToRequest() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void receiveRequest() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void sendResponse() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void executeTask() {
 		System.out.println("Server is listening");
 		try {
@@ -90,7 +72,7 @@ public class ServerReceiverServlet extends DCServlet {
 
 				/* Blocking receive */
 				receivingSocket.receive(dataGram);
-				
+
 				System.out.println("Received datagram");
 
 				buffer = dataGram.getData();
@@ -111,25 +93,25 @@ public class ServerReceiverServlet extends DCServlet {
 					}
 					case SEND_STRING_MESSAGE: {
 						TaskManager.DoTask(new ReceiveRemoteMessagesTask(node));
-						
-//						Server selfServer = new Server();
-//						selfServer.setCurrentIP(InetAddress.getLocalHost()
-//								.getHostAddress());
-//						selfServer.setHostname(InetAddress.getLocalHost()
-//								.getHostName());
-//						selfServer.setPort(ServerReceiverServlet.LISTENING_PORT);
-//						selfServer.setUsername("Server "
-//								+ DCServer.getLocalHostname());
-//						
-//						buffer = selfServer.toBytes();
-//						
-//						dataGram = new DatagramPacket(buffer, buffer.length);
-//						dataGram.setPort(node.getCurrentPort());
-//						dataGram.setAddress(InetAddress.getByName(node
-//								.getCurrentIP()));
-//						
-//						receivingSocket.send(dataGram);
-						
+
+						// Server selfServer = new Server();
+						// selfServer.setCurrentIP(InetAddress.getLocalHost()
+						// .getHostAddress());
+						// selfServer.setHostname(InetAddress.getLocalHost()
+						// .getHostName());
+						// selfServer.setPort(ServerReceiverServlet.LISTENING_PORT);
+						// selfServer.setUsername("Server "
+						// + DCServer.getLocalHostname());
+						//
+						// buffer = selfServer.toBytes();
+						//
+						// dataGram = new DatagramPacket(buffer, buffer.length);
+						// dataGram.setPort(node.getCurrentPort());
+						// dataGram.setAddress(InetAddress.getByName(node
+						// .getCurrentIP()));
+						//
+						// receivingSocket.send(dataGram);
+
 						break;
 					}
 					case PING_NODE: {
@@ -138,17 +120,18 @@ public class ServerReceiverServlet extends DCServlet {
 								.getHostAddress());
 						selfServer.setHostname(InetAddress.getLocalHost()
 								.getHostName());
-						selfServer.setPort(ServerReceiverServlet.LISTENING_PORT);
+						selfServer
+								.setPort(ServerReceiverServlet.LISTENING_PORT);
 						selfServer.setUsername("Server "
 								+ DCServer.getLocalHostname());
-						
+
 						buffer = selfServer.toBytes();
-						
+
 						dataGram = new DatagramPacket(buffer, buffer.length);
 						dataGram.setPort(node.getCurrentPort());
 						dataGram.setAddress(InetAddress.getByName(node
 								.getCurrentIP()));
-						
+
 						receivingSocket.send(dataGram);
 						break;
 					}
@@ -167,16 +150,34 @@ public class ServerReceiverServlet extends DCServlet {
 	}
 
 	@Override
-	public void onProgressUpdate() {
-	}
-
-	@Override
-	public byte[] toBytes() {
+	public Task fromBytes(byte[] byteArray) {
 		return null;
 	}
 
 	@Override
-	public Task fromBytes(byte[] byteArray) {
+	public void onProgressUpdate() {
+	}
+
+	@Override
+	public void receiveRequest() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void respondToRequest() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void sendResponse() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public byte[] toBytes() {
 		return null;
 	}
 

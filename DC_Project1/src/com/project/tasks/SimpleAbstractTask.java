@@ -4,6 +4,11 @@ import com.project.framework.Task;
 
 public abstract class SimpleAbstractTask implements Task {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2163720329964850383L;
+
 	protected ITaskCallback m_Callback;
 
 	private ITaskCallback m_ThreadCallback;
@@ -18,11 +23,6 @@ public abstract class SimpleAbstractTask implements Task {
 		logTask();
 	}
 
-	public SimpleAbstractTask(String id) {
-		logTask();
-		taskId = id;
-	}
-
 	public SimpleAbstractTask(final ITaskCallback callback) {
 		m_Callback = callback;
 	}
@@ -32,9 +32,18 @@ public abstract class SimpleAbstractTask implements Task {
 		taskId = id;
 	}
 
-	@Override
-	public void logTask() {
+	public SimpleAbstractTask(String id) {
+		logTask();
+		taskId = id;
+	}
 
+	@Override
+	public void beginAtomicTask(ITaskCallback callback) {
+		this.m_Callback = callback;
+		if (!isExecuting()) {
+			m_Callback.onAtomicTaskStart(this);
+			executeTask();
+		}
 	}
 
 	@Override
@@ -57,17 +66,49 @@ public abstract class SimpleAbstractTask implements Task {
 	}
 
 	@Override
-	public void beginAtomicTask(ITaskCallback callback) {
-		this.m_Callback = callback;
-		if (!isExecuting()) {
-			m_Callback.onAtomicTaskStart(this);
-			executeTask();
-		}
+	public String getStringData() {
+		return stringData;
+	}
+
+	@Override
+	public ITaskCallback getTaskCallback() {
+		return m_Callback;
+	}
+
+	@Override
+	public String getTaskId() {
+		return taskId;
 	}
 
 	@Override
 	public boolean isExecuting() {
 		return isRunning;
+	}
+
+	@Override
+	public void logTask() {
+
+	}
+
+	@Override
+	public void setStringData(final String data) {
+		stringData = data;
+	}
+
+	@Override
+	public void setTaskCallback(final ITaskCallback callback) {
+		this.m_Callback = callback;
+	}
+
+	@Override
+	public void setTaskId(String id) {
+		taskId = id;
+	}
+
+	@Override
+	public void stopAtomicTask() {
+		onFinished();
+		m_ThreadCallback.onTaskFinished(this);
 	}
 
 	@Override
@@ -88,39 +129,5 @@ public abstract class SimpleAbstractTask implements Task {
 		// }
 
 		// onFinished();
-	}
-
-	@Override
-	public void stopAtomicTask() {
-		onFinished();
-		m_ThreadCallback.onTaskFinished(this);
-	}
-
-	@Override
-	public void setTaskId(String id) {
-		taskId = id;
-	}
-
-	@Override
-	public String getTaskId() {
-		return taskId;
-	}
-
-	@Override
-	public String getStringData() {
-		return stringData;
-	}
-
-	@Override
-	public void setStringData(final String data) {
-		stringData = data;
-	}
-
-	public ITaskCallback getTaskCallback() {
-		return m_Callback;
-	}
-
-	public void setTaskCallback(final ITaskCallback callback) {
-		this.m_Callback = callback;
 	}
 }

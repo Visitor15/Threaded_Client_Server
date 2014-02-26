@@ -8,11 +8,19 @@ import java.net.SocketException;
 import com.project.tasks.ThreadHelper;
 
 public class SocketManager {
-	
+
 	private static SocketManager instance;
-	
+
 	private static DatagramSocket datagramSendSocket;
-	
+
+	public static SocketManager getInstance() {
+		if (instance == null) {
+			new SocketManager();
+		}
+
+		return instance;
+	}
+
 	private SocketManager() {
 		try {
 			datagramSendSocket = new DatagramSocket(6868);
@@ -23,14 +31,6 @@ public class SocketManager {
 			e.printStackTrace();
 		}
 	}
-	
-	public static SocketManager getInstance() {
-		if(instance == null) {
-			new SocketManager();
-		}
-		
-		return instance;
-	}
 
 	public synchronized boolean sendDatagram(final DatagramPacket dataGram) {
 		try {
@@ -39,7 +39,7 @@ public class SocketManager {
 		} catch (IOException e) {
 			return false;
 		}
-		
+
 		return true;
 	}
 }
