@@ -65,10 +65,10 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 		this.node = node;
 	}
 
-	public SendStringMessageTask(final Node client, boolean toServer) {
+	public SendStringMessageTask(final Node client, boolean toServer, final ITaskCallback callback) {
 		super();
 		setTaskId("SendStringMessagesTask");
-
+		this.m_Callback = callback;
 		this.toServer = toServer;
 		clientNode = client;
 	}
@@ -114,8 +114,13 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 					if (textLines.get(i) != null) {
 						send.writeUTF(textLines.get(i));
 						receivedMessage = inDataStream.readUTF();
-						System.out.println(recipientHostname + ": "
-								+ receivedMessage);
+						
+						setStringData(receivedMessage);
+						
+						m_Callback.onTaskProgress(this);
+						
+//						System.out.println(recipientHostname + ": "
+//								+ receivedMessage);
 					}
 				}
 			}

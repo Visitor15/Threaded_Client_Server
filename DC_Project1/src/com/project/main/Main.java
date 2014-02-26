@@ -8,12 +8,10 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Random;
-import java.util.Scanner;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -24,26 +22,11 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 
 import com.project.framework.Task;
-import com.project.server.DCServer;
-import com.project.server.DCServer.COMMAND_TYPE;
-import com.project.server.RoutingTableServlet;
-import com.project.server.ServerReceiverServlet;
-import com.project.server.router.Client;
-import com.project.tasks.SendStringMessageTask;
 import com.project.tasks.SimpleAbstractTask;
 import com.project.tasks.TaskManager;
 import com.project.tasks.ThreadHelper;
+import com.project.ui.FakeUI;
 
-/**
- * Created by Alex on 1/15/14.
- */
-
-// I am thinking we have this as the "client/server" as it will be easy to port
-// to all platforms
-// the server/router we will have as a different class
-
-// feel free to add classes with things you are working on, lets try and keep
-// these main two files
 // with "working code" so they will compile
 
 public class Main {
@@ -208,30 +191,8 @@ public class Main {
 	}
 
 	public static void doTempTest() throws UnknownHostException {
-		Scanner input = new Scanner(System.in);
-		System.out.print("Are you a SERVER or CLIENT? (C/S): ");
-		String userInput = input.nextLine();
-
-		Client selfClient = new Client();
-		selfClient.setCurrentIP(InetAddress.getLocalHost().getHostAddress());
-		selfClient.setHostname(InetAddress.getLocalHost().getHostName());
-		selfClient.setPort(ServerReceiverServlet.LISTENING_PORT);
-		selfClient.setUsername("Client " + DCServer.getLocalHostname());
-		selfClient.SERVER_COMMAND = COMMAND_TYPE.ROUTE_DATA_TO_SERVER;
-		selfClient.ROUTERTABLE_COMMAND = COMMAND_TYPE.PING_NODE;
-
-		if (userInput.equalsIgnoreCase("C")) {
-			System.out.print("Recipient IP: ");
-			userInput = input.nextLine();
-
-			selfClient.setDestinationIP(userInput);
-
-			TaskManager.DoTask(new SendStringMessageTask(selfClient, true));
-		} else {
-			// RoutingTable
-			TaskManager.DoTask(new ServerReceiverServlet());
-			TaskManager.DoTask(new RoutingTableServlet());
-		}
+		FakeUI fakeUI = new FakeUI();
+		fakeUI.start();
 	}
 
 	public static void doTests() {
