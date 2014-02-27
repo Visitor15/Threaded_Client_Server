@@ -11,7 +11,7 @@ import com.project.server.router.Client;
 import com.project.server.router.Node;
 import com.project.server.router.RoutingTable;
 import com.project.server.router.Server;
-import com.project.tasks.RegisterNodeTask;
+import com.project.tasks.RegisterNodeOnRoutingServlet;
 import com.project.tasks.SendStringMessageTask;
 import com.project.tasks.TaskManager;
 
@@ -80,7 +80,7 @@ public class RoutingTableServlet extends DCServlet {
 					case REGISTER_NODE: {
 						if (!node.getHostname().equalsIgnoreCase(
 								InetAddress.getLocalHost().getHostName())) {
-							TaskManager.DoTask(new RegisterNodeTask(node));
+							TaskManager.DoTask(new RegisterNodeOnRoutingServlet(node));
 						}
 						break;
 					}
