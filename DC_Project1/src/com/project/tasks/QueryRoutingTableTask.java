@@ -9,7 +9,7 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 import com.project.framework.Task;
-import com.project.main.Main;
+import com.project.server.DCServer;
 import com.project.server.DCServer.COMMAND_TYPE;
 import com.project.server.RoutingTableServlet;
 import com.project.server.router.Client;
@@ -72,7 +72,7 @@ public class QueryRoutingTableTask extends SimpleAbstractTask {
 
 			dataGram = new DatagramPacket(buffer, buffer.length);
 			dataGram.setPort(RoutingTableServlet.LISTENING_PORT);
-			dataGram.setAddress(InetAddress.getByName(Main.ROUTING_TABLE_IP));
+			dataGram.setAddress(InetAddress.getByName(DCServer.ROUTING_TABLE_IP));
 
 			buffer = new byte[1024];
 

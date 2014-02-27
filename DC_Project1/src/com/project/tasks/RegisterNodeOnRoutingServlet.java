@@ -11,7 +11,7 @@ import com.project.server.RoutingTableServlet;
 import com.project.server.SocketManager;
 import com.project.server.router.Node;
 
-public class RegisterNodeTask extends SimpleAbstractTask {
+public class RegisterNodeOnRoutingServlet extends SimpleAbstractTask {
 
 	/**
 	 * Serializable
@@ -30,7 +30,7 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 
 	private Node node;
 
-	public RegisterNodeTask(final Node n) {
+	public RegisterNodeOnRoutingServlet(final Node n) {
 		setTaskId("RegisterClientTask");
 		node = n;
 	}
@@ -43,6 +43,21 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 
 			/* NULL indicates no node was registered. */
 			if (node != null) {
+				
+				switch(node.NODE) {
+				case CLIENT:
+					break;
+				case NODE:
+					break;
+				case SERVER:
+					break;
+				default:
+					break;
+				
+				}
+				
+				
+				
 				buffer = node.toBytes();
 
 				datagramSocket = new DatagramSocket(LISTENING_PORT);

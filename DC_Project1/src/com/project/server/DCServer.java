@@ -30,6 +30,8 @@ public class DCServer extends SimplePersistentTask implements IServletCallback,
 	public static enum NODE_TYPE {
 		SERVER, CLIENT, NODE
 	}
+	
+	public static String ROUTING_TABLE_IP = "NULL";
 
 	/**
 	 * 
