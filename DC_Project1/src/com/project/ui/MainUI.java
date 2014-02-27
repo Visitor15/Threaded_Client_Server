@@ -28,6 +28,7 @@ import javax.swing.JTextField;
 import com.project.framework.Task;
 import com.project.server.DCServer;
 import com.project.server.RoutingTableServlet;
+import com.project.server.ServerReceiverServlet;
 import com.project.server.router.Client;
 import com.project.server.router.Server;
 import com.project.tasks.ITaskCallback;
@@ -441,8 +442,12 @@ public class MainUI implements ITaskCallback {
 				DCServer.ROUTING_TABLE_IP = txtRouterName.getText();
 				
 				if(clientSelect.isSelected()) {
+					TaskManager.DoTask(new RoutingTableServlet());
+					TaskManager.DoTask(new ServerReceiverServlet());
 					Client client = new Client();
-					TaskManager.DoTask(new RegisterNodeTask(client));
+					RegisterNodeTask nodeTask = new RegisterNodeTask(client);
+					nodeTask.setTaskCallback(MainUI.this);
+					TaskManager.DoTask(nodeTask);
 					
 					// Client
 				}
@@ -450,6 +455,7 @@ public class MainUI implements ITaskCallback {
 					// Server
 					
 					Server server = new Server();
+					TaskManager.DoTask(new ServerReceiverServlet());
 					TaskManager.DoTask(new RegisterNodeTask(server));
 				}
 				else if(routerSelect.isSelected()) {

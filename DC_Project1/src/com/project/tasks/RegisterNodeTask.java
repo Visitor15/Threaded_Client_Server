@@ -60,6 +60,10 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 				Node node = Node.fromBytes(dataGram.getData());
 				DCServer.ROUTING_TABLE_IP = node.getCurrentIP();
 				
+				
+				setStringData("Routing table found at: " + DCServer.ROUTING_TABLE_IP);
+				this.m_Callback.onTaskProgress(this);
+				
 				datagramSocket.close();
 			}
 		} catch (IOException e) {

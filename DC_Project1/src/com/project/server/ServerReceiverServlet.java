@@ -50,17 +50,17 @@ public class ServerReceiverServlet extends DCServlet {
 			selfServer.SERVER_COMMAND = COMMAND_TYPE.NULL;
 			selfServer.ROUTERTABLE_COMMAND = COMMAND_TYPE.REGISTER_NODE;
 			
-			Scanner input = new Scanner(System.in);
+//			Scanner input = new Scanner(System.in);
 			
-			System.out.print("Router Name: ");
-			String userInput = input.nextLine();
+//			System.out.print("Router Name: ");
+//			String userInput = input.nextLine();
 			
-			selfServer.setRouterName(userInput);
+			selfServer.setRouterName(DCServer.ROUTING_TABLE_IP);
 			
-			System.out.print("Router Port: ");
-			userInput = input.nextLine();
+//			System.out.print("Router Port: ");
+//			userInput = input.nextLine();
 			
-			selfServer.setRouterPort(Integer.parseInt(userInput));
+			selfServer.setRouterPort(RoutingTableServlet.LISTENING_PORT);
 			
 			
 			buffer = selfServer.toBytes();
@@ -73,7 +73,7 @@ public class ServerReceiverServlet extends DCServlet {
 			
 			RoutingTable.getInstance().registerServer(selfServer);
 
-			input.close();
+//			input.close();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -26,12 +26,12 @@ public class FakeUI implements ITaskCallback {
 	}
 	
 	public void start() {
-		try {
-			doTempTest();
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			doTempTest();
+//		} catch (UnknownHostException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	
 	public void doTempTest() throws UnknownHostException {

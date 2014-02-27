@@ -120,6 +120,7 @@ public class Node {
 		destIP = "NULL";
 		destHostname = "NULL";
 		destUsername = "NULL";
+		routerName = "NULL";
 		currentPort = -1;
 
 		NODE = NODE_TYPE.NODE;
