@@ -61,11 +61,7 @@ public class RoutingTable implements ITaskCallback {
 	}
 
 	public Server getPrimaryServer() {
-		if (m_ServerMap.size() > 0) {
-			return m_ServerMap.get(0);
-		}
-
-		return null;
+		return primaryServer;
 	}
 
 	public Server getServerAtIndex(final int pos) {

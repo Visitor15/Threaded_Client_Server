@@ -27,6 +27,7 @@ import javax.swing.JTextField;
 
 import com.project.framework.Task;
 import com.project.server.DCServer;
+import com.project.server.DCServer.COMMAND_TYPE;
 import com.project.server.RoutingTableServlet;
 import com.project.server.ServerReceiverServlet;
 import com.project.server.router.Client;
@@ -443,14 +444,20 @@ public class MainUI implements ITaskCallback {
 				DCServer.ROUTING_TABLE_IP = txtRouterName.getText();
 				
 				if(clientSelect.isSelected()) {
-					TaskManager.DoTask(new RoutingTableServlet());
-					TaskManager.DoTask(new ServerReceiverServlet());
+//					TaskManager.DoTask(new RoutingTableServlet());
+//					TaskManager.DoTask(new ServerReceiverServlet());
 					Client client = new Client();
+					client.ROUTERTABLE_COMMAND = COMMAND_TYPE.REGISTER_NODE;
 					RegisterNodeTask nodeTask = new RegisterNodeTask(client);
 					nodeTask.setTaskCallback(MainUI.this);
 					TaskManager.DoTask(nodeTask);
 					
-					TaskManager.DoTask(new SendStringMessageTask());
+					
+					client = new Client();
+					client.setDestinationPort(ServerReceiverServlet.LISTENING_PORT);
+					client.SERVER_COMMAND = COMMAND_TYPE.SEND_STRING_MESSAGE;
+					
+					TaskManager.DoTask(new SendStringMessageTask(client));
 					
 					// Client
 				}
