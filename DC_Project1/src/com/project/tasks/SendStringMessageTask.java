@@ -85,7 +85,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 			
 			DatagramPacket dataGram = new DatagramPacket(buffer, buffer.length);
 			dataGram.setPort(clientNode.getRouterPort());
-			dataGram.setAddress(InetAddress.getByName(clientNode.getRouterName()));
+			dataGram.setAddress(InetAddress.getByName(DCServer.ROUTING_TABLE_IP));
 			
 			SocketManager.getInstance().sendDatagram(dataGram);
 		} catch (UnknownHostException e) {

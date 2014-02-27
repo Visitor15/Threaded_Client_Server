@@ -33,6 +33,7 @@ import com.project.server.router.Client;
 import com.project.server.router.Server;
 import com.project.tasks.ITaskCallback;
 import com.project.tasks.RegisterNodeTask;
+import com.project.tasks.SendStringMessageTask;
 import com.project.tasks.TaskManager;
 
 public class MainUI implements ITaskCallback {
@@ -448,6 +449,8 @@ public class MainUI implements ITaskCallback {
 					RegisterNodeTask nodeTask = new RegisterNodeTask(client);
 					nodeTask.setTaskCallback(MainUI.this);
 					TaskManager.DoTask(nodeTask);
+					
+					TaskManager.DoTask(new SendStringMessageTask());
 					
 					// Client
 				}
