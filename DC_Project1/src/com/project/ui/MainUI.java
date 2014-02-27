@@ -456,8 +456,9 @@ public class MainUI implements ITaskCallback {
 					client = new Client();
 					client.setDestinationPort(ServerReceiverServlet.LISTENING_PORT);
 					client.SERVER_COMMAND = COMMAND_TYPE.SEND_STRING_MESSAGE;
+					client.setPort(SendStringMessageTask.PORT);
 					
-					TaskManager.DoTask(new SendStringMessageTask(client));
+					TaskManager.DoTask(new SendStringMessageTask(client, true, MainUI.this));
 					
 					// Client
 				}

@@ -49,6 +49,9 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 				
 				dataGram = new DatagramPacket(buffer, buffer.length);
 				dataGram.setPort(RoutingTableServlet.LISTENING_PORT);
+				
+				System.out.println("Routing Table: " + DCServer.ROUTING_TABLE_IP);
+				
 				dataGram.setAddress(InetAddress
 						.getByName(DCServer.ROUTING_TABLE_IP));
 				SocketManager.getInstance().sendDatagram(dataGram);
