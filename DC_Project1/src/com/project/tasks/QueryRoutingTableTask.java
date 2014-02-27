@@ -61,7 +61,7 @@ public class QueryRoutingTableTask extends SimpleAbstractTask {
 			selfClient.setRouterName(queryUserIP);
 			selfClient.setHostname(InetAddress.getLocalHost().getHostName());
 			selfClient.setPort(PORT);
-			selfClient.setRouterPort(RoutingTableServlet.LISTENING_PORT);
+			selfClient.setRouterPort(QueryRoutingTableTask.PORT);
 			selfClient.setUsername("Client "
 					+ InetAddress.getLocalHost().getHostName());
 			selfClient.SERVER_COMMAND = COMMAND_TYPE.NULL;
@@ -84,12 +84,14 @@ public class QueryRoutingTableTask extends SimpleAbstractTask {
 			buffer = receiveGram.getData();
 
 			Node node = Node.fromBytes(buffer);
-
+			
 			node.setCurrentIP(receiveGram.getAddress().getHostAddress());
 			node.setHostname(receiveGram.getAddress().getHostName());
-
+			node.setPort(dataGram.getPort());
 			RoutingTable.getInstance().registerServer((Server) node);
 
+			
+			
 			setStringData(new String(node.toBytes()));
 
 			stopTask();

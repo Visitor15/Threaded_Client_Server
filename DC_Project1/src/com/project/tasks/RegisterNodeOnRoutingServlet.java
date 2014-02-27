@@ -1,6 +1,7 @@
 package com.project.tasks;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -20,7 +21,7 @@ public class RegisterNodeOnRoutingServlet extends SimpleAbstractTask {
 
 	public static final int BUFFER_SIZE = 64;
 
-	public static final int LISTENING_PORT = 11235;
+	public static int LISTENING_PORT = 11235;
 	
 	private DatagramSocket datagramSocket;
 
@@ -37,10 +38,11 @@ public class RegisterNodeOnRoutingServlet extends SimpleAbstractTask {
 
 	@Override
 	public void executeTask() {
+		
 
 		/* Redundant code here in the event Server and Client start diverting. */
 		try {
-
+			datagramSocket = new DatagramSocket(LISTENING_PORT);
 			/* NULL indicates no node was registered. */
 			if (node != null) {
 				
@@ -56,11 +58,7 @@ public class RegisterNodeOnRoutingServlet extends SimpleAbstractTask {
 				
 				}
 				
-				
-				
 				buffer = node.toBytes();
-
-				datagramSocket = new DatagramSocket(LISTENING_PORT);
 				
 				dataGram = new DatagramPacket(buffer, buffer.length);
 				dataGram.setPort(RoutingTableServlet.LISTENING_PORT);
@@ -77,7 +75,10 @@ public class RegisterNodeOnRoutingServlet extends SimpleAbstractTask {
 				
 				datagramSocket.close();
 			}
-		} catch (IOException e) {
+		} catch (BindException e) {
+			LISTENING_PORT += 1;
+		}
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 
