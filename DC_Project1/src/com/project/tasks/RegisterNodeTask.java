@@ -8,9 +8,7 @@ import com.project.framework.Task;
 import com.project.main.Main;
 import com.project.server.RoutingTableServlet;
 import com.project.server.SocketManager;
-import com.project.server.router.Client;
 import com.project.server.router.Node;
-import com.project.server.router.Server;
 
 public class RegisterNodeTask extends SimpleAbstractTask {
 

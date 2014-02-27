@@ -48,10 +48,10 @@ public class FakeUI implements ITaskCallback {
 		selfClient.ROUTERTABLE_COMMAND = COMMAND_TYPE.PING_PRIMARY_SERVER_NODE;
 
 		if (userInput.equalsIgnoreCase("C")) {
-			System.out.print("Router IP: ");
+			System.out.print("Router Name: ");
 			userInput = input.nextLine();
 			
-			selfClient.setRouterIP(userInput);
+			selfClient.setRouterName(userInput);
 			
 			System.out.print("Router Port: ");
 			userInput = input.nextLine();
@@ -68,16 +68,6 @@ public class FakeUI implements ITaskCallback {
 		} else if (userInput.equalsIgnoreCase("R")) {
 			TaskManager.DoTask(new RoutingTableServlet());
 		} else {
-			System.out.print("Router IP: ");
-			userInput = input.nextLine();
-			
-			selfClient.setRouterIP(userInput);
-			
-			System.out.print("Router Port: ");
-			userInput = input.nextLine();
-			
-			selfClient.setRouterPort(Integer.parseInt(userInput));
-			
 			// RoutingTable
 			TaskManager.DoTask(new ServerReceiverServlet());
 		}

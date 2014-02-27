@@ -17,6 +17,7 @@ import java.util.Scanner;
 import com.project.framework.Task;
 import com.project.server.DCServer;
 import com.project.server.DCServer.COMMAND_TYPE;
+import com.project.server.SocketManager;
 import com.project.server.router.Client;
 import com.project.server.router.Node;
 
@@ -76,6 +77,26 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 	long endLookupTime = 0;
 	@Override
 	public void executeTask() {
+		clientNode.ROUTERTABLE_COMMAND = COMMAND_TYPE.REGISTER_NODE;
+		
+		try {
+			
+			buffer = clientNode.toBytes();
+			
+			DatagramPacket dataGram = new DatagramPacket(buffer, buffer.length);
+			dataGram.setPort(clientNode.getRouterPort());
+			dataGram.setAddress(InetAddress.getByName(clientNode.getRouterName()));
+			
+			SocketManager.getInstance().sendDatagram(dataGram);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		/*
 		 * the following code will connect to the server router and then open a
 		 * file for sending the data
@@ -96,7 +117,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 			if (toServer || node == null) {
 				startLookupTime = System.currentTimeMillis();
 				TaskManager.DoTaskOnCurrentThread(new QueryRoutingTableTask(
-						clientNode.getRouterIP(), true), this);
+						clientNode.getRouterName(), true), this);
 			}
 			clientSocket = new Socket(node.getCurrentIP(),
 					node.getCurrentPort());
@@ -228,7 +249,9 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 			selfClient
 					.setCurrentIP(InetAddress.getLocalHost().getHostAddress());
 			selfClient.setHostname(InetAddress.getLocalHost().getHostName());
+			selfClient.setRouterName(node.getRouterName());
 			selfClient.setPort(SendStringMessageTask.PORT);
+			selfClient.setRouterPort(node.getRouterPort());
 			selfClient.setUsername("Client " + DCServer.getLocalHostname());
 			selfClient.SERVER_COMMAND = COMMAND_TYPE.SEND_STRING_MESSAGE;
 
