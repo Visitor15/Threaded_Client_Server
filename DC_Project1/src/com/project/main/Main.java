@@ -1,288 +1,50 @@
 package com.project.main;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.net.*;
-import java.util.Random;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
-import javax.swing.*;
-
-import com.project.framework.Task;
-import com.project.tasks.SimpleAbstractTask;
-import com.project.tasks.TaskManager;
-import com.project.tasks.ThreadHelper;
-import com.project.ui.FakeUI;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 // with "working code" so they will compile
 
 public class Main {
 
-	// public class ClientTask extends SimpleAbstractTask {
-	//
-	// @Override
-	// public void executeTask() {
-	// // TODO Auto-generated method stub
-	// /*
-	// the following code will connect to the server router and then open a file
-	// for sending the data
-	// */
-	//
-	// try {
-	// Socket clientSocket = new Socket(IPaddress, 6666); //port needs to be
-	// serverrouters port
-	// //network output stream
-	// DataOutputStream send = new
-	// DataOutputStream(clientSocket.getOutputStream());
-	// //network input stream
-	// BufferedReader receive = new BufferedReader(new
-	// InputStreamReader(clientSocket.getInputStream()));
-	// //get a lowercase message from the user (no verification or anything)
-	// String message = fileName.getText();
-	//
-	// InputStream file = new FileInputStream(fileName.getText());
-	// BufferedReader reader = new BufferedReader(new InputStreamReader(file));
-	// String line = null;
-	//
-	//
-	// /*
-	// in the while loop below we need to add the statistics for average length
-	// of each line we send
-	// the average round trip time of each message.
-	// */
-	//
-	// while ((line = reader.readLine()) != null) //loop to end of file sending
-	// every line
-	// {
-	// outputWindow.append("Sending TCP: " + line + "\n"); //we may want to only
-	// output statistics if its a long file
-	// //convert to bytes and write to stream
-	// send.writeBytes(line + '\n');
-	// //receive the message back from the server
-	// String modifiedMsg = receive.readLine();
-	// outputWindow.append("Server TCP: " + modifiedMsg + "\n");
-	// //we are done here close the socket!
-	//
-	// }
-	// clientSocket.close(); //we are done here
-	//
-	//
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	//
-	// @Override
-	// public void onProgressUpdate() {
-	// // TODO Auto-generated method stub
-	//
-	// }
-	//
-	// @Override
-	// public void onFinished() {
-	// // TODO Auto-generated method stub
-	//
-	// }
-	//
-	// @Override
-	// public byte[] toBytes() {
-	// // TODO Auto-generated method stub
-	// return null;
-	// }
-	//
-	// @Override
-	// public Task fromBytes(byte[] byteArray) {
-	// // -
-	// return null;
-	// }
-	//
-	// }
-
-	public class ServerListeningTask extends SimpleAbstractTask {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -3666564813084684487L;
-
-		@Override
-		public void executeTask() {
-			// TODO Auto-generated method stub
-			try {
-				ServerSocket Socket = new ServerSocket(6666); // port here can
-																// be anything
-																// as long as
-																// server router
-																// knows what it
-																// is
-
-				/*
-				 * We might want to consider adding a timeout feature to the
-				 * server as it will hang forever waiting for a connection... we
-				 * could also spawn a server thread to handle everything so as
-				 * not to lock the gui. we can worry about this when the rest is
-				 * functioning.
-				 */
-
-				while (serverSelect.isSelected()) // servers run loop forever
-				{
-					// accept new connections to the socket (blocks forever)
-					outputWindow.append("Waiting for client on port  :"
-							+ Socket.getLocalPort() + "...\n");
-					Socket connectionSocket = Socket.accept();
-					outputWindow.append("Client connected on port    :"
-							+ Socket.getLocalPort() + "...\n");
-					// create streams
-					BufferedReader receive = new BufferedReader(
-							new InputStreamReader(
-									connectionSocket.getInputStream()));
-					DataOutputStream send = new DataOutputStream(
-							connectionSocket.getOutputStream());
-					// get a new message from the socket
-					String message = receive.readLine();
-					// modify the sentence
-					String modifiedMsg = message.toUpperCase() + '\n';
-					// send modified message back
-					send.writeBytes(modifiedMsg);
-				}
-
-			} catch (IOException e) {
-
-			}
-		}
-
-		@Override
-		public Task fromBytes(byte[] byteArray) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public void onFinished() {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onProgressUpdate() {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public byte[] toBytes() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-	}
-
-	public static void doTempTest() throws UnknownHostException {
-		FakeUI fakeUI = new FakeUI();
-		fakeUI.start();
-	}
-
-	public static void doTests() {
-		for (int i = 0; i < 50; i++) {
-			TaskManager.DoTask(new SimpleAbstractTask("Task - " + i) {
-
-				/**
-				 * 
-				 */
-				private static final long serialVersionUID = 4177765551108467842L;
-				Random random = new Random();
-
-				@Override
-				public void executeTask() {
-					for (int j = 0; j < 5; j++) {
-						System.out.println("HELLO FROM TEST TASK: "
-								+ getTaskId());
-						ThreadHelper.sleepThread(random.nextInt(1800) + 200);
-					}
-
-					stopTask();
-				}
-
-				@Override
-				public Task fromBytes(byte[] byteArray) {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				@Override
-				public void onFinished() {
-					System.out.println("TEST TASK: " + getTaskId()
-							+ " is finished");
-				}
-
-				@Override
-				public void onProgressUpdate() {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public byte[] toBytes() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-			});
-		}
-	}
-
 	public static final void main(String[] args) {
-
-//		try {
-//			doTempTest();
-//		} catch (UnknownHostException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 
         JFrame frame = new JFrame("baseClient");
         frame.setContentPane(new Main().mains);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
-
-		// MainWindow mainUI = new MainWindow();
-
-		// TaskManager.DoPersistentTask(new DCServer(), new ITaskCallback() {
-		//
-		// @Override
-		// public void onTaskStart(Task task) {
-		// // TODO Auto-generated method stub
-		//
-		// }
-		//
-		// @Override
-		// public void onAtomicTaskStart(Task task) {
-		// // TODO Auto-generated method stub
-		//
-		// }
-		//
-		// @Override
-		// public void onTaskProgress(Task task) {
-		// // TODO Auto-generated method stub
-		//
-		// }
-		//
-		// @Override
-		// public void onTaskFinished(Task task) {
-		// // TODO Auto-generated method stub
-		//
-		// }
-		//
-		// });
-
-		// ThreadHelper.sleepThread(2000);
-
-		// System.out.println("Beginning other tasks.");
-
-		// TaskManager.DoTask(new ServerFinderTask());
-
-		// doTests();c
 	}
 
     private JButton startButton;
