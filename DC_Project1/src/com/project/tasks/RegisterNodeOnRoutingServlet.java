@@ -10,7 +10,10 @@ import com.project.framework.Task;
 import com.project.server.DCServer;
 import com.project.server.RoutingTableServlet;
 import com.project.server.SocketManager;
+import com.project.server.router.Client;
 import com.project.server.router.Node;
+import com.project.server.router.RoutingTable;
+import com.project.server.router.Server;
 
 public class RegisterNodeOnRoutingServlet extends SimpleAbstractTask {
 
@@ -46,34 +49,46 @@ public class RegisterNodeOnRoutingServlet extends SimpleAbstractTask {
 			/* NULL indicates no node was registered. */
 			if (node != null) {
 				
+				Client self = new Client();
+				
 				switch(node.NODE) {
 				case CLIENT:
+					
+					if(RoutingTable.getInstance().registerClient((Client) node)) {
+						self.addStringMessage("REGISTER_OKAY");
+					} else {
+						self.addStringMessage("REGISTRATION_ERROR");
+					}
+					
 					break;
 				case NODE:
+					
+					self.addStringMessage("Node " + node.getCurrentIP() + " did not have a NODE_TYPE");
+					
 					break;
 				case SERVER:
+					
+					if(RoutingTable.getInstance().registerServer((Server) node)){
+						self.addStringMessage("REGISTER_OKAY");
+					} else {
+						self.addStringMessage("REGISTRATION_ERROR");
+					}
+					
 					break;
 				default:
 					break;
 				
 				}
 				
-				buffer = node.toBytes();
+				self.setDestinationIP(node.getCurrentIP());
+				self.setDestinationPort(node.getCurrentPort());
 				
+				buffer = self.toBytes();
 				dataGram = new DatagramPacket(buffer, buffer.length);
-				dataGram.setPort(RoutingTableServlet.LISTENING_PORT);
+				dataGram.setPort(self.getDestinationPort());
 				dataGram.setAddress(InetAddress
-						.getByName(DCServer.ROUTING_TABLE_IP));
+						.getByName(self.getDestinationIP()));
 				SocketManager.getInstance().sendDatagram(dataGram);
-				
-				buffer = new byte[1024];
-				dataGram = new DatagramPacket(buffer, buffer.length);
-				datagramSocket.receive(dataGram);
-				
-				Node node = Node.fromBytes(dataGram.getData());
-				DCServer.ROUTING_TABLE_IP = node.getCurrentIP();
-				
-				datagramSocket.close();
 			}
 		} catch (BindException e) {
 			LISTENING_PORT += 1;

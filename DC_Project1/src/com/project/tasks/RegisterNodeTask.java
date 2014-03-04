@@ -43,6 +43,8 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 
 			/* NULL indicates no node was registered. */
 			if (node != null) {
+				System.out.println("NODE ROUTER COMMAND: " + node.ROUTERTABLE_COMMAND.name());
+				
 				buffer = node.toBytes();
 
 				datagramSocket = new DatagramSocket(LISTENING_PORT);
@@ -62,6 +64,15 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 				
 				Node node = Node.fromBytes(dataGram.getData());
 				DCServer.ROUTING_TABLE_IP = node.getCurrentIP();
+				
+				String returnMessage = node.getStringMessage();
+				
+				if(returnMessage.equalsIgnoreCase("REGISTER_OKAY")) {
+					System.out.println("Registered on routing table succesfully!");
+				}
+				else {
+					System.out.println("EXCEPTION: " + returnMessage);
+				}
 				
 				
 				setStringData("Routing table found at: " + DCServer.ROUTING_TABLE_IP);

@@ -466,6 +466,8 @@ public class MainUI implements ITaskCallback {
 					// Server
 					
 					Server server = new Server();
+					server.ROUTERTABLE_COMMAND = COMMAND_TYPE.REGISTER_NODE;
+					server.setDestinationIP(IPaddress);
 					TaskManager.DoTask(new ServerReceiverServlet());
 					TaskManager.DoTask(new RegisterNodeTask(server));
 				}
