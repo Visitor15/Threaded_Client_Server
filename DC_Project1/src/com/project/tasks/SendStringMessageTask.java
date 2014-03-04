@@ -17,7 +17,6 @@ import java.util.Scanner;
 import com.project.framework.Task;
 import com.project.server.DCServer;
 import com.project.server.DCServer.COMMAND_TYPE;
-import com.project.server.RoutingTableServlet;
 import com.project.server.ServerReceiverServlet;
 import com.project.server.SocketManager;
 import com.project.server.router.Client;
@@ -93,7 +92,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 			buffer = clientNode.toBytes();
 			
 			DatagramPacket dataGram = new DatagramPacket(buffer, buffer.length);
-			dataGram.setPort(RoutingTableServlet.LISTENING_PORT);
+			dataGram.setPort(ServerReceiverServlet.LISTENING_PORT);					// THIS SHOULD BE GOING TO BE THE ROUTING TABLE SERVLET. TESTING ONLY!!
 			dataGram.setAddress(InetAddress.getByName(DCServer.ROUTING_TABLE_IP));
 			
 			SocketManager.getInstance().sendDatagram(dataGram);

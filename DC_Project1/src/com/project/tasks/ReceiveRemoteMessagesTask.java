@@ -81,6 +81,8 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 			selfServer.setReceivingPort(ReceiveRemoteMessagesTask.LISTEN_PORT);
 			selfServer.setUsername("Server " + DCServer.getLocalHostname());
 
+			selfServer.addStringMessage("TASK_OKAY");
+			
 			buffer = selfServer.toBytes();
 
 			dataGram = new DatagramPacket(buffer, buffer.length);
