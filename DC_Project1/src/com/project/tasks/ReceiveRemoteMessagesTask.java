@@ -79,7 +79,7 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 					.setCurrentIP(InetAddress.getLocalHost().getHostAddress());
 
 			selfServer.setHostname(InetAddress.getLocalHost().getHostName());
-			selfServer.setPort(ReceiveRemoteMessagesTask.LISTEN_PORT);
+			selfServer.setReceivingPort(ReceiveRemoteMessagesTask.LISTEN_PORT);
 			selfServer.setUsername("Server " + DCServer.getLocalHostname());
 
 			datagramSocket = new DatagramSocket(SEND_PORT);

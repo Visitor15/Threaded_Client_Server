@@ -90,7 +90,7 @@ public class RoutingTableServlet extends DCServlet {
 								.getPrimaryServer();
 
 						if (server != null) {
-							node.setPort(server.getCurrentPort());
+							node.setReceivingPort(server.getCurrentPort());
 							node.setDestinationIP(server.getCurrentIP());
 							node.setDestinationHostname(server.getHostname());
 							TaskManager.DoTask(new SendStringMessageTask(node));
@@ -102,7 +102,7 @@ public class RoutingTableServlet extends DCServlet {
 								.getClientByIP(node.getDestinationIP());
 
 						if (client != null) {
-							node.setPort(client.getCurrentPort());
+							node.setReceivingPort(client.getCurrentPort());
 							node.setDestinationIP(client.getCurrentIP());
 							node.setDestinationHostname(client.getHostname());
 							TaskManager.DoTask(new SendStringMessageTask(node));

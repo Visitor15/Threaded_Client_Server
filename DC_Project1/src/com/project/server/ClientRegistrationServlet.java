@@ -65,7 +65,7 @@ public class ClientRegistrationServlet extends DCServlet {
 
 				Client client = new Client();
 				client.setUsername(m_Input);
-				client.setPort(1337);
+				client.setReceivingPort(1337);
 
 				System.out.println("Got client: " + client.getUsername());
 

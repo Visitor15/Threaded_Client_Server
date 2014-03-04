@@ -42,7 +42,7 @@ public class FakeUI implements ITaskCallback {
 		Client selfClient = new Client();
 		selfClient.setCurrentIP(InetAddress.getLocalHost().getHostAddress());
 		selfClient.setHostname(InetAddress.getLocalHost().getHostName());
-		selfClient.setPort(ServerReceiverServlet.LISTENING_PORT);
+		selfClient.setReceivingPort(ServerReceiverServlet.LISTENING_PORT);
 		selfClient.setUsername("Client " + DCServer.getLocalHostname());
 		selfClient.SERVER_COMMAND = COMMAND_TYPE.ROUTE_DATA_TO_SERVER;
 		selfClient.ROUTERTABLE_COMMAND = COMMAND_TYPE.PING_PRIMARY_SERVER_NODE;

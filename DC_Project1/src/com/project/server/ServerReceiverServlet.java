@@ -38,49 +38,49 @@ public class ServerReceiverServlet extends DCServlet {
 	public ServerReceiverServlet() {
 		super();
 		
-		try {
-			selfServer = new Server();
-
-			selfServer
-					.setCurrentIP(InetAddress.getLocalHost().getHostAddress());
-
-			selfServer.setHostname(InetAddress.getLocalHost().getHostName());
-			selfServer.setPort(ServerReceiverServlet.LISTENING_PORT);
-			selfServer.setUsername("Server " + DCServer.getLocalHostname());
-			selfServer.SERVER_COMMAND = COMMAND_TYPE.NULL;
-			selfServer.ROUTERTABLE_COMMAND = COMMAND_TYPE.REGISTER_NODE;
-			
-//			Scanner input = new Scanner(System.in);
-			
-//			System.out.print("Router Name: ");
-//			String userInput = input.nextLine();
-			
-			selfServer.setRouterName(DCServer.ROUTING_TABLE_IP);
-			
-//			System.out.print("Router Port: ");
-//			userInput = input.nextLine();
-			
-			selfServer.setRouterPort(RoutingTableServlet.LISTENING_PORT);
-			
-			
-			buffer = selfServer.toBytes();
-			
-			DatagramPacket dataGram = new DatagramPacket(buffer, buffer.length);
-			dataGram.setPort(selfServer.getRouterPort());
-			dataGram.setAddress(InetAddress.getByName(selfServer.getRouterName()));
-			
-			SocketManager.getInstance().sendDatagram(dataGram);
-			
-			RoutingTable.getInstance().registerServer(selfServer);
-
-//			input.close();
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			selfServer = new Server();
+//
+//			selfServer
+//					.setCurrentIP(InetAddress.getLocalHost().getHostAddress());
+//
+//			selfServer.setHostname(InetAddress.getLocalHost().getHostName());
+//			selfServer.setReceivingPort(ServerReceiverServlet.LISTENING_PORT);
+//			selfServer.setUsername("Server " + DCServer.getLocalHostname());
+//			selfServer.SERVER_COMMAND = COMMAND_TYPE.NULL;
+//			selfServer.ROUTERTABLE_COMMAND = COMMAND_TYPE.REGISTER_NODE;
+//			
+////			Scanner input = new Scanner(System.in);
+//			
+////			System.out.print("Router Name: ");
+////			String userInput = input.nextLine();
+//			
+//			selfServer.setRouterName(DCServer.ROUTING_TABLE_IP);
+//			
+////			System.out.print("Router Port: ");
+////			userInput = input.nextLine();
+//			
+//			selfServer.setRouterPort(RoutingTableServlet.LISTENING_PORT);
+//			
+//			
+//			buffer = selfServer.toBytes();
+//			
+//			DatagramPacket dataGram = new DatagramPacket(buffer, buffer.length);
+//			dataGram.setPort(selfServer.getRouterPort());
+//			dataGram.setAddress(InetAddress.getByName(selfServer.getRouterName()));
+//			
+//			SocketManager.getInstance().sendDatagram(dataGram);
+//			
+//			RoutingTable.getInstance().registerServer(selfServer);
+//
+////			input.close();
+//		} catch (UnknownHostException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 		setTaskId("ServerReceiverServelet");
 	}
@@ -149,7 +149,7 @@ public class ServerReceiverServlet extends DCServlet {
 						selfServer.setHostname(InetAddress.getLocalHost()
 								.getHostName());
 						selfServer
-								.setPort(ServerReceiverServlet.LISTENING_PORT);
+								.setReceivingPort(ServerReceiverServlet.LISTENING_PORT);
 						selfServer.setUsername("Server "
 								+ DCServer.getLocalHostname());
 

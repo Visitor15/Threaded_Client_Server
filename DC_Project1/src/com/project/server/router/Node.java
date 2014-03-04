@@ -32,7 +32,7 @@ public class Node {
 			node.setDestinationUsername(in.readUTF());
 			node.setRouterName(in.readUTF());
 			node.addStringMessage(in.readUTF());
-			node.setPort(in.readInt());
+			node.setReceivingPort(in.readInt());
 			node.setRouterPort(in.readInt());
 			node.NODE = NODE_TYPE.values()[in.readInt()];
 			node.SERVER_COMMAND = COMMAND_TYPE.values()[in.readInt()];
@@ -51,7 +51,7 @@ public class Node {
 			client.setCurrentIP(node.getCurrentIP());
 			client.setRouterName(node.getRouterName());
 			client.addStringMessage(node.getStringMessage());
-			client.setPort(node.getCurrentPort());
+			client.setReceivingPort(node.getCurrentPort());
 			client.setRouterPort(node.getRouterPort());
 			client.NODE = node.NODE;
 			client.SERVER_COMMAND = node.SERVER_COMMAND;
@@ -67,7 +67,7 @@ public class Node {
 			server.setCurrentIP(node.getCurrentIP());
 			server.setRouterName(node.getRouterName());
 			server.addStringMessage(node.getStringMessage());
-			server.setPort(node.getCurrentPort());
+			server.setReceivingPort(node.getCurrentPort());
 			server.setRouterPort(node.getRouterPort());
 			server.NODE = node.NODE;
 			server.SERVER_COMMAND = node.SERVER_COMMAND;
@@ -204,7 +204,7 @@ public class Node {
 		hostname = hostName;
 	}
 
-	public void setPort(final int port) {
+	public void setReceivingPort(final int port) {
 		currentPort = port;
 	}
 

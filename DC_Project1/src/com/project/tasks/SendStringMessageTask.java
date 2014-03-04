@@ -250,7 +250,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 					.setCurrentIP(InetAddress.getLocalHost().getHostAddress());
 			selfClient.setHostname(InetAddress.getLocalHost().getHostName());
 			selfClient.setRouterName(node.getRouterName());
-			selfClient.setPort(SendStringMessageTask.PORT);
+			selfClient.setReceivingPort(SendStringMessageTask.PORT);
 			selfClient.setRouterPort(node.getRouterPort());
 			selfClient.setUsername("Client " + DCServer.getLocalHostname());
 			selfClient.SERVER_COMMAND = COMMAND_TYPE.SEND_STRING_MESSAGE;

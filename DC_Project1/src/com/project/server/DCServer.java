@@ -289,7 +289,7 @@ public class DCServer extends SimplePersistentTask implements IServletCallback,
 
 							client.setCurrentIP(sock.getInetAddress()
 									.getHostAddress());
-							client.setPort(sock.getLocalPort());
+							client.setReceivingPort(sock.getLocalPort());
 
 							client.addStringMessage(mMessage);
 

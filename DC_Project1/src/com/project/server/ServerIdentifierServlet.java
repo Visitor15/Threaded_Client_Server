@@ -113,7 +113,7 @@ public class ServerIdentifierServlet extends DCServlet implements ITaskCallback 
 				Client client = new Client();
 
 				client.setHostname(clientAddress);
-				client.setPort(Integer.parseInt(clientPort));
+				client.setReceivingPort(Integer.parseInt(clientPort));
 
 				if (register) {
 					if (!RoutingTable.getInstance().registerClient(client)) {

@@ -49,7 +49,7 @@ public class ServerFinderTask extends SimpleAbstractTask {
 			client = new Client();
 			client.setCurrentIP(InetAddress.getLocalHost().getHostAddress());
 			client.setHostname(InetAddress.getLocalHost().getHostName());
-			client.setPort(ServerReceiverServlet.LISTENING_PORT);
+			client.setReceivingPort(ServerReceiverServlet.LISTENING_PORT);
 			client.setUsername("Client " + client.getHostname());
 
 			client.SERVER_COMMAND = COMMAND_TYPE.REGISTER_NODE;
