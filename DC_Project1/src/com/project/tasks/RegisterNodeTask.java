@@ -1,9 +1,11 @@
 package com.project.tasks;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketTimeoutException;
 
 import com.project.framework.Task;
 import com.project.server.DCServer;
@@ -20,9 +22,9 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 
 	public static final int BUFFER_SIZE = 64;
 
-	public static final int LISTENING_PORT = 11235;
-	
-	private DatagramSocket datagramSocket;
+	public static int LISTENING_PORT = 11235;
+
+	private static DatagramSocket datagramSocket;
 
 	private DatagramPacket dataGram;
 
@@ -43,45 +45,57 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 
 			/* NULL indicates no node was registered. */
 			if (node != null) {
-				System.out.println("NODE ROUTER COMMAND: " + node.ROUTERTABLE_COMMAND.name());
+				System.out.println("NODE ROUTER COMMAND: "
+						+ node.ROUTERTABLE_COMMAND.name());
 				node.setReceivingPort(RegisterNodeTask.LISTENING_PORT);
 				buffer = node.toBytes();
 
 				datagramSocket = new DatagramSocket(LISTENING_PORT);
-				
+				datagramSocket.setSoTimeout(3000);
+
 				dataGram = new DatagramPacket(buffer, buffer.length);
 				dataGram.setPort(RoutingTableServlet.LISTENING_PORT);
-				
-				System.out.println("Routing Table: " + DCServer.ROUTING_TABLE_IP);
-				
+
+				System.out.println("Routing Table: "
+						+ DCServer.ROUTING_TABLE_IP);
+
 				dataGram.setAddress(InetAddress
 						.getByName(DCServer.ROUTING_TABLE_IP));
 				SocketManager.getInstance().sendDatagram(dataGram);
-				
+
 				buffer = new byte[1024];
 				dataGram = new DatagramPacket(buffer, buffer.length);
 				datagramSocket.receive(dataGram);
-				
-				Node node = Node.fromBytes(dataGram.getData());
-				DCServer.ROUTING_TABLE_IP = node.getCurrentIP();
-				
-				String returnMessage = node.getStringMessage();
-				
-				if(returnMessage.equalsIgnoreCase("REGISTER_OKAY")) {
-					System.out.println("Registered on routing table succesfully!");
-				}
-				else {
+
+				Node mNode = Node.fromBytes(dataGram.getData());
+				DCServer.ROUTING_TABLE_IP = mNode.getCurrentIP();
+
+				String returnMessage = mNode.getStringMessage();
+
+				if (returnMessage.equalsIgnoreCase("REGISTER_OKAY")) {
+					System.out
+							.println("Registered on routing table succesfully!");
+				} else {
 					System.out.println("EXCEPTION: " + returnMessage);
 				}
-				
-				
-				setStringData("Routing table found at: " + DCServer.ROUTING_TABLE_IP);
+
+				setStringData("Routing table found at: "
+						+ DCServer.ROUTING_TABLE_IP);
 				m_Callback.onTaskProgress(this);
-				
+
 				datagramSocket.close();
 			}
+		} catch(BindException e) {
+			e.printStackTrace();
+			LISTENING_PORT++;
+			executeTask();
+		}
+		catch (SocketTimeoutException e) {
+			e.printStackTrace();
+			stopTask();
 		} catch (IOException e) {
 			e.printStackTrace();
+			stopTask();
 		}
 
 		stopTask();

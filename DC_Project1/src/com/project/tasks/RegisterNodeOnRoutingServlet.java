@@ -92,6 +92,7 @@ public class RegisterNodeOnRoutingServlet extends SimpleAbstractTask {
 			}
 		} catch (BindException e) {
 			LISTENING_PORT += 1;
+			executeTask();
 		}
 		catch (IOException e) {
 			e.printStackTrace();

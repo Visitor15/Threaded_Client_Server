@@ -1,15 +1,13 @@
 package com.project.server;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.Scanner;
 
 import com.project.framework.Task;
-import com.project.server.DCServer.COMMAND_TYPE;
 import com.project.server.router.Client;
 import com.project.server.router.Node;
 import com.project.server.router.RoutingTable;
@@ -170,7 +168,10 @@ public class ServerReceiverServlet extends DCServlet {
 				}
 			} while (isExecuting());
 
-		} catch (SocketException e) {
+		} catch (BindException e) {
+			stopTask();
+		}
+		catch (SocketException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
