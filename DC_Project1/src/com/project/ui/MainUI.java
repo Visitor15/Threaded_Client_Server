@@ -450,13 +450,14 @@ public class MainUI implements ITaskCallback {
 					client.ROUTERTABLE_COMMAND = COMMAND_TYPE.REGISTER_NODE;
 					RegisterNodeTask nodeTask = new RegisterNodeTask(client);
 					nodeTask.setTaskCallback(MainUI.this);
-					TaskManager.DoTask(nodeTask);
+//					TaskManager.DoTask(nodeTask);
 					
 					
 					client = new Client();
 					client.setDestinationPort(ServerReceiverServlet.LISTENING_PORT);
 					client.SERVER_COMMAND = COMMAND_TYPE.SEND_STRING_MESSAGE;
 					client.setReceivingPort(SendStringMessageTask.LISTENING_PORT);
+					client.setDestinationIP(txtServerDestinationIP.getText());
 					
 					TaskManager.DoTask(new SendStringMessageTask(client, true, MainUI.this));
 					
@@ -473,7 +474,7 @@ public class MainUI implements ITaskCallback {
 					registerTask.setTaskCallback(MainUI.this);
 					
 					TaskManager.DoTask(new ServerReceiverServlet());
-					TaskManager.DoTask(registerTask);
+//					TaskManager.DoTask(registerTask);
 				}
 				else if(routerSelect.isSelected()) {
 					// RoutingTable
