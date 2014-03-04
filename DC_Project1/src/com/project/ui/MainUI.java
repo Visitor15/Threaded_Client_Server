@@ -22,8 +22,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 
 import com.project.framework.Task;
 import com.project.server.DCServer;
@@ -50,6 +53,7 @@ public class MainUI implements ITaskCallback {
 
 	private JButton startButton;
 	private JFormattedTextField ipAddress;
+	private JScrollPane scroll;
 	private JTextArea outputWindow;
 	private JFormattedTextField fileName;
 	private JRadioButton clientSelect;
@@ -79,159 +83,159 @@ public class MainUI implements ITaskCallback {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);
-		
-//		startButton.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				try {
-//					int portNumber;
-//					String portString = txtRouterPortNumber.getText();
-//
-//					if (portString.matches("-{0,1}[0-9]+")) {
-//						portNumber = Integer.parseInt(portString);
-//
-//						if (portNumber < 0 || portNumber >= Math.pow(2, 16)) {
-//							JOptionPane
-//									.showMessageDialog(
-//											null,
-//											"Port Number must be between 0-65535!",
-//											"Invalid Input!",
-//											JOptionPane.ERROR_MESSAGE);
-//						} else if (portNumber > 0
-//								&& portNumber < Math.pow(2, 10)) {
-//							JOptionPane
-//									.showMessageDialog(
-//											null,
-//											"You shouldn't pick a well known port (i.e., 1-1023),",
-//											"Well Known Ports",
-//											JOptionPane.INFORMATION_MESSAGE);
-//						}
-//					} else {
-//						JOptionPane
-//								.showMessageDialog(
-//										null,
-//										"Port Number must be a number between 0-65535!",
-//										"Invalid Input!",
-//										JOptionPane.ERROR_MESSAGE);
-//					}
-//
-//					if (routerSelect.isSelected()) {
-//					} else if (serverSelect.isSelected()) {
-//						ServerSocket Socket = new ServerSocket(6666); // port
-//																		// here
-//																		// can
-//																		// be
-//																		// anything
-//																		// as
-//																		// long
-//																		// as
-//																		// server
-//																		// router
-//																		// knows
-//																		// what
-//																		// it is
-//
-//						/*
-//						 * We might want to consider adding a timeout feature to
-//						 * the server as it will hang forever waiting for a
-//						 * connection... we could also spawn a server thread to
-//						 * handle everything so as not to lock the gui. we can
-//						 * worry about this when the rest is functioning.
-//						 */
-//
-//						while (serverSelect.isSelected()) // servers run loop
-//															// forever
-//						{
-//							// accept new connections to the socket (blocks
-//							// forever)
-//							outputWindow.append("Waiting for client on port  :"
-//									+ Socket.getLocalPort() + "...\n");
-//							Socket connectionSocket = Socket.accept();
-//							outputWindow.append("Client connected on port    :"
-//									+ Socket.getLocalPort() + "...\n");
-//							// create streams
-//							BufferedReader receive = new BufferedReader(
-//									new InputStreamReader(connectionSocket
-//											.getInputStream()));
-//							DataOutputStream send = new DataOutputStream(
-//									connectionSocket.getOutputStream());
-//							// get a new message from the socket
-//							String message = receive.readLine();
-//							// modify the sentence
-//							String modifiedMsg = message.toUpperCase() + '\n';
-//							// send modified message back
-//							send.writeBytes(modifiedMsg);
-//						}
-//
-//					} else if (clientSelect.isSelected()) {
-//						/*
-//						 * the following code will connect to the server router
-//						 * and then open a file for sending the data
-//						 */
-//
-//						Socket clientSocket = new Socket(IPaddress, 6666); // port
-//																			// needs
-//																			// to
-//																			// be
-//																			// serverrouters
-//																			// port
-//						// network output stream
-//						DataOutputStream send = new DataOutputStream(
-//								clientSocket.getOutputStream());
-//						// network input stream
-//						BufferedReader receive = new BufferedReader(
-//								new InputStreamReader(clientSocket
-//										.getInputStream()));
-//						// get a lowercase message from the user (no
-//						// verification or anything)
-//						String message = fileName.getText();
-//
-//						InputStream file = new FileInputStream(fileName
-//								.getText());
-//						BufferedReader reader = new BufferedReader(
-//								new InputStreamReader(file));
-//						String line = null;
-//
-//						/*
-//						 * in the while loop below we need to add the statistics
-//						 * for average length of each line we send the average
-//						 * round trip time of each message.
-//						 */
-//
-//						while ((line = reader.readLine()) != null) // loop to
-//																	// end of
-//																	// file
-//																	// sending
-//																	// every
-//																	// line
-//						{
-//							outputWindow.append("Sending TCP: " + line + "\n"); // we
-//																				// may
-//																				// want
-//																				// to
-//																				// only
-//																				// output
-//																				// statistics
-//																				// if
-//																				// its
-//																				// a
-//																				// long
-//																				// file
-//							// convert to bytes and write to stream
-//							send.writeBytes(line + '\n');
-//							// receive the message back from the server
-//							String modifiedMsg = receive.readLine();
-//							outputWindow.append("Server TCP: " + modifiedMsg
-//									+ "\n");
-//							// we are done here close the socket!
-//
-//						}
-//						clientSocket.close(); // we are done here
-//					}
-//				} catch (IOException h) {
-//				}
-//			}
-//		});
+
+		// startButton.addActionListener(new ActionListener() {
+		// @Override
+		// public void actionPerformed(ActionEvent e) {
+		// try {
+		// int portNumber;
+		// String portString = txtRouterPortNumber.getText();
+		//
+		// if (portString.matches("-{0,1}[0-9]+")) {
+		// portNumber = Integer.parseInt(portString);
+		//
+		// if (portNumber < 0 || portNumber >= Math.pow(2, 16)) {
+		// JOptionPane
+		// .showMessageDialog(
+		// null,
+		// "Port Number must be between 0-65535!",
+		// "Invalid Input!",
+		// JOptionPane.ERROR_MESSAGE);
+		// } else if (portNumber > 0
+		// && portNumber < Math.pow(2, 10)) {
+		// JOptionPane
+		// .showMessageDialog(
+		// null,
+		// "You shouldn't pick a well known port (i.e., 1-1023),",
+		// "Well Known Ports",
+		// JOptionPane.INFORMATION_MESSAGE);
+		// }
+		// } else {
+		// JOptionPane
+		// .showMessageDialog(
+		// null,
+		// "Port Number must be a number between 0-65535!",
+		// "Invalid Input!",
+		// JOptionPane.ERROR_MESSAGE);
+		// }
+		//
+		// if (routerSelect.isSelected()) {
+		// } else if (serverSelect.isSelected()) {
+		// ServerSocket Socket = new ServerSocket(6666); // port
+		// // here
+		// // can
+		// // be
+		// // anything
+		// // as
+		// // long
+		// // as
+		// // server
+		// // router
+		// // knows
+		// // what
+		// // it is
+		//
+		// /*
+		// * We might want to consider adding a timeout feature to
+		// * the server as it will hang forever waiting for a
+		// * connection... we could also spawn a server thread to
+		// * handle everything so as not to lock the gui. we can
+		// * worry about this when the rest is functioning.
+		// */
+		//
+		// while (serverSelect.isSelected()) // servers run loop
+		// // forever
+		// {
+		// // accept new connections to the socket (blocks
+		// // forever)
+		// outputWindow.append("Waiting for client on port  :"
+		// + Socket.getLocalPort() + "...\n");
+		// Socket connectionSocket = Socket.accept();
+		// outputWindow.append("Client connected on port    :"
+		// + Socket.getLocalPort() + "...\n");
+		// // create streams
+		// BufferedReader receive = new BufferedReader(
+		// new InputStreamReader(connectionSocket
+		// .getInputStream()));
+		// DataOutputStream send = new DataOutputStream(
+		// connectionSocket.getOutputStream());
+		// // get a new message from the socket
+		// String message = receive.readLine();
+		// // modify the sentence
+		// String modifiedMsg = message.toUpperCase() + '\n';
+		// // send modified message back
+		// send.writeBytes(modifiedMsg);
+		// }
+		//
+		// } else if (clientSelect.isSelected()) {
+		// /*
+		// * the following code will connect to the server router
+		// * and then open a file for sending the data
+		// */
+		//
+		// Socket clientSocket = new Socket(IPaddress, 6666); // port
+		// // needs
+		// // to
+		// // be
+		// // serverrouters
+		// // port
+		// // network output stream
+		// DataOutputStream send = new DataOutputStream(
+		// clientSocket.getOutputStream());
+		// // network input stream
+		// BufferedReader receive = new BufferedReader(
+		// new InputStreamReader(clientSocket
+		// .getInputStream()));
+		// // get a lowercase message from the user (no
+		// // verification or anything)
+		// String message = fileName.getText();
+		//
+		// InputStream file = new FileInputStream(fileName
+		// .getText());
+		// BufferedReader reader = new BufferedReader(
+		// new InputStreamReader(file));
+		// String line = null;
+		//
+		// /*
+		// * in the while loop below we need to add the statistics
+		// * for average length of each line we send the average
+		// * round trip time of each message.
+		// */
+		//
+		// while ((line = reader.readLine()) != null) // loop to
+		// // end of
+		// // file
+		// // sending
+		// // every
+		// // line
+		// {
+		// outputWindow.append("Sending TCP: " + line + "\n"); // we
+		// // may
+		// // want
+		// // to
+		// // only
+		// // output
+		// // statistics
+		// // if
+		// // its
+		// // a
+		// // long
+		// // file
+		// // convert to bytes and write to stream
+		// send.writeBytes(line + '\n');
+		// // receive the message back from the server
+		// String modifiedMsg = receive.readLine();
+		// outputWindow.append("Server TCP: " + modifiedMsg
+		// + "\n");
+		// // we are done here close the socket!
+		//
+		// }
+		// clientSocket.close(); // we are done here
+		// }
+		// } catch (IOException h) {
+		// }
+		// }
+		// });
 
 		ItemListener select = new ItemListener() {
 			@Override
@@ -351,9 +355,15 @@ public class MainUI implements ITaskCallback {
 						null, null, null, 0, true));
 		panel1.setBorder(BorderFactory.createTitledBorder("Output"));
 		outputWindow = new JTextArea();
-		outputWindow.setEditable(false);
+		outputWindow.setLineWrap(true);
+		outputWindow.setWrapStyleWord(true);
+		outputWindow.setLineWrap(true);
+
+		scroll = new JScrollPane(outputWindow);
+		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
 		panel1.add(
-				outputWindow,
+				scroll,
 				new com.intellij.uiDesigner.core.GridConstraints(
 						0,
 						0,
@@ -436,55 +446,55 @@ public class MainUI implements ITaskCallback {
 						new Dimension(120, 40), new Dimension(120, 40),
 						new Dimension(120, 40), 0, false));
 		startButton = new JButton();
-		
+
 		startButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				DCServer.ROUTING_TABLE_IP = txtRouterName.getText();
-				
-				if(clientSelect.isSelected()) {
-//					TaskManager.DoTask(new RoutingTableServlet());
-//					TaskManager.DoTask(new ServerReceiverServlet());
+
+				if (clientSelect.isSelected()) {
+					// TaskManager.DoTask(new RoutingTableServlet());
+					// TaskManager.DoTask(new ServerReceiverServlet());
 					Client client = new Client();
 					client.ROUTERTABLE_COMMAND = COMMAND_TYPE.REGISTER_NODE;
 					RegisterNodeTask nodeTask = new RegisterNodeTask(client);
 					nodeTask.setTaskCallback(MainUI.this);
-//					TaskManager.DoTask(nodeTask);
-					
-					
+					 TaskManager.DoTask(nodeTask);
+
+					DCServer.ROUTING_TABLE_IP = txtServerDestinationIP
+							.getText();
 					client = new Client();
 					client.setDestinationPort(ServerReceiverServlet.LISTENING_PORT);
 					client.SERVER_COMMAND = COMMAND_TYPE.SEND_STRING_MESSAGE;
 					client.setReceivingPort(SendStringMessageTask.LISTENING_PORT);
 					client.setDestinationIP(txtServerDestinationIP.getText());
-					
-					TaskManager.DoTask(new SendStringMessageTask(client, true, MainUI.this));
-					
+
+					TaskManager.DoTask(new SendStringMessageTask(client, true,
+							MainUI.this));
+
 					// Client
-				}
-				else if(serverSelect.isSelected()) {
+				} else if (serverSelect.isSelected()) {
 					// Server
-					
+
 					Server server = new Server();
 					server.ROUTERTABLE_COMMAND = COMMAND_TYPE.REGISTER_NODE;
 					server.setDestinationIP(IPaddress);
-					
+
 					RegisterNodeTask registerTask = new RegisterNodeTask(server);
 					registerTask.setTaskCallback(MainUI.this);
-					
+
 					TaskManager.DoTask(new ServerReceiverServlet());
-//					TaskManager.DoTask(registerTask);
-				}
-				else if(routerSelect.isSelected()) {
+					 TaskManager.DoTask(registerTask);
+				} else if (routerSelect.isSelected()) {
 					// RoutingTable
-					
+
 					TaskManager.DoTask(new RoutingTableServlet());
 				}
 			}
-			
+
 		});
-		
+
 		startButton.setHideActionText(true);
 		startButton.setHorizontalAlignment(0);
 		startButton.setText("Start");
@@ -768,7 +778,10 @@ public class MainUI implements ITaskCallback {
 	@Override
 	public void onTaskProgress(Task task) {
 		// TODO Auto-generated method stub
-		outputWindow.setText(task.getStringData());
+
+		outputWindow.append(task.getStringData() + "\n");
+		JScrollBar vertical = scroll.getVerticalScrollBar();
+		vertical.setValue(vertical.getMaximum());
 	}
 
 	@Override

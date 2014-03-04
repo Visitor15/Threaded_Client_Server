@@ -17,6 +17,7 @@ import java.util.Scanner;
 import com.project.framework.Task;
 import com.project.server.DCServer;
 import com.project.server.DCServer.COMMAND_TYPE;
+import com.project.server.RoutingTableServlet;
 import com.project.server.ServerReceiverServlet;
 import com.project.server.SocketManager;
 import com.project.server.router.Client;
@@ -82,6 +83,8 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 	
 	@Override
 	public void executeTask() {
+		System.out.println("Starting: " + getTaskId());
+		
 		clientNode.ROUTERTABLE_COMMAND = COMMAND_TYPE.ROUTE_DATA_TO_SERVER;
 		clientNode.setDestinationPort(ServerReceiverServlet.LISTENING_PORT);
 		clientNode.SERVER_COMMAND = COMMAND_TYPE.SEND_STRING_MESSAGE;
@@ -92,12 +95,12 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 			buffer = clientNode.toBytes();
 			
 			DatagramPacket dataGram = new DatagramPacket(buffer, buffer.length);
-			dataGram.setPort(ServerReceiverServlet.LISTENING_PORT);					// THIS SHOULD BE GOING TO BE THE ROUTING TABLE SERVLET. TESTING ONLY!!
+			dataGram.setPort(RoutingTableServlet.LISTENING_PORT);					// THIS SHOULD BE GOING TO BE THE ROUTING TABLE SERVLET. TESTING ONLY!!
 			dataGram.setAddress(InetAddress.getByName(DCServer.ROUTING_TABLE_IP));
-			
+			datagramReceiveSocket = new DatagramSocket(SendStringMessageTask.LISTENING_PORT);
 			SocketManager.getInstance().sendDatagram(dataGram);
 			
-			datagramReceiveSocket = new DatagramSocket(SendStringMessageTask.LISTENING_PORT);
+			System.out.println("Datagram sent to: " + DCServer.ROUTING_TABLE_IP);
 			
 			buffer = new byte[1024];
 			dataGram = new DatagramPacket(buffer, buffer.length);
