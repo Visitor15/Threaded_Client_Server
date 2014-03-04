@@ -17,6 +17,8 @@ import java.util.Scanner;
 import com.project.framework.Task;
 import com.project.server.DCServer;
 import com.project.server.DCServer.COMMAND_TYPE;
+import com.project.server.RoutingTableServlet;
+import com.project.server.ServerReceiverServlet;
 import com.project.server.SocketManager;
 import com.project.server.router.Client;
 import com.project.server.router.Node;
@@ -29,7 +31,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 	 */
 	private static final long serialVersionUID = -3296275676738733533L;
 
-	public static final int PORT = 13135;
+	public static final int LISTENING_PORT = 13135;
 
 	private Node node = null;
 
@@ -54,6 +56,8 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 	private Scanner userInput;
 
 	private String fileText;
+	
+	private DatagramSocket datagramReceiveSocket;
 
 	String recipientHostname = "NULL";
 
@@ -75,19 +79,39 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 	}
 
 	long endLookupTime = 0;
+
+	
 	@Override
 	public void executeTask() {
-		clientNode.ROUTERTABLE_COMMAND = COMMAND_TYPE.REGISTER_NODE;
+		clientNode.ROUTERTABLE_COMMAND = COMMAND_TYPE.ROUTE_DATA_TO_SERVER;
+		clientNode.setDestinationPort(ServerReceiverServlet.LISTENING_PORT);
+		clientNode.SERVER_COMMAND = COMMAND_TYPE.SEND_STRING_MESSAGE;
+		clientNode.setReceivingPort(SendStringMessageTask.LISTENING_PORT);
 		
 		try {
 			
 			buffer = clientNode.toBytes();
 			
 			DatagramPacket dataGram = new DatagramPacket(buffer, buffer.length);
-			dataGram.setPort(clientNode.getRouterPort());
+			dataGram.setPort(RoutingTableServlet.LISTENING_PORT);
 			dataGram.setAddress(InetAddress.getByName(DCServer.ROUTING_TABLE_IP));
 			
 			SocketManager.getInstance().sendDatagram(dataGram);
+			
+			datagramReceiveSocket = new DatagramSocket(SendStringMessageTask.LISTENING_PORT);
+			
+			buffer = new byte[1024];
+			dataGram = new DatagramPacket(buffer, buffer.length);
+			datagramReceiveSocket.receive(dataGram);
+			
+			node = Node.fromBytes(dataGram.getData());
+			String returnMessage = node.getStringMessage();
+			
+			if(!returnMessage.equalsIgnoreCase("TASK_OKAY")) {
+				System.out.println("EXCEPTION: " + returnMessage);
+				stopTask();
+			}
+			
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -114,13 +138,13 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 		try {
 			userInput = new Scanner(System.in);
 			long startLookupTime = 0;
-			if (toServer || node == null) {
+			if (node == null) {
 				startLookupTime = System.currentTimeMillis();
 				TaskManager.DoTaskOnCurrentThread(new QueryRoutingTableTask(
 						clientNode.getRouterName(), true), this);
 			}
 			clientSocket = new Socket(node.getCurrentIP(),
-					node.getCurrentPort());
+					node.getReceivingPort());
 			// network output stream
 			send = new DataOutputStream(clientSocket.getOutputStream());
 
@@ -243,14 +267,14 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 		recipientHostname = node.getHostname();
 
 		try {
-			datagramSocket = new DatagramSocket(SendStringMessageTask.PORT);
+			datagramSocket = new DatagramSocket(SendStringMessageTask.LISTENING_PORT);
 
 			Client selfClient = new Client();
 			selfClient
 					.setCurrentIP(InetAddress.getLocalHost().getHostAddress());
 			selfClient.setHostname(InetAddress.getLocalHost().getHostName());
 			selfClient.setRouterName(node.getRouterName());
-			selfClient.setReceivingPort(SendStringMessageTask.PORT);
+			selfClient.setReceivingPort(SendStringMessageTask.LISTENING_PORT);
 			selfClient.setRouterPort(node.getRouterPort());
 			selfClient.setUsername("Client " + DCServer.getLocalHostname());
 			selfClient.SERVER_COMMAND = COMMAND_TYPE.SEND_STRING_MESSAGE;
@@ -258,7 +282,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 			buffer = selfClient.toBytes();
 
 			dataGram = new DatagramPacket(buffer, buffer.length);
-			dataGram.setPort(node.getCurrentPort());
+			dataGram.setPort(node.getReceivingPort());
 			dataGram.setAddress(InetAddress.getByName(node.getCurrentIP()));
 
 			datagramSocket.send(dataGram);

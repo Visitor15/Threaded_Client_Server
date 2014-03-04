@@ -90,7 +90,7 @@ public class RoutingTableServlet extends DCServlet {
 								.getPrimaryServer();
 
 						if (server != null) {
-							node.setReceivingPort(server.getCurrentPort());
+							node.setReceivingPort(server.getReceivingPort());
 							node.setDestinationIP(server.getCurrentIP());
 							node.setDestinationHostname(server.getHostname());
 							TaskManager.DoTask(new SendStringMessageTask(node));
@@ -102,7 +102,8 @@ public class RoutingTableServlet extends DCServlet {
 								.getClientByIP(node.getDestinationIP());
 
 						if (client != null) {
-							node.setReceivingPort(client.getCurrentPort());
+							node.setReceivingIP(dataGram.getAddress().getHostAddress());
+							node.setReceivingPort(client.getReceivingPort());
 							node.setDestinationIP(client.getCurrentIP());
 							node.setDestinationHostname(client.getHostname());
 							TaskManager.DoTask(new SendStringMessageTask(node));
@@ -122,7 +123,7 @@ public class RoutingTableServlet extends DCServlet {
 							dataGram = new DatagramPacket(buffer, buffer.length);
 						}
 
-						dataGram.setPort(node.getCurrentPort());
+						dataGram.setPort(node.getReceivingPort());
 						dataGram.setAddress(InetAddress.getByName(node
 								.getCurrentIP()));
 						receivingSocket.send(dataGram);
@@ -140,14 +141,14 @@ public class RoutingTableServlet extends DCServlet {
 							buffer = client.toBytes();
 
 							dataGram = new DatagramPacket(buffer, buffer.length);
-							dataGram.setPort(node.getCurrentPort());
+							dataGram.setPort(node.getReceivingPort());
 							dataGram.setAddress(InetAddress.getByName(node
 									.getCurrentIP()));
 						} else {
 							buffer = new Server().toBytes();
 
 							dataGram = new DatagramPacket(buffer, buffer.length);
-							dataGram.setPort(node.getCurrentPort());
+							dataGram.setPort(node.getReceivingPort());
 							dataGram.setAddress(InetAddress.getByName(node
 									.getCurrentIP()));
 						}

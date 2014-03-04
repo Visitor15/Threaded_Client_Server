@@ -81,7 +81,7 @@ public class RegisterNodeOnRoutingServlet extends SimpleAbstractTask {
 				}
 				
 				self.setDestinationIP(node.getCurrentIP());
-				self.setDestinationPort(node.getCurrentPort());
+				self.setDestinationPort(node.getReceivingPort());
 				
 				buffer = self.toBytes();
 				dataGram = new DatagramPacket(buffer, buffer.length);

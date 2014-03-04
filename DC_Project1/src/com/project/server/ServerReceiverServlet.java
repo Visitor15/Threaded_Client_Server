@@ -154,7 +154,7 @@ public class ServerReceiverServlet extends DCServlet {
 						buffer = selfServer.toBytes();
 
 						dataGram = new DatagramPacket(buffer, buffer.length);
-						dataGram.setPort(node.getCurrentPort());
+						dataGram.setPort(node.getReceivingPort());
 						dataGram.setAddress(InetAddress.getByName(node
 								.getCurrentIP()));
 

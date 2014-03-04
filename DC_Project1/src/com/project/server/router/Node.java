@@ -11,79 +11,6 @@ import com.project.server.DCServer.NODE_TYPE;
 
 public class Node {
 
-	public static Node fromBytes(final byte[] byteArray) {
-		Node node = new Node();
-		ByteArrayInputStream is;
-		ObjectInputStream in;
-
-		Client client;
-		Server server;
-
-		try {
-			is = new ByteArrayInputStream(byteArray);
-			in = new ObjectInputStream(is);
-
-			node.setUsername(in.readUTF());
-			node.setHostname(in.readUTF());
-			node.setCurrentIP(in.readUTF());
-			node.setDestinationPort(in.readInt());
-			node.setDestinationIP(in.readUTF());
-			node.setDestinationHostname(in.readUTF());
-			node.setDestinationUsername(in.readUTF());
-			node.setRouterName(in.readUTF());
-			node.addStringMessage(in.readUTF());
-			node.setReceivingPort(in.readInt());
-			node.setRouterPort(in.readInt());
-			node.NODE = NODE_TYPE.values()[in.readInt()];
-			node.SERVER_COMMAND = COMMAND_TYPE.values()[in.readInt()];
-			node.ROUTERTABLE_COMMAND = COMMAND_TYPE.values()[in.readInt()];
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		/* Casting to appropriate object. */
-		switch (node.NODE) {
-		case CLIENT: {
-			client = new Client();
-
-			client.setUsername(node.getUsername());
-			client.setHostname(node.getHostname());
-			client.setCurrentIP(node.getCurrentIP());
-			client.setRouterName(node.getRouterName());
-			client.addStringMessage(node.getStringMessage());
-			client.setReceivingPort(node.getCurrentPort());
-			client.setRouterPort(node.getRouterPort());
-			client.NODE = node.NODE;
-			client.SERVER_COMMAND = node.SERVER_COMMAND;
-			client.ROUTERTABLE_COMMAND = node.ROUTERTABLE_COMMAND;
-
-			return client;
-		}
-		case SERVER: {
-			server = new Server();
-
-			server.setUsername(node.getUsername());
-			server.setHostname(node.getHostname());
-			server.setCurrentIP(node.getCurrentIP());
-			server.setRouterName(node.getRouterName());
-			server.addStringMessage(node.getStringMessage());
-			server.setReceivingPort(node.getCurrentPort());
-			server.setRouterPort(node.getRouterPort());
-			server.NODE = node.NODE;
-			server.SERVER_COMMAND = node.SERVER_COMMAND;
-			server.ROUTERTABLE_COMMAND = node.ROUTERTABLE_COMMAND;
-
-			return server;
-		}
-		case NODE: {
-			return node;
-		}
-		default: {
-			return node;
-		}
-		}
-	}
-
 	public NODE_TYPE NODE;
 
 	public COMMAND_TYPE SERVER_COMMAND;
@@ -111,6 +38,8 @@ public class Node {
 	public int currentPort;
 	
 	public int routerPort;
+	
+	public String receivingIP;
 
 	Node() {
 		username = "NULL";
@@ -121,6 +50,7 @@ public class Node {
 		destHostname = "NULL";
 		destUsername = "NULL";
 		routerName = "NULL";
+		receivingIP = "NULL";
 		currentPort = -1;
 
 		NODE = NODE_TYPE.NODE;
@@ -136,7 +66,7 @@ public class Node {
 		return currentIP;
 	}
 
-	public int getCurrentPort() {
+	public int getReceivingPort() {
 		return currentPort;
 	}
 
@@ -219,6 +149,14 @@ public class Node {
 	public void setRouterPort(final int port) {
 		routerPort = port;
 	}
+	
+	public void setReceivingIP(String ip) {
+		receivingIP = ip;
+	}
+	
+	public String getReceivingIP() {
+		return receivingIP;
+	}
 
 	public byte[] toBytes() {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -229,13 +167,14 @@ public class Node {
 			out.writeUTF(getUsername());
 			out.writeUTF(getHostname());
 			out.writeUTF(getCurrentIP());
+			out.writeUTF(getReceivingIP());
 			out.writeInt(getDestinationPort());
 			out.writeUTF(getDestinationIP());
 			out.writeUTF(getDestinationHostname());
 			out.writeUTF(getDestinationUsername());
 			out.writeUTF(getRouterName());
 			out.writeUTF(getStringMessage());
-			out.writeInt(getCurrentPort());
+			out.writeInt(getReceivingPort());
 			out.writeInt(getRouterPort());
 			out.writeInt(NODE.ordinal());
 			out.writeInt(SERVER_COMMAND.ordinal());
@@ -248,5 +187,89 @@ public class Node {
 		final byte[] res = os.toByteArray();
 
 		return res;
+	}
+	
+	public static Node fromBytes(final byte[] byteArray) {
+		Node node = new Node();
+		ByteArrayInputStream is;
+		ObjectInputStream in;
+
+		Client client;
+		Server server;
+
+		try {
+			is = new ByteArrayInputStream(byteArray);
+			in = new ObjectInputStream(is);
+
+			node.setUsername(in.readUTF());
+			node.setHostname(in.readUTF());
+			node.setCurrentIP(in.readUTF());
+			node.setReceivingIP(in.readUTF());
+			node.setDestinationPort(in.readInt());
+			node.setDestinationIP(in.readUTF());
+			node.setDestinationHostname(in.readUTF());
+			node.setDestinationUsername(in.readUTF());
+			node.setRouterName(in.readUTF());
+			node.addStringMessage(in.readUTF());
+			node.setReceivingPort(in.readInt());
+			node.setRouterPort(in.readInt());
+			node.NODE = NODE_TYPE.values()[in.readInt()];
+			node.SERVER_COMMAND = COMMAND_TYPE.values()[in.readInt()];
+			node.ROUTERTABLE_COMMAND = COMMAND_TYPE.values()[in.readInt()];
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		/* Casting to appropriate object. */
+		switch (node.NODE) {
+		case CLIENT: {
+			client = new Client();
+			
+			client.setUsername(node.getUsername());
+			client.setHostname(node.getHostname());
+			client.setCurrentIP(node.getCurrentIP());
+			client.setReceivingIP(node.getReceivingIP());
+			client.setDestinationPort(node.getDestinationPort());
+			client.setDestinationIP(node.getDestinationIP());
+			client.setDestinationHostname(node.getDestinationHostname());
+			client.setDestinationUsername(node.getDestinationUsername());
+			client.setRouterName(node.getRouterName());
+			client.addStringMessage(node.getStringMessage());
+			client.setReceivingPort(node.getReceivingPort());
+			client.setRouterPort(node.getRouterPort());
+			client.NODE = node.NODE;
+			client.SERVER_COMMAND = node.SERVER_COMMAND;
+			client.ROUTERTABLE_COMMAND = node.ROUTERTABLE_COMMAND;
+
+			return client;
+		}
+		case SERVER: {
+			server = new Server();
+
+			server.setUsername(node.getUsername());
+			server.setHostname(node.getHostname());
+			server.setCurrentIP(node.getCurrentIP());
+			server.setReceivingIP(node.getReceivingIP());
+			server.setDestinationPort(node.getDestinationPort());
+			server.setDestinationIP(node.getDestinationIP());
+			server.setDestinationHostname(node.getDestinationHostname());
+			server.setDestinationUsername(node.getDestinationUsername());
+			server.setRouterName(node.getRouterName());
+			server.addStringMessage(node.getStringMessage());
+			server.setReceivingPort(node.getReceivingPort());
+			server.setRouterPort(node.getRouterPort());
+			server.NODE = node.NODE;
+			server.SERVER_COMMAND = node.SERVER_COMMAND;
+			server.ROUTERTABLE_COMMAND = node.ROUTERTABLE_COMMAND;
+
+			return server;
+		}
+		case NODE: {
+			return node;
+		}
+		default: {
+			return node;
+		}
+		}
 	}
 }

@@ -15,6 +15,7 @@ import java.util.Locale;
 
 import com.project.framework.Task;
 import com.project.server.DCServer;
+import com.project.server.SocketManager;
 import com.project.server.router.Client;
 import com.project.server.router.Node;
 import com.project.server.router.Server;
@@ -39,8 +40,6 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 	private Node clientNode;
 
 	private byte[] buffer;
-
-	private DatagramSocket datagramSocket;
 
 	private DatagramPacket dataGram;
 
@@ -82,28 +81,22 @@ public class ReceiveRemoteMessagesTask extends SimpleAbstractTask {
 			selfServer.setReceivingPort(ReceiveRemoteMessagesTask.LISTEN_PORT);
 			selfServer.setUsername("Server " + DCServer.getLocalHostname());
 
-			datagramSocket = new DatagramSocket(SEND_PORT);
-			datagramSocket.setReuseAddress(true);
-
 			buffer = selfServer.toBytes();
 
 			dataGram = new DatagramPacket(buffer, buffer.length);
-			dataGram.setPort(clientNode.getCurrentPort());
+			dataGram.setPort(clientNode.getReceivingPort());
 			dataGram.setAddress(InetAddress.getByName(clientNode.getCurrentIP()));
 
-			System.out.println("Datagram: PORT: " + clientNode.getCurrentPort()
-					+ " IP: " + clientNode.getCurrentIP());
+			System.out.println("Datagram: PORT: " + clientNode.getReceivingPort()
+					+ " IP: " + clientNode.getReceivingIP());
 
 			System.out.println("Sending datagram");
 
-			datagramSocket.send(dataGram);
+			SocketManager.getInstance().sendDatagram(dataGram);
 
 		} catch (UnknownHostException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
-		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
