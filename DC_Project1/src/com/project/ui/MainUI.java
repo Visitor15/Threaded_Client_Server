@@ -456,14 +456,14 @@ public class MainUI implements ITaskCallback {
 				if (clientSelect.isSelected()) {
 					// TaskManager.DoTask(new RoutingTableServlet());
 					// TaskManager.DoTask(new ServerReceiverServlet());
+					
 					Client client = new Client();
 					client.ROUTERTABLE_COMMAND = COMMAND_TYPE.REGISTER_NODE;
 					RegisterNodeTask nodeTask = new RegisterNodeTask(client);
 					nodeTask.setTaskCallback(MainUI.this);
 					 TaskManager.DoTask(nodeTask);
 
-					DCServer.ROUTING_TABLE_IP = txtServerDestinationIP
-							.getText();
+					
 					client = new Client();
 					client.setDestinationPort(ServerReceiverServlet.LISTENING_PORT);
 					client.SERVER_COMMAND = COMMAND_TYPE.SEND_STRING_MESSAGE;

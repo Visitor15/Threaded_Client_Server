@@ -68,7 +68,7 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 				datagramSocket.receive(dataGram);
 
 				Node mNode = Node.fromBytes(dataGram.getData());
-				DCServer.ROUTING_TABLE_IP = mNode.getCurrentIP();
+//				DCServer.ROUTING_TABLE_IP = mNode.getCurrentIP();
 
 				String returnMessage = mNode.getStringMessage();
 

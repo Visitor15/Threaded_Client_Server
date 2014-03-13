@@ -67,7 +67,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 		super();
 		setTaskId("SendStringMessagesTask");
 
-		this.node = node;
+		clientNode = node;
 	}
 
 	public SendStringMessageTask(final Node client, boolean toServer, final ITaskCallback callback) {
@@ -95,7 +95,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 			buffer = clientNode.toBytes();
 			
 			DatagramPacket dataGram = new DatagramPacket(buffer, buffer.length);
-			dataGram.setPort(RoutingTableServlet.LISTENING_PORT);					// THIS SHOULD BE GOING TO BE THE ROUTING TABLE SERVLET. TESTING ONLY!!
+			dataGram.setPort(RoutingTableServlet.LISTENING_PORT);
 			dataGram.setAddress(InetAddress.getByName(DCServer.ROUTING_TABLE_IP));
 			datagramReceiveSocket = new DatagramSocket(SendStringMessageTask.LISTENING_PORT);
 			SocketManager.getInstance().sendDatagram(dataGram);
