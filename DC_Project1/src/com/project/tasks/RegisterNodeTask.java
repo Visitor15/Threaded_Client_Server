@@ -10,6 +10,7 @@ import java.net.SocketTimeoutException;
 import com.project.framework.Task;
 import com.project.server.DCServer;
 import com.project.server.RoutingTableServlet;
+import com.project.server.ServerReceiverServlet;
 import com.project.server.SocketManager;
 import com.project.server.router.Node;
 
@@ -47,7 +48,8 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 			if (node != null) {
 				System.out.println("NODE ROUTER COMMAND: "
 						+ node.ROUTERTABLE_COMMAND.name());
-				node.setReceivingPort(LISTENING_PORT);
+//				node.setReceivingPort(LISTENING_PORT);
+				node.setDestinationPort(LISTENING_PORT);
 				buffer = node.toBytes();
 
 				datagramSocket = new DatagramSocket(LISTENING_PORT);

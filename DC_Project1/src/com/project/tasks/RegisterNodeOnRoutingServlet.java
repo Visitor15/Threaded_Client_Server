@@ -80,7 +80,7 @@ public class RegisterNodeOnRoutingServlet extends SimpleAbstractTask {
 				}
 				
 				mNode.setDestinationIP(node.getCurrentIP());
-				mNode.setDestinationPort(node.getReceivingPort());
+				mNode.setDestinationPort(node.getDestinationPort());
 				
 				buffer = mNode.toBytes();
 				dataGram = new DatagramPacket(buffer, buffer.length);
