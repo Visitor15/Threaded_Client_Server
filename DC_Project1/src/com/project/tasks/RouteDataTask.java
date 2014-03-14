@@ -49,7 +49,7 @@ public class RouteDataTask extends SimpleAbstractTask implements ITaskCallback {
 
 			dataGram.setPort(node.getReceivingPort());
 
-			dataGram.setAddress(InetAddress.getByName(node.getCurrentIP()));
+			dataGram.setAddress(InetAddress.getByName(node.getDestinationIP()));
 
 			SocketManager.getInstance().sendDatagram(dataGram);
 		} catch (UnknownHostException e) {
