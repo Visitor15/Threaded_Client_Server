@@ -8,7 +8,6 @@ import com.project.framework.Task;
 import com.project.server.SocketManager;
 import com.project.server.router.Node;
 import com.project.server.router.RoutingTable;
-import com.project.server.router.Server;
 
 public class RouteDataTask extends SimpleAbstractTask implements ITaskCallback {
 
@@ -47,6 +46,8 @@ public class RouteDataTask extends SimpleAbstractTask implements ITaskCallback {
 			}
 
 			if (destinationNode != null) {
+				destinationNode.setReceivingIP(node.getCurrentIP());
+				destinationNode.setReceivingPort(node.getReceivingPort());
 				buffer = destinationNode.toBytes();
 				dataGram = new DatagramPacket(buffer, buffer.length);
 			}
