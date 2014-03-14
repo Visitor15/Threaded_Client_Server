@@ -110,7 +110,7 @@ public class ServerReceiverServlet extends DCServlet {
 
 					node.setCurrentIP(dataGram.getAddress().getHostAddress());
 
-					// System.out.println("Got node: " + node.getHostname());
+					System.out.println("Got node: " + node.getHostname() + " wanting task: " + node.SERVER_COMMAND.name());
 
 					switch (node.SERVER_COMMAND) {
 					case REGISTER_NODE: {

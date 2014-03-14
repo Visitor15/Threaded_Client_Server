@@ -13,7 +13,7 @@ import com.project.server.router.Server;
 public class RouteDataTask extends SimpleAbstractTask implements ITaskCallback {
 
 	/**
-	 * 	Serializable stuff
+	 * Serializable stuff
 	 */
 	private static final long serialVersionUID = 5236205344457418583L;
 
@@ -21,13 +21,15 @@ public class RouteDataTask extends SimpleAbstractTask implements ITaskCallback {
 
 	private Node node;
 
-	private Server currentServer;
+	private Node destinationNode;
 
 	private byte[] buffer;
 
-	public RouteDataTask(final Node n) {
+	private boolean toServer;
+
+	public RouteDataTask(final Node n, final boolean toServer) {
 		setTaskId("RouteDataTask");
-		
+		this.toServer = toServer;
 		node = n;
 	}
 
@@ -35,28 +37,35 @@ public class RouteDataTask extends SimpleAbstractTask implements ITaskCallback {
 	public void executeTask() {
 
 		try {
-			currentServer = RoutingTable.getInstance().getPrimaryServer();
-
-			if (currentServer != null) {
-				buffer = currentServer.toBytes();
-				dataGram = new DatagramPacket(buffer, buffer.length);
+			if (toServer) {
+				destinationNode = RoutingTable.getInstance()
+						.getServerByHostname(node.getDestinationIP());
+				destinationNode.SERVER_COMMAND = node.SERVER_COMMAND;
 			} else {
-				buffer = new Server().toBytes();
+				destinationNode = RoutingTable.getInstance().getClientByIP(
+						node.getDestinationIP());
+			}
+
+			if (destinationNode != null) {
+				buffer = destinationNode.toBytes();
 				dataGram = new DatagramPacket(buffer, buffer.length);
 			}
-			
-			System.out.println("Sending back to node: " + node.getDestinationIP() + " on port: " + node.getReceivingPort());
 
-			dataGram.setPort(node.getReceivingPort());
+			System.out.println("Sending back to node: "
+					+ destinationNode.getCurrentIP() + " on port: "
+					+ destinationNode.getReceivingPort());
 
-			dataGram.setAddress(InetAddress.getByName(node.getDestinationIP()));
+			dataGram.setPort(destinationNode.getReceivingPort());
+
+			dataGram.setAddress(InetAddress.getByName(destinationNode
+					.getCurrentIP()));
 
 			SocketManager.getInstance().sendDatagram(dataGram);
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		stopTask();
 	}
 
