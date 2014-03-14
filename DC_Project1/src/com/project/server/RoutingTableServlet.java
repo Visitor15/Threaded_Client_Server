@@ -74,7 +74,7 @@ public class RoutingTableServlet extends DCServlet {
 					node.setCurrentIP(dataGram.getAddress().getHostAddress());
 					node.setHostname(dataGram.getAddress().getHostName());
 
-					System.out.println("Got node: " + node.getUsername());
+					System.out.println("Got node: " + node.getHostname());
 
 					switch (node.ROUTERTABLE_COMMAND) {
 					case REGISTER_NODE: {
