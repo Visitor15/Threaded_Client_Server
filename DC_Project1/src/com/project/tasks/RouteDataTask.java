@@ -44,6 +44,8 @@ public class RouteDataTask extends SimpleAbstractTask implements ITaskCallback {
 				buffer = new Server().toBytes();
 				dataGram = new DatagramPacket(buffer, buffer.length);
 			}
+			
+			System.out.println("Sending back to node: " + node.getCurrentIP() + " on port: " + node.getReceivingPort());
 
 			dataGram.setPort(node.getReceivingPort());
 
