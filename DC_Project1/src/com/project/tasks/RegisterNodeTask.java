@@ -68,7 +68,7 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 				datagramSocket.receive(dataGram);
 
 				Node mNode = Node.fromBytes(dataGram.getData());
-//				DCServer.ROUTING_TABLE_IP = mNode.getCurrentIP();
+				DCServer.CURRENT_PRIMARY_SERVER = mNode.getCurrentIP();
 
 				String returnMessage = mNode.getStringMessage();
 
@@ -79,8 +79,8 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 					System.out.println("EXCEPTION: " + returnMessage);
 				}
 
-				setStringData("Routing table found at: "
-						+ DCServer.ROUTING_TABLE_IP);
+				setStringData("Primary server found at: "
+						+ DCServer.CURRENT_PRIMARY_SERVER);
 				m_Callback.onTaskProgress(this);
 
 				datagramSocket.close();

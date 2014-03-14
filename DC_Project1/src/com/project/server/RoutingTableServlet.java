@@ -12,6 +12,7 @@ import com.project.server.router.Node;
 import com.project.server.router.RoutingTable;
 import com.project.server.router.Server;
 import com.project.tasks.RegisterNodeOnRoutingServlet;
+import com.project.tasks.RouteDataTask;
 import com.project.tasks.SendStringMessageTask;
 import com.project.tasks.TaskManager;
 
@@ -93,7 +94,7 @@ public class RoutingTableServlet extends DCServlet {
 							node.setReceivingPort(server.getReceivingPort());
 							node.setDestinationIP(server.getCurrentIP());
 							node.setDestinationHostname(server.getHostname());
-							TaskManager.DoTask(new SendStringMessageTask(node));
+							TaskManager.DoTask(new RouteDataTask(node));
 						}
 						break;
 					}
@@ -106,7 +107,7 @@ public class RoutingTableServlet extends DCServlet {
 							node.setReceivingPort(client.getReceivingPort());
 							node.setDestinationIP(client.getCurrentIP());
 							node.setDestinationHostname(client.getHostname());
-							TaskManager.DoTask(new SendStringMessageTask(node));
+							TaskManager.DoTask(new RouteDataTask(node));
 						}
 						break;
 					}

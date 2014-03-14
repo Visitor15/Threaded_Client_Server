@@ -32,6 +32,8 @@ public class DCServer extends SimplePersistentTask implements IServletCallback,
 	}
 	
 	public static String ROUTING_TABLE_IP = "NULL";
+	
+	public static String CURRENT_PRIMARY_SERVER = "NULL";
 
 	/**
 	 * 

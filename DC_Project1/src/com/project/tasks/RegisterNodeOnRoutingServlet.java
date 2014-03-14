@@ -33,6 +33,8 @@ public class RegisterNodeOnRoutingServlet extends SimpleAbstractTask {
 	private byte[] buffer;
 
 	private Node node;
+	
+	private Server primaryServer;
 
 	public RegisterNodeOnRoutingServlet(final Node n) {
 		setTaskId("RegisterClientTask");
@@ -49,29 +51,31 @@ public class RegisterNodeOnRoutingServlet extends SimpleAbstractTask {
 			/* NULL indicates no node was registered. */
 			if (node != null) {
 				
-				Client self = new Client();
+				Node mNode = new Client();
 				
 				switch(node.NODE) {
 				case CLIENT:
 					
+					mNode = RoutingTable.getInstance().getPrimaryServer();
+					
 					if(RoutingTable.getInstance().registerClient((Client) node)) {
-						self.addStringMessage("REGISTER_OKAY");
+						mNode.addStringMessage("REGISTER_OKAY");
 					} else {
-						self.addStringMessage("REGISTRATION_ERROR");
+						mNode.addStringMessage("REGISTRATION_ERROR");
 					}
 					
 					break;
 				case NODE:
 					
-					self.addStringMessage("Node " + node.getCurrentIP() + " did not have a NODE_TYPE");
+					mNode.addStringMessage("Node " + node.getCurrentIP() + " did not have a NODE_TYPE");
 					
 					break;
 				case SERVER:
 					
 					if(RoutingTable.getInstance().registerServer((Server) node)){
-						self.addStringMessage("REGISTER_OKAY");
+						mNode.addStringMessage("REGISTER_OKAY");
 					} else {
-						self.addStringMessage("REGISTRATION_ERROR");
+						mNode.addStringMessage("REGISTRATION_ERROR");
 					}
 					
 					break;
@@ -80,14 +84,14 @@ public class RegisterNodeOnRoutingServlet extends SimpleAbstractTask {
 				
 				}
 				
-				self.setDestinationIP(node.getCurrentIP());
-				self.setDestinationPort(node.getReceivingPort());
+				mNode.setDestinationIP(node.getCurrentIP());
+				mNode.setDestinationPort(node.getReceivingPort());
 				
-				buffer = self.toBytes();
+				buffer = mNode.toBytes();
 				dataGram = new DatagramPacket(buffer, buffer.length);
-				dataGram.setPort(self.getDestinationPort());
+				dataGram.setPort(mNode.getDestinationPort());
 				dataGram.setAddress(InetAddress
-						.getByName(self.getDestinationIP()));
+						.getByName(mNode.getDestinationIP()));
 				SocketManager.getInstance().sendDatagram(dataGram);
 			}
 		} catch (BindException e) {

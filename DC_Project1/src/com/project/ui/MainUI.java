@@ -461,7 +461,7 @@ public class MainUI implements ITaskCallback {
 					client.ROUTERTABLE_COMMAND = COMMAND_TYPE.REGISTER_NODE;
 					RegisterNodeTask nodeTask = new RegisterNodeTask(client);
 					nodeTask.setTaskCallback(MainUI.this);
-					 TaskManager.DoTask(nodeTask);
+					 TaskManager.DoTaskOnCurrentThread(nodeTask, MainUI.this);
 
 					
 					client = new Client();
@@ -485,7 +485,7 @@ public class MainUI implements ITaskCallback {
 					registerTask.setTaskCallback(MainUI.this);
 
 					TaskManager.DoTask(new ServerReceiverServlet());
-					 TaskManager.DoTask(registerTask);
+					TaskManager.DoTask(registerTask);
 				} else if (routerSelect.isSelected()) {
 					// RoutingTable
 
