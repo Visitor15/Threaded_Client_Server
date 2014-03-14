@@ -142,13 +142,13 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 		}
 
 		try {
-			userInput = new Scanner(System.in);
-			long startLookupTime = 0;
-			if (node == null) {
-				startLookupTime = System.currentTimeMillis();
-				TaskManager.DoTaskOnCurrentThread(new QueryRoutingTableTask(
-						clientNode.getRouterName(), true), this);
-			}
+//			userInput = new Scanner(System.in);
+			long startLookupTime = System.currentTimeMillis();
+//			if (node == null) {
+//				startLookupTime = System.currentTimeMillis();
+//				TaskManager.DoTaskOnCurrentThread(new QueryRoutingTableTask(
+//						clientNode.getRouterName(), true), this);
+//			}
 
 			if (node != null) {
 				clientSocket = new Socket(node.getCurrentIP(),
