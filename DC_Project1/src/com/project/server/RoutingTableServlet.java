@@ -91,7 +91,6 @@ public class RoutingTableServlet extends DCServlet {
 								.getPrimaryServer();
 
 						if (server != null) {
-							node.setReceivingPort(server.getReceivingPort());
 							node.setDestinationIP(server.getCurrentIP());
 							node.setDestinationHostname(server.getHostname());
 							TaskManager.DoTask(new RouteDataTask(node, true));
