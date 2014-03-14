@@ -21,6 +21,8 @@ public class RouteDataTask extends SimpleAbstractTask implements ITaskCallback {
 	private Node node;
 
 	private Node destinationNode;
+	
+	private int serverPort;
 
 	private byte[] buffer;
 
@@ -46,6 +48,7 @@ public class RouteDataTask extends SimpleAbstractTask implements ITaskCallback {
 			}
 
 			if (destinationNode != null) {
+				serverPort = destinationNode.getReceivingPort();
 				destinationNode.setReceivingIP(node.getCurrentIP());
 				destinationNode.setReceivingPort(node.getReceivingPort());
 				buffer = destinationNode.toBytes();
@@ -54,9 +57,9 @@ public class RouteDataTask extends SimpleAbstractTask implements ITaskCallback {
 
 			System.out.println("Sending back to node: "
 					+ destinationNode.getCurrentIP() + " on port: "
-					+ destinationNode.getReceivingPort());
+					+ serverPort);
 
-			dataGram.setPort(destinationNode.getReceivingPort());
+			dataGram.setPort(serverPort);
 
 			dataGram.setAddress(InetAddress.getByName(destinationNode
 					.getCurrentIP()));
