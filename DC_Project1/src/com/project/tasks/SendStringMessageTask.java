@@ -31,7 +31,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 	 */
 	private static final long serialVersionUID = -3296275676738733533L;
 
-	public static final int LISTENING_PORT = 13135;
+	public static final int LISTENING_PORT = 15577;
 
 	private Node node = null;
 
@@ -56,7 +56,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 	private Scanner userInput;
 
 	private String fileText;
-	
+
 	private DatagramSocket datagramReceiveSocket;
 
 	String recipientHostname = "NULL";
@@ -70,7 +70,8 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 		clientNode = node;
 	}
 
-	public SendStringMessageTask(final Node client, boolean toServer, final ITaskCallback callback) {
+	public SendStringMessageTask(final Node client, boolean toServer,
+			final ITaskCallback callback) {
 		super();
 		setTaskId("SendStringMessagesTask");
 		this.m_Callback = callback;
@@ -80,40 +81,44 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 
 	long endLookupTime = 0;
 
-	
 	@Override
 	public void executeTask() {
 		System.out.println("Starting: " + getTaskId());
-		
+
 		clientNode.ROUTERTABLE_COMMAND = COMMAND_TYPE.ROUTE_DATA_TO_SERVER;
 		clientNode.setDestinationPort(ServerReceiverServlet.LISTENING_PORT);
 		clientNode.SERVER_COMMAND = COMMAND_TYPE.SEND_STRING_MESSAGE;
 		clientNode.setReceivingPort(SendStringMessageTask.LISTENING_PORT);
-		
+
 		try {
-			
+
 			buffer = clientNode.toBytes();
-			
+
 			DatagramPacket dataGram = new DatagramPacket(buffer, buffer.length);
 			dataGram.setPort(RoutingTableServlet.LISTENING_PORT);
-			dataGram.setAddress(InetAddress.getByName(DCServer.ROUTING_TABLE_IP));
-			datagramReceiveSocket = new DatagramSocket(SendStringMessageTask.LISTENING_PORT);
+			dataGram.setAddress(InetAddress
+					.getByName(DCServer.ROUTING_TABLE_IP));
+			datagramReceiveSocket = new DatagramSocket(
+					SendStringMessageTask.LISTENING_PORT);
 			SocketManager.getInstance().sendDatagram(dataGram);
-			
-			System.out.println("Datagram sent to: " + DCServer.ROUTING_TABLE_IP);
-			
+
+			System.out
+					.println("Datagram sent to: " + DCServer.ROUTING_TABLE_IP);
+
 			buffer = new byte[1024];
 			dataGram = new DatagramPacket(buffer, buffer.length);
 			datagramReceiveSocket.receive(dataGram);
-			
+
 			node = Node.fromBytes(dataGram.getData());
 			String returnMessage = node.getStringMessage();
-			
-			if(!returnMessage.equalsIgnoreCase("TASK_OKAY")) {
+
+			datagramReceiveSocket.close();
+
+			if (!returnMessage.equalsIgnoreCase("TASK_OKAY")) {
 				System.out.println("EXCEPTION: " + returnMessage);
 				stopTask();
 			}
-			
+
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -121,8 +126,7 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
 		/*
 		 * the following code will connect to the server router and then open a
 		 * file for sending the data
@@ -145,61 +149,61 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 				TaskManager.DoTaskOnCurrentThread(new QueryRoutingTableTask(
 						clientNode.getRouterName(), true), this);
 			}
-			clientSocket = new Socket(node.getCurrentIP(),
-					node.getReceivingPort());
-			// network output stream
-			send = new DataOutputStream(clientSocket.getOutputStream());
 
-			inDataStream = new DataInputStream(clientSocket.getInputStream());
+			if (node != null) {
+				clientSocket = new Socket(node.getCurrentIP(),
+						node.getReceivingPort());
+				// network output stream
+				send = new DataOutputStream(clientSocket.getOutputStream());
 
-			// if (clientNode != null) {
-			// message = clientNode.getStringMessage();
-			// System.out.println("Sending message: " + message);
-			// send.writeUTF(message + "\n");
-			// }
-			
-			long avgLookupTime = endLookupTime - startLookupTime;
-			
-			
-			
-			long totalMsgSize = 0;
-			long time = System.currentTimeMillis();
+				inDataStream = new DataInputStream(
+						clientSocket.getInputStream());
 
-			if (textLines.size() > 0) {
-				for (int i = 0; i < textLines.size(); i++) {
-					if (textLines.get(i) != null) {
-						
-						totalMsgSize += textLines.get(i).getBytes().length;
-						
-						send.writeUTF(textLines.get(i));
-						receivedMessage = inDataStream.readUTF();
-						
-						setStringData(receivedMessage);
-						
-						
-						
-						m_Callback.onTaskProgress(this);
-						
-//						System.out.println(recipientHostname + ": "
-//								+ receivedMessage);
+				// if (clientNode != null) {
+				// message = clientNode.getStringMessage();
+				// System.out.println("Sending message: " + message);
+				// send.writeUTF(message + "\n");
+				// }
+
+				long avgLookupTime = endLookupTime - startLookupTime;
+
+				long totalMsgSize = 0;
+				long time = System.currentTimeMillis();
+
+				if (textLines.size() > 0) {
+					for (int i = 0; i < textLines.size(); i++) {
+						if (textLines.get(i) != null) {
+
+							totalMsgSize += textLines.get(i).getBytes().length;
+
+							send.writeUTF(textLines.get(i));
+							receivedMessage = inDataStream.readUTF();
+
+							setStringData(receivedMessage);
+
+							m_Callback.onTaskProgress(this);
+
+							// System.out.println(recipientHostname + ": "
+							// + receivedMessage);
+						}
 					}
 				}
-			}
-			
-			long finishedTime = System.currentTimeMillis();
-			
-			long diff = finishedTime - time;
-			
-			double avgMsgRoundTime = textLines.size() / (double) diff;
-			
-			long avgMsgSize = totalMsgSize / textLines.size();
-			
-			System.out.println("Total msgs sent: " + textLines.size());
-			System.out.println("Lookup time: " + avgLookupTime);
-			System.out.println("Avg msg size: " + avgMsgSize);
-			System.out.println("Avg round trip time: " + avgMsgRoundTime);
 
-			send.writeUTF("Q");
+				long finishedTime = System.currentTimeMillis();
+
+				long diff = finishedTime - time;
+
+				double avgMsgRoundTime = textLines.size() / (double) diff;
+
+				long avgMsgSize = totalMsgSize / textLines.size();
+
+				System.out.println("Total msgs sent: " + textLines.size());
+				System.out.println("Lookup time: " + avgLookupTime);
+				System.out.println("Avg msg size: " + avgMsgSize);
+				System.out.println("Avg round trip time: " + avgMsgRoundTime);
+
+				send.writeUTF("Q");
+			}
 
 			// do {
 			// System.out.print(InetAddress.getLocalHost().getHostName()
@@ -264,12 +268,14 @@ public class SendStringMessageTask extends SimpleAbstractTask implements
 	@Override
 	public void onTaskFinished(Task task) {
 		endLookupTime = System.currentTimeMillis();
-		node = Node.fromBytes(task.getStringData().getBytes());
-
-		recipientHostname = node.getHostname();
 
 		try {
-			datagramSocket = new DatagramSocket(SendStringMessageTask.LISTENING_PORT);
+			node = Node.fromBytes(task.getStringData().getBytes());
+
+			recipientHostname = node.getHostname();
+
+			// datagramSocket = new
+			// DatagramSocket(SendStringMessageTask.LISTENING_PORT);
 
 			Client selfClient = new Client();
 			selfClient
