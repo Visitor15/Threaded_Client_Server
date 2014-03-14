@@ -479,7 +479,7 @@ public class MainUI implements ITaskCallback {
 
 					Server server = new Server();
 					server.ROUTERTABLE_COMMAND = COMMAND_TYPE.REGISTER_NODE;
-					server.setDestinationIP(IPaddress);
+					server.setReceivingPort(ServerReceiverServlet.LISTENING_PORT);
 
 					RegisterNodeTask registerTask = new RegisterNodeTask(server);
 					registerTask.setTaskCallback(MainUI.this);
