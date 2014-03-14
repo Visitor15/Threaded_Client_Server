@@ -22,7 +22,7 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 
 	public static final int BUFFER_SIZE = 64;
 
-	public static int LISTENING_PORT = 11235;
+	public int LISTENING_PORT = 11235;
 
 	private static DatagramSocket datagramSocket;
 
@@ -47,22 +47,22 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 			if (node != null) {
 				System.out.println("NODE ROUTER COMMAND: "
 						+ node.ROUTERTABLE_COMMAND.name());
-				node.setReceivingPort(RegisterNodeTask.LISTENING_PORT);
+				node.setReceivingPort(LISTENING_PORT);
 				buffer = node.toBytes();
 
 				datagramSocket = new DatagramSocket(LISTENING_PORT);
-				datagramSocket.setSoTimeout(3000);
+				datagramSocket.setSoTimeout(5000);
 
 				dataGram = new DatagramPacket(buffer, buffer.length);
 				dataGram.setPort(RoutingTableServlet.LISTENING_PORT);
-
-				System.out.println("Routing Table: "
-						+ DCServer.ROUTING_TABLE_IP);
 
 				dataGram.setAddress(InetAddress
 						.getByName(DCServer.ROUTING_TABLE_IP));
 				SocketManager.getInstance().sendDatagram(dataGram);
 
+				System.out.println("Routing Table: "
+						+ DCServer.ROUTING_TABLE_IP);
+				
 				buffer = new byte[1024];
 				dataGram = new DatagramPacket(buffer, buffer.length);
 				datagramSocket.receive(dataGram);
