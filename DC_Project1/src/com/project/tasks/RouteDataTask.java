@@ -26,6 +26,8 @@ public class RouteDataTask extends SimpleAbstractTask implements ITaskCallback {
 	private byte[] buffer;
 
 	public RouteDataTask(final Node n) {
+		setTaskId("RouteDataTask");
+		
 		node = n;
 	}
 

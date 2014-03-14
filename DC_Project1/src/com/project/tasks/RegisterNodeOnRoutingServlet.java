@@ -25,16 +25,12 @@ public class RegisterNodeOnRoutingServlet extends SimpleAbstractTask {
 	public static final int BUFFER_SIZE = 64;
 
 	public static int LISTENING_PORT = 11235;
-	
-	private DatagramSocket datagramSocket;
 
 	private DatagramPacket dataGram;
 
 	private byte[] buffer;
 
 	private Node node;
-	
-	private Server primaryServer;
 
 	public RegisterNodeOnRoutingServlet(final Node n) {
 		setTaskId("RegisterClientTask");
@@ -47,7 +43,6 @@ public class RegisterNodeOnRoutingServlet extends SimpleAbstractTask {
 
 		/* Redundant code here in the event Server and Client start diverting. */
 		try {
-			datagramSocket = new DatagramSocket(LISTENING_PORT);
 			/* NULL indicates no node was registered. */
 			if (node != null) {
 				
@@ -94,9 +89,6 @@ public class RegisterNodeOnRoutingServlet extends SimpleAbstractTask {
 						.getByName(mNode.getDestinationIP()));
 				SocketManager.getInstance().sendDatagram(dataGram);
 			}
-		} catch (BindException e) {
-			LISTENING_PORT += 1;
-			executeTask();
 		}
 		catch (IOException e) {
 			e.printStackTrace();
