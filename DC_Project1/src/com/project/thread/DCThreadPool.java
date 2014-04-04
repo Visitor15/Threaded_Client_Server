@@ -45,13 +45,10 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback,
 	}
 
 	public boolean doTaskPersistent(T persistentTask) {
-		DCThread<Task> thread = new DCThread<Task>("Forced thread - DCServer",
-				persistentTask);
-		thread.setCallback(this);
-		// thread.addTask(persistentTask);
-		thread.startThread(false);
-		m_ForcedThreads.add(thread);
 
+		System.out.println("Hereeeee?");
+		forceNewTaskThread(persistentTask);
+		
 		return true;
 	}
 

@@ -80,7 +80,7 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 	@Override
 	public void executeCurrentTasks() {
 
-		// System.out.println("Thread: " + threadId + " is executing a task");
+		 System.out.println("Thread: " + threadId + " is executing a task");
 
 		setThreadState(THREAD_STATE.RUNNING);
 		// System.out.println("Task list size: " + taskList.size());
@@ -204,6 +204,7 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 	public void run() {
 		setThreadState(THREAD_STATE.RUNNING);
 
+		System.out.println("Task list size: " + taskList.size());
 		if (taskList.size() > 0) {
 			executeCurrentTasks();
 		}

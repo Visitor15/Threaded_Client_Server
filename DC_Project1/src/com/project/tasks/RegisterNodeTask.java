@@ -48,59 +48,76 @@ public class RegisterNodeTask extends SimpleAbstractTask {
 			if (node != null) {
 				System.out.println("NODE ROUTER COMMAND: "
 						+ node.ROUTERTABLE_COMMAND.name());
-//				node.setReceivingPort(LISTENING_PORT);
+				// node.setReceivingPort(LISTENING_PORT);
 				node.setDestinationPort(LISTENING_PORT);
 				buffer = node.toBytes();
-
-				datagramSocket = new DatagramSocket(LISTENING_PORT);
-				datagramSocket.setSoTimeout(5000);
-
-				dataGram = new DatagramPacket(buffer, buffer.length);
-				dataGram.setPort(RoutingTableServlet.LISTENING_PORT);
-
-				dataGram.setAddress(InetAddress
-						.getByName(DCServer.ROUTING_TABLE_IP));
-				SocketManager.getInstance().sendDatagram(dataGram);
-
-				System.out.println("Routing Table: "
-						+ DCServer.ROUTING_TABLE_IP);
 				
-				buffer = new byte[1024];
-				dataGram = new DatagramPacket(buffer, buffer.length);
-				datagramSocket.receive(dataGram);
+				datagramSocket = new DatagramSocket(LISTENING_PORT);
+				datagramSocket.setSoTimeout(1000);
 
-				Node mNode = Node.fromBytes(dataGram.getData());
-				DCServer.CURRENT_PRIMARY_SERVER = mNode.getCurrentIP();
-
-				String returnMessage = mNode.getStringMessage();
-
-				if (returnMessage.equalsIgnoreCase("REGISTER_OKAY")) {
-					System.out
-							.println("Registered on routing table succesfully!");
-				} else {
-					System.out.println("EXCEPTION: " + returnMessage);
-				}
-
-				setStringData("Primary server found at: "
-						+ DCServer.CURRENT_PRIMARY_SERVER);
-				m_Callback.onTaskProgress(this);
-
+				doWork();
+				
 				datagramSocket.close();
 			}
-		} catch(BindException e) {
+		} catch (BindException e) {
 			e.printStackTrace();
 			LISTENING_PORT++;
 			executeTask();
-		}
-		catch (SocketTimeoutException e) {
-			e.printStackTrace();
-			stopTask();
 		} catch (IOException e) {
 			e.printStackTrace();
 			stopTask();
 		}
 
 		stopTask();
+	}
+
+	private void doWork() {
+
+		try {
+			System.out.println("NODE ROUTER COMMAND: "
+					+ node.ROUTERTABLE_COMMAND.name());
+			// node.setReceivingPort(LISTENING_PORT);
+			node.setDestinationPort(LISTENING_PORT);
+			buffer = node.toBytes();
+			
+			dataGram = new DatagramPacket(buffer, buffer.length);
+			dataGram.setPort(RoutingTableServlet.LISTENING_PORT);
+
+			dataGram.setAddress(InetAddress
+					.getByName(DCServer.ROUTING_TABLE_IP));
+			SocketManager.getInstance().sendDatagram(dataGram);
+
+			System.out.println("Routing Table: " + DCServer.ROUTING_TABLE_IP);
+
+			buffer = new byte[1024];
+			dataGram = new DatagramPacket(buffer, buffer.length);
+			datagramSocket.receive(dataGram);
+
+			Node mNode = Node.fromBytes(dataGram.getData());
+			DCServer.CURRENT_PRIMARY_SERVER = mNode.getCurrentIP();
+
+			String returnMessage = mNode.getStringMessage();
+
+			if (returnMessage.equalsIgnoreCase("REGISTER_OKAY")) {
+				System.out.println("Registered on routing table succesfully!");
+			} else {
+				System.out.println("EXCEPTION: " + returnMessage);
+			}
+
+			setStringData("Primary server found at: "
+					+ DCServer.CURRENT_PRIMARY_SERVER);
+			m_Callback.onTaskProgress(this);
+		} catch (BindException e) {
+			e.printStackTrace();
+			LISTENING_PORT++;
+			executeTask();
+		} catch (SocketTimeoutException e) {
+			doWork();
+		} catch (IOException e) {
+			e.printStackTrace();
+			stopTask();
+		}
+
 	}
 
 	@Override

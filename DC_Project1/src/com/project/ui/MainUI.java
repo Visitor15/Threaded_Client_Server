@@ -35,6 +35,7 @@ import com.project.server.RoutingTableServlet;
 import com.project.server.ServerReceiverServlet;
 import com.project.server.router.Client;
 import com.project.server.router.Server;
+import com.project.tasks.DCproject2Client;
 import com.project.tasks.ITaskCallback;
 import com.project.tasks.RegisterNodeTask;
 import com.project.tasks.SendStringMessageTask;
@@ -76,6 +77,15 @@ public class MainUI implements ITaskCallback {
 	public static String ROUTING_TABLE_IP = "NULL";
 
 	// router
+	
+	public void initProject2() {
+		DCproject2Client project2Client = new DCproject2Client();
+//		project2Client.setTaskCallback(MainUI.this);
+		System.out.println("Getting here");
+		TaskManager.DoPersistentTask(project2Client, MainUI.this);
+		
+//		init();
+	}
 
 	public void init() {
 		JFrame frame = new JFrame("baseClient");

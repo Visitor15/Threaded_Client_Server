@@ -9,6 +9,6 @@ public class Main {
 
 	public static final void main(String[] args) {
 		MainUI mainUI = new MainUI();
-		mainUI.init();
+		mainUI.initProject2();
 	}
 }

@@ -21,6 +21,8 @@ public class TaskManager {
 			new TaskManager();
 		}
 
+		System.out.println("Doing task");
+		
 		return m_Instance.initPersistentTask(task, callback);
 	}
 
@@ -60,6 +62,7 @@ public class TaskManager {
 
 	private boolean initPersistentTask(final Task task,
 			final ITaskCallback callback) {
+		System.out.println("Here?");
 		return ThreadPool.doTaskPersistent(task);
 	}
 
