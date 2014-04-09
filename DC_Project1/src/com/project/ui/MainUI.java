@@ -91,9 +91,9 @@ public class MainUI implements ITaskCallback {
 
 		TaskManager.DoTask(new ClientGUITask());
 		
-		ThreadHelper.sleepThread(3000);
-
-		TaskManager.DoTask(new ClientGUITask());
+//		ThreadHelper.sleepThread(3000);
+//
+//		TaskManager.DoTask(new ClientGUITask());
 		
 		// init();
 	}
