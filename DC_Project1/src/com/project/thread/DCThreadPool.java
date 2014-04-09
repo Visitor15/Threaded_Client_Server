@@ -17,7 +17,7 @@ public class DCThreadPool<T extends Task> implements IThreadPoolCallback,
 	 */
 	private static final long serialVersionUID = -1548454151480835708L;
 
-	public static final int POOL_SIZE = 4;
+	public static final int POOL_SIZE = 25;
 
 	public static final long DEF_WAIT_TIME = 250;
 

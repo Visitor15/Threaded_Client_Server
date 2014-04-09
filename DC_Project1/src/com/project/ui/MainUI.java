@@ -28,6 +28,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
+import com.project.dc_server.DCServerTask;
 import com.project.framework.Task;
 import com.project.server.DCServer;
 import com.project.server.DCServer.COMMAND_TYPE;
@@ -35,11 +36,11 @@ import com.project.server.RoutingTableServlet;
 import com.project.server.ServerReceiverServlet;
 import com.project.server.router.Client;
 import com.project.server.router.Server;
-import com.project.tasks.DCproject2Client;
 import com.project.tasks.ITaskCallback;
 import com.project.tasks.RegisterNodeTask;
 import com.project.tasks.SendStringMessageTask;
 import com.project.tasks.TaskManager;
+import com.project.tasks.ThreadHelper;
 
 public class MainUI implements ITaskCallback {
 
@@ -77,14 +78,24 @@ public class MainUI implements ITaskCallback {
 	public static String ROUTING_TABLE_IP = "NULL";
 
 	// router
-	
+
 	public void initProject2() {
-		DCproject2Client project2Client = new DCproject2Client();
-//		project2Client.setTaskCallback(MainUI.this);
-		System.out.println("Getting here");
-		TaskManager.DoPersistentTask(project2Client, MainUI.this);
+		// DCproject2Client project2Client = new DCproject2Client();
+		// project2Client.setTaskCallback(MainUI.this);
+		// System.out.println("Getting here");
+		// TaskManager.DoPersistentTask(project2Client, MainUI.this);
 		
-//		init();
+		TaskManager.DoTask(new DCServerTask());
+		
+		ThreadHelper.sleepThread(3000);
+
+		TaskManager.DoTask(new ClientGUITask());
+		
+		ThreadHelper.sleepThread(3000);
+
+		TaskManager.DoTask(new ClientGUITask());
+		
+		// init();
 	}
 
 	public void init() {
@@ -466,14 +477,13 @@ public class MainUI implements ITaskCallback {
 				if (clientSelect.isSelected()) {
 					// TaskManager.DoTask(new RoutingTableServlet());
 					// TaskManager.DoTask(new ServerReceiverServlet());
-					
+
 					Client client = new Client();
 					client.ROUTERTABLE_COMMAND = COMMAND_TYPE.REGISTER_NODE;
 					RegisterNodeTask nodeTask = new RegisterNodeTask(client);
 					nodeTask.setTaskCallback(MainUI.this);
-					 TaskManager.DoTaskOnCurrentThread(nodeTask, MainUI.this);
+					TaskManager.DoTaskOnCurrentThread(nodeTask, MainUI.this);
 
-					
 					client = new Client();
 					client.setDestinationPort(ServerReceiverServlet.LISTENING_PORT);
 					client.SERVER_COMMAND = COMMAND_TYPE.SEND_STRING_MESSAGE;
