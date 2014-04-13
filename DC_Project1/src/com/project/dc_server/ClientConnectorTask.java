@@ -115,7 +115,10 @@ public class ClientConnectorTask extends SimpleAbstractTask {
                             }
                         if(!existing)
                         {
+                        	System.out.println("Adding server: " + tempSL);
                         	DCServerTask.servers.add(tempSL);
+                        	TaskManager.DoTask(new ServerLoadBalancerTask());
+                        	TaskManager.DoTask(new ServerFileQueryTask());
                         }
                     }
                     else
