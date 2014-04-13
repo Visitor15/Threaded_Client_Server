@@ -54,6 +54,8 @@ public class DCServerTask extends SimplePersistentTask implements ITaskCallback 
 		TaskManager.DoPersistentTask(new ClientConnectorTask(), DCServerTask.this);
 		
 		TaskManager.DoPersistentTask(new SelfServerFileQueryTask(), DCServerTask.this);
+		
+		TaskManager.DoPersistentTask(new ServerFileQueryTask(), DCServerTask.this);
 
 //		serverServerFileQuery sSFQ = new serverServerFileQuery();
 

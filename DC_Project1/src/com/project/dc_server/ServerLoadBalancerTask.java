@@ -76,6 +76,7 @@ public class ServerLoadBalancerTask extends SimpleAbstractTask {
 			System.out.println("failed on something major : " + excep);
 		}
 		clientN.close();
+		stopTask();
 	}
 
 	@Override

@@ -95,7 +95,7 @@ public class DCThread<T extends Task> extends Thread implements IDCThread,
 				taskCallback.onTaskStart(task);
 			}
 			task.beginTask(this);
-
+			task.stopTask();
 			do {
 				if (getThreadState() == THREAD_STATE.FINISHED) {
 					stopThread();

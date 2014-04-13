@@ -33,6 +33,8 @@ import com.intellij.uiDesigner.core.Spacer;
 import com.project.dc_client.ClientSenderHandlerTask;
 import com.project.dc_client.ClientTask;
 import com.project.dc_client.ClientUpdaterTask;
+import com.project.dc_server.DCServerTask;
+import com.project.dc_server.ServerFileQueryTask;
 import com.project.framework.Task;
 import com.project.tasks.ITaskCallback;
 import com.project.tasks.SimpleAbstractTask;
@@ -80,6 +82,7 @@ public class ClientGUITask extends SimplePersistentTask implements
 		System.out.println("booting gui");
 
 		TaskManager.DoTask(new ClientTask());
+		TaskManager.DoPersistentTask(new ServerFileQueryTask(), ClientGUITask.this);
 		TaskManager.DoTask(new ClientSenderHandlerTask());
 
 		// clientbackend BEnd = new clientbackend();
@@ -274,9 +277,7 @@ public class ClientGUITask extends SimplePersistentTask implements
 		// CU.start();
 
 		try {
-			TaskManager.DoTaskOnCurrentThread(new ClientUpdaterTask(),
-					ClientGUITask.this);
-
+			TaskManager.DoTask(new ClientUpdaterTask());
 			// CU.join();
 		} catch (Exception e) {
 			System.out.println((new StringBuilder())
