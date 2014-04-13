@@ -277,7 +277,7 @@ public class ClientGUITask extends SimplePersistentTask implements
 		// CU.start();
 
 		try {
-			TaskManager.DoTask(new ClientUpdaterTask());
+			TaskManager.DoTaskOnCurrentThread(new ClientUpdaterTask(), ClientGUITask.this);
 			// CU.join();
 		} catch (Exception e) {
 			System.out.println((new StringBuilder())

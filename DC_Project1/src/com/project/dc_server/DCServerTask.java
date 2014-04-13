@@ -362,7 +362,7 @@ public class DCServerTask extends SimplePersistentTask implements ITaskCallback 
 
 		@Override
 		public void executeTask() {
-			System.out.println("BEGIN LISTENING");
+			System.out.println("EXECUTING LISTENING TASK SERVER SIDE!");
 			beginListening();
 		}
 

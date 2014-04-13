@@ -67,18 +67,20 @@ public class ClientUpdaterTask extends SimpleAbstractTask {
 
 			do {
 				System.out.println("sent EOF");
-				if (Istream.ready()) {
+//				if (Istream.ready()) {
 					temp = Istream.readLine();
 					if (temp.equals("EOF")) {
 						localSocket.close();
 						Istream.close();
 						break;
 					}
-				} else {
-					break;
-				}
-				if (!ClientGUITask.files.contains(temp))
+//				} else {
+//					break;
+//				}
+				if (!ClientGUITask.files.contains(temp)) {
+					System.out.println("CLIENT ADDING FILE: " + temp);
 					ClientGUITask.files.add(temp);
+				}
 			} while (true);
 		} catch (Exception excep) {
 		}

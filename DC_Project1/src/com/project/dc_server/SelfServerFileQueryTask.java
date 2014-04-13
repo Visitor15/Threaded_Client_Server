@@ -22,7 +22,6 @@ public class SelfServerFileQueryTask extends SimpleAbstractTask {
 			while (true) // forever
 			{
 				try {
-					socket.setSoTimeout(10000);
 					System.out.println("Waiting server file request");
 					byte[] recBuffer = new byte[15000];
 					DatagramPacket packet = new DatagramPacket(recBuffer,

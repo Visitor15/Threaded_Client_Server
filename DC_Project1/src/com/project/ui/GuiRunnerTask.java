@@ -97,6 +97,8 @@ public class GuiRunnerTask extends SimplePersistentTask {
             try {
                 Thread.sleep(1000);
             } catch (Exception e) {
+            	System.out.println("ERROR WITH GUI RUNNER!");
+            	
                 System.out.println(e);
             }
         }
